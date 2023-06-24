@@ -1,0 +1,417 @@
+
+
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bounce/flutter_bounce.dart';
+import 'package:ltr/controller/global/globalValues.dart';
+import 'package:ltr/services/apiController.dart';
+import 'package:ltr/views/components/common/common.dart';
+import 'package:ltr/views/components/enum.dart';
+import 'package:ltr/views/components/inputfield/commonTextField.dart';
+import 'package:ltr/views/styles/colors.dart';
+
+class UserCreation extends StatefulWidget {
+  final String pUserRole;
+  final String pPageMode;
+  final String pPageUserCd;
+  final String pStockistCode;
+  final String pDealerCode;
+  final Function pfnCallBack;
+  const UserCreation({Key? key, required this.pUserRole, required this.pPageMode, required this.pPageUserCd, required this.pStockistCode, required this.pDealerCode, required this.pfnCallBack}) : super(key: key);
+
+  @override
+  _UserCreationState createState() => _UserCreationState();
+}
+
+class _UserCreationState extends State<UserCreation> {
+
+
+  //Global
+  var g =  Global();
+  var apiCall  = ApiCall();
+  late Future<dynamic> futureForm;
+  var wstrPageMode  =  "ADD";
+  var wstrRole = "Admin";
+
+  //Page Variable
+  var frGameList  =  [];
+  var frSelectedGameList = [];
+  
+  var txtId = TextEditingController();
+  var txtPassword = TextEditingController();
+  var txtConfirmPwd = TextEditingController();
+  var txtWeeklyCredit = TextEditingController();
+  var txtDailyCredit = TextEditingController();
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    fnGetPageData();
+  }
+
+
+  @override
+  Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
+    return Scaffold(
+      body: Container(
+        margin: MediaQuery.of(context).padding,
+        child: Column(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(10),
+              decoration: boxBaseDecoration(g.wstrGameBColor, 0),
+              child: Column(
+                children: [
+                  Row(
+                    children: [
+                      GestureDetector(
+                        onTap: (){
+                          Navigator.pop(context);
+                        },
+                        child: Container(
+                          decoration: boxDecoration(Colors.white,10),
+                          padding: const EdgeInsets.all(5),
+                          child: const Icon(Icons.arrow_back,color: Colors.black,size: 20,),
+                        ),
+                      ),
+                      gapWC(10),
+                      tcn(wstrRole.toString(), Colors.white, 20)
+                    ],
+                  ),
+                  
+                ],
+              ),
+            ),
+            gapHC(20),
+            Expanded(
+              child: Container(
+                padding: const EdgeInsets.symmetric(vertical: 10,horizontal: 15),
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(5),
+                        decoration: boxBaseDecoration(greyLight,0),
+                        child: Row(
+                          children: [
+                            tcn('User Details', Colors.black, 12),
+                          ],
+                        ),
+                      ),
+                      gapHC(10),
+                      CustomTextField(
+                        editable: wstrPageMode == "ADD"?true:false,
+                        controller: txtId,
+                        hintText: "ID",
+                      ),
+                      gapHC(15,),
+                      CustomTextField(
+                        controller: txtPassword,
+                        hintText: "Password",
+                        textFormFieldType: TextFormFieldType.passwrd,
+                      ),
+                      gapHC(15,),
+                      CustomTextField(
+                        controller: txtConfirmPwd,
+                        hintText: "Confirm Password",
+                        textFormFieldType: TextFormFieldType.confirmPasswrd,
+                      ),
+                      gapHC(10,),
+                      Container(
+                        padding: const EdgeInsets.all(5),
+                        decoration: boxBaseDecoration(greyLight,0),
+                        child: Row(
+                          children: [
+                            tcn('Credit Limit', Colors.black, 12),
+                          ],
+                        ),
+                      ),
+
+                      gapHC(10,),
+                      CustomTextField(
+                        keybordType: TextInputType.number,
+                        controller: txtWeeklyCredit,
+                        hintText: "Weekly credit limit",
+                        textFormFieldType: TextFormFieldType.weeklyCreditLimit,
+
+                      ),
+                      gapHC(15,),
+                      CustomTextField(
+                        keybordType: TextInputType.number,
+                        controller: txtDailyCredit,
+                        hintText: "Daily credit limit",
+                        textFormFieldType: TextFormFieldType.dailyCreditLimit,
+
+                      ),
+                      gapHC(10,),
+                      Container(
+                        padding: const EdgeInsets.all(5),
+                        decoration: boxBaseDecoration(greyLight,0),
+                        child: Row(
+                          children: [
+                            tcn('Allowed Games', Colors.black, 12)
+                          ],
+                        ),
+                      ),
+                      gapHC(10,),
+                      Wrap(
+                        children: wGameList(size),
+                      )
+
+
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            Row(
+              children: [
+                gapWC(10),
+                wstrPageMode == "ADD"?
+                Expanded(child: GestureDetector(
+                  onTap: (){
+                    fnSave();
+                  },
+                  child: Container(
+                    decoration: boxDecoration(g.wstrGameBColor, 30),
+                    margin: const EdgeInsets.symmetric(vertical: 10),
+                    padding: const EdgeInsets.symmetric(vertical: 8,horizontal: 10),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(Icons.task_alt,color: Colors.white,size: 15,),
+                        gapWC(5),
+                        tcn('Save', Colors.white, 15)
+                      ],
+                    ),
+                  ),
+                )):Expanded(child: Bounce(
+                  onPressed: (){
+                    fnSave();
+                  },
+                  duration: const Duration(milliseconds: 110),
+                  child: Container(
+                    decoration: boxDecoration(g.wstrGameBColor, 30),
+                    margin: const EdgeInsets.symmetric(vertical: 10),
+                    padding: const EdgeInsets.symmetric(vertical: 8,horizontal: 10),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(Icons.edit,color: Colors.white,size: 15,),
+                        gapWC(5),
+                        tcn('Update', Colors.white, 15)
+                      ],
+                    ),
+                  ),
+                )),
+                gapWC(10),
+                Bounce(
+                  onPressed: (){
+                    Navigator.pop(context);
+                  },
+                  duration: const Duration(milliseconds: 110),
+                  child: Container(
+                    decoration: boxBaseDecoration(greyLight, 30),
+                    padding: const EdgeInsets.symmetric(vertical: 8,horizontal: 15),
+                    child: Row(
+                      children: [
+                        const Icon(Icons.close,color: Colors.black,size: 15,),
+                        gapWC(5),
+                        tcn('Cancel', Colors.black, 15)
+                      ],
+                    ),
+                  ),
+                ),
+                gapWC(10),
+              ],
+            )
+
+          ],
+        ),
+      ),
+    );
+  }
+  //=========================================WIDGET
+    
+    List<Widget> wGameList(size){
+      List<Widget> rtnList  = [];
+      for(var e in frGameList){
+        var code  =  (e["CODE"]??"").toString();
+        rtnList.add(Bounce(
+          onPressed: (){
+            fnSelectGames(code);
+          },
+          duration: const Duration(milliseconds: 110),
+          child: Container(
+            width: size.width * 0.4,
+            padding: const EdgeInsets.symmetric(vertical: 10,horizontal: 20),
+            margin: const EdgeInsets.symmetric(vertical: 5,horizontal: 8),
+            decoration: boxDecoration( frSelectedGameList.contains(code)? grey: Colors.white, 30),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                tcn((e["DESCP"]??"").toString(),frSelectedGameList.contains(code)?Colors.white: Colors.black, 13),
+                const Icon(Icons.task_alt,color: Colors.white,size: 15,)
+              ],
+            )
+          ),
+        ));
+      }
+      return rtnList;
+    }
+  //=========================================PAGE FN
+
+    fnGetPageData(){
+       if(mounted){
+         Future.delayed(const Duration(seconds: 1),(){
+          apiGetGameList();
+         });
+         setState(() {
+           wstrRole =  (widget.pUserRole??"").toString();
+           wstrPageMode =  (widget.pPageMode??"").toString();
+         });
+         if(wstrPageMode == "EDIT"){
+           //Load old details
+           txtId.text =  widget.pPageUserCd.toString();
+           apiGetDetails();
+         }
+       }
+    }
+
+    fnSelectGames(code){
+      if(mounted){
+        setState(() {
+          if(frSelectedGameList.contains(code)){
+            frSelectedGameList.remove(code);
+          }else{
+            frSelectedGameList.add(code);
+          }
+        });
+      }
+    }
+
+    fnSave(){
+      if(txtId.text.isEmpty){
+        errorMsg(context, "Check Id");
+        return;
+      }
+      if(txtPassword.text.isEmpty){
+        errorMsg(context, "Check Password");
+        return;
+      }
+      if(txtPassword.text !=  txtConfirmPwd.text){
+        errorMsg(context, "Confirm Password");
+        return;
+      }
+
+      apiCreateUser();
+
+    }
+
+    fnFill(value){
+      if(mounted){
+        var headData  = value["USERDET"];
+        var gameData  = value["USERGAMES"];
+        setState(() {
+          frSelectedGameList.clear();
+          txtWeeklyCredit.text = g.mfnDbl((headData[0]['WEEKLY_CR_LIMIT'].toString())).toString();
+          txtDailyCredit.text = g.mfnDbl((headData[0]['DAILY_CR_LIMIT'].toString())).toString();
+
+          for(var e in gameData) {
+            if (!frSelectedGameList.contains((e["GAME_CODE"] ?? ""))) {
+              frSelectedGameList.add((e["GAME_CODE"] ?? ""));
+            }
+          }
+
+        });
+      }
+    }
+
+  //=========================================API CALL
+  apiGetGameList(){
+    //api for get user wise game list
+
+    var parentCode = "";
+    if(wstrRole == "Stockist"){
+      parentCode = g.wstrUserCd;
+    }else if(wstrRole == "Dealer"){
+      parentCode = widget.pStockistCode;
+    }else if(wstrRole == "Agent"){
+      parentCode = widget.pDealerCode;
+    }
+
+    futureForm = apiCall.apiGetUserGames(g.wstrCompany, parentCode, "");
+    futureForm.then((value) => apiGetGameListRes(value));
+  }
+  apiGetGameListRes(value){
+    if(mounted){
+      setState(() {
+        frGameList = [];
+        if(g.fnValCheck(value)){
+          frGameList = value;
+        }
+      });
+    }
+  }
+
+  apiCreateUser(){
+
+    var games = [];
+    for(var e in frSelectedGameList){
+      games.add({
+        "GAME_CODE":e,
+        "MAX_COUNT":0,//50
+        "REPORT_DAYS":0
+      });
+    }
+    var parentCode = "";
+    if(wstrRole == "Stockist"){
+      parentCode = g.wstrUserCd;
+    }else if(wstrRole == "Dealer"){
+      parentCode = widget.pStockistCode;
+    }else if(wstrRole == "Agent"){
+      parentCode = widget.pDealerCode;
+    }
+
+    futureForm = apiCall.apiCreateUser(g.wstrCompany, txtId.text, wstrRole.toString().toUpperCase(),parentCode, txtPassword.text, txtWeeklyCredit.text, txtDailyCredit.text, wstrPageMode,games);
+    futureForm.then((value) => apiCreateUserRes(value));
+  }
+  apiCreateUserRes(value){
+    if(mounted){
+      if(g.fnValCheck(value)){
+        //[{STATUS: 1, MSG: ADDED}]
+        var sts = (value[0]["STATUS"]??"").toString();
+        var msg = (value[0]["MSG"]??"").toString();
+        if(sts == "1"){
+          Navigator.pop(context);
+          successMsg(context, "Success");
+          widget.pfnCallBack();
+          //after success directly move to the user details page
+        }else{
+          errorMsg(context, msg.toString());
+        }
+
+      }else{
+        errorMsg(context, "Please try again");
+      }
+
+    }
+  }
+
+  apiGetDetails(){
+    futureForm  = apiCall.apiGetUserDetails(g.wstrCompany, widget.pPageUserCd.toString(), "USERDET");
+    futureForm.then((value) => apiGetDetailsRes(value));
+  }
+  apiGetDetailsRes(value){
+    if(mounted){
+        if(g.fnValCheck(value)){
+          fnFill(value);
+        }
+    }
+  }
+
+
+}
