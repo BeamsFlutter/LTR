@@ -10,6 +10,7 @@ const Color blackBlue = Color(0xFF001540);
 const Color buttonColor = Color(0xFF001540);
 const Color txtColor = Color(0xFF000000);
 const Color txtSubColor = Color(0xFF4D4D4D);
+const Color txtSubColor1 = Color(0xFF4D4D4D);
 const Color black = Color(0xFF000000);
 const Color white = Color(0xFFFFFFFF);
 // const Color bgColor = Color(0xFF586BFF);
