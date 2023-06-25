@@ -363,8 +363,8 @@ class _UserCreationState extends State<UserCreation> {
     for(var e in frSelectedGameList){
       games.add({
         "GAME_CODE":e,
-        "MAX_COUNT":0,//50
-        "REPORT_DAYS":0
+        "MAX_COUNT":-1,//50
+        "REPORT_DAYS":-1
       });
     }
     var parentCode = "";

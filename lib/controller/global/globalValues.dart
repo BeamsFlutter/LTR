@@ -39,6 +39,7 @@ class Global {
     _wstrGameTColor = Colors.white;
     _wstrGameOTColor = Colors.white;
     _wstrSysTime  =  DateTime.now();
+    _wstrCurrTime  =  DateTime.now();
     _wstrSGameDocNo = "";
     _wstrSGameDoctype = "";
     _wstrSGameStart = "";
@@ -61,6 +62,7 @@ class Global {
   var _wstrDeviceIP;
   var _wstrVersionName = '';
   var _wstrSysTime  =  DateTime.now();
+  var _wstrCurrTime  =  DateTime.now();
   var _wstrDeviceName ='';
   var _wstrDeivceId ='';
 
@@ -229,6 +231,12 @@ class Global {
 
   set wstrSGameDocNo(value) {
     _wstrSGameDocNo = value;
+  }
+
+  get wstrCurrTime => _wstrCurrTime;
+
+  set wstrCurrTime(value) {
+    _wstrCurrTime = value;
   } //===============================================================global fn========================
 
 

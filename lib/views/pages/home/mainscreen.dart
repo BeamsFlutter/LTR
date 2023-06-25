@@ -9,6 +9,7 @@ import 'package:ltr/controller/navigation/navigation_controller.dart';
 import 'package:ltr/services/apiController.dart';
 import 'package:ltr/views/components/common/common.dart';
 import 'package:ltr/views/pages/booking/booking.dart';
+import 'package:ltr/views/pages/booking/publishresult.dart';
 import 'package:ltr/views/pages/booking/result.dart';
 import 'package:ltr/views/pages/home/countview.dart';
 import 'package:ltr/views/pages/number/favnumber.dart';
@@ -146,6 +147,7 @@ class _MainPageState extends State<MainPage> {
                       gapHC(5),
                       wMenuCard('Booking',2),
                       wMenuCard('Results',3),
+                      wMenuCard('Result Publish',12),
                       wMenuCard('Count View',7),
                       g.wstrUserRole != "AGENT"?
                       Column(
@@ -361,7 +363,7 @@ class _MainPageState extends State<MainPage> {
                              ),
                            ),
                            Container(
-                             margin: EdgeInsets.all(5),
+                             margin: const EdgeInsets.all(5),
                              padding: const EdgeInsets.symmetric(horizontal: 15,vertical: 10),
                              decoration: boxBaseDecoration(greyLight, 10),
                              child: Row(
@@ -394,7 +396,7 @@ class _MainPageState extends State<MainPage> {
                  ),
                  Expanded(child: Container(
                    decoration: boxDecoration(Colors.white, 10),
-                   margin: EdgeInsets.all(10),
+                   margin: const EdgeInsets.all(10),
                    child: Column(
                      children: [
                        Row(),
@@ -445,6 +447,9 @@ class _MainPageState extends State<MainPage> {
 
         } else if(nav == 11){
           Navigator.push(context, MaterialPageRoute(builder: (context) =>   const Settings()));
+
+        } else if(nav == 12){
+          Navigator.push(context, MaterialPageRoute(builder: (context) =>   const PublishResult()));
 
         }  else{
           Navigator.push(context, MaterialPageRoute(builder: (context) =>   UserList(pRoleCode: text,)));
@@ -560,11 +565,19 @@ class _MainPageState extends State<MainPage> {
               var doctype  =   value[0]["DOCTYPE"];
               var startTime  =   value[0]["START_TIME"];
               var endTime  =   value[0]["END_TIME"];
+              var sysTime  =   value[0]["SYS_TIME"];
+              var currTime  =   DateTime.now();
                 setState(() {
                   g.wstrSGameDocNo = docno;
                   g.wstrSGameDoctype = doctype;
                   g.wstrSGameStart = startTime;
                   g.wstrSGameEnd = endTime;
+                  try{
+                    g.wstrSysTime = DateTime.parse(sysTime.toString());
+                  }catch(e){
+                    dprint(e);
+                  }
+                  g.wstrCurrTime = currTime;
                 });
                Navigator.push(context, MaterialPageRoute(builder: (context) =>   const Booking()));
             }else{

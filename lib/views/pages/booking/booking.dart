@@ -9,6 +9,7 @@ import 'package:ltr/views/components/common/common.dart';
 import 'package:ltr/views/components/inputfield/commonTextField.dart';
 import 'package:ltr/views/pages/user/usersearch.dart';
 import 'package:ltr/views/styles/colors.dart';
+import 'package:marquee/marquee.dart';
 
 class Booking extends StatefulWidget {
   const Booking({Key? key}) : super(key: key);
@@ -38,6 +39,7 @@ class _BookingState extends State<Booking> {
 
   var fBookingNo = "";
   var fBookingDoctype = "";
+  var fEndTime  =  "";
 
   //Game
   var gCountNum = 3;
@@ -489,7 +491,9 @@ class _BookingState extends State<Booking> {
                       wOption("10s"),
                       wOption("11s"),
                     ],
-                  ):gapHC(0)
+                  ):gapHC(0),
+
+
                 ],
               ),
             ),
@@ -525,13 +529,30 @@ class _BookingState extends State<Booking> {
               padding: const EdgeInsets.all(5),
               margin: const EdgeInsets.symmetric(horizontal: 5),
               decoration: boxDecoration(Colors.white, 8),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              child: Column(
                 children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
 
-                  tcn('Total', Colors.black, 15),
-                  tcn(fTotalCount.toStringAsFixed(0), Colors.black, 20),
-                  tc(fTotalAmount.toStringAsFixed(2), Colors.black, 20)
+                      tcn('Total', Colors.black, 15),
+                      tcn(fTotalCount.toStringAsFixed(0), Colors.black, 20),
+                      tc(fTotalAmount.toStringAsFixed(2), Colors.black, 20)
+                    ],
+                  ),
+                  const Divider(
+                    height: 5,
+                  ),
+                  Container(
+                    height: 15,
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Marquee(text: "BOOKING CLOSE @ $fEndTime",blankSpace: 30.0,style: TextStyle(color: Colors.black,fontSize: 12),),
+                        ),
+                      ],
+                    )
+                  )
                 ],
               ),
             ),
@@ -890,6 +911,14 @@ class _BookingState extends State<Booking> {
           fAgentCode = g.wstrUserCd;
         });
       }
+
+      try{
+        fEndTime =  setDate(7, DateTime.parse(g.wstrSGameEnd.toString()));
+      }catch(e){
+        dprint(e);
+      }
+
+
         apiAvailableGames();
       }
     }
@@ -899,14 +928,23 @@ class _BookingState extends State<Booking> {
         if(rolecode == "Stockist"){
           if(fStockistCode != usercd){
             fDealerCode = "";
+            fAgentCode = "";
           }
           fStockistCode = usercd;
         }else if(rolecode == "Dealer"){
+          if(fDealerCode != usercd){
+            fAgentCode = "";
+          }
           fDealerCode = usercd;
+
         }else if(rolecode == "Agent"){
           fAgentCode = usercd;
+
         }
       });
+      if(rolecode == "Agent"){
+        apiGetDetails();
+      }
     }
   }
   fnButtonPres(plan){
@@ -1640,10 +1678,12 @@ class _BookingState extends State<Booking> {
   }
   fnSave(){
     if(countList.isEmpty) {
+      errorMsg(context, "Choose Numbers");
       return;
     }
     if(txtName.text.isEmpty){
       errorMsg(context, "Enter Name");
+      fnName.requestFocus();
       return;
     }
 
@@ -1653,14 +1693,23 @@ class _BookingState extends State<Booking> {
     for(var e in countList){
       var qty =  g.mfnDbl(e["COUNT"].toString());
       var rate =  g.mfnDbl(e["AMOUNT"].toString());
+      var sts =  e["STATUS"].toString();
       var total  =  qty * rate;
-      det.add({
-        "GAME_TYPE":e["PLAN"],
-        "NUMBER":e["NUMBER"],
-        "QTY":e["COUNT"],
-        "RATE":e["AMOUNT"],
-        "TOT_AMT":total
-      });
+      if(sts != "Y"){
+        det.add({
+          "GAME_TYPE":e["PLAN"],
+          "NUMBER":e["NUMBER"],
+          "QTY":e["COUNT"],
+          "RATE":e["AMOUNT"],
+          "TOT_AMT":total
+        });
+      }
+
+    }
+
+    if(det.isEmpty) {
+      errorMsg(context, "Choose Numbers");
+      return;
     }
 
     apiSaveBooking(det);
@@ -1669,24 +1718,19 @@ class _BookingState extends State<Booking> {
 
   List<List<int>> permute(List<int> digits) {
     List<List<int>> result = [];
-
     void backtrack(List<int> curr, List<int> remaining) {
       if (remaining.isEmpty) {
         result.add(curr);
         return;
       }
-
       for (int i = 0; i < remaining.length; i++) {
         List<int> newCurr = List.from(curr);
         newCurr.add(remaining[i]);
-
         List<int> newRemaining = List.from(remaining);
         newRemaining.removeAt(i);
-
         backtrack(newCurr, newRemaining);
       }
     }
-
     backtrack([], digits);
     return result;
   }
@@ -1700,6 +1744,10 @@ class _BookingState extends State<Booking> {
   }
   fnCancel(){
     Get.back();
+  }
+
+  fnGameTime(){
+     
   }
 
   //=======================================API CALL
@@ -1736,15 +1784,65 @@ class _BookingState extends State<Booking> {
     }
   }
 
-
   apiSaveBooking(det){
     futureForm = apiCall.apiSaveBooking(g.wstrSGameDocNo, g.wstrSGameDoctype, g.wstrCompany, g.wstrUserCd, txtName.text, txtName.text, g.wstrDeivceId, fAgentCode, "ADD", det);
     futureForm.then((value) => apiSaveBookingRes(value));
   }
   apiSaveBookingRes(value){
     if(mounted){
+
+      if(g.fnValCheck(value)){
+
+        try{
+          var sts = (value[0]["STATUS"])??"";
+          var msg = (value[0]["MSG"])??"";
+          if(sts == "1"){
+            Get.back();
+            successMsg(context, "BOOKING SAVED");
+          }else{
+            errorMsg(context, msg);
+          }
+        }catch(e){
+          dprint(e);
+        }
+
+      }else{
+        errorMsg(context, "Failed");
+      }
+
       if(value == "1"){
         successMsg(context, "BOOKING SAVED");
+      }
+    }
+  }
+
+  apiGetDetails(){
+    futureForm  = apiCall.apiGetUserDetails(g.wstrCompany, fAgentCode, "PRICE");
+    futureForm.then((value) => apiGetDetailsRes(value));
+  }
+  apiGetDetailsRes(value){
+    if(mounted){
+      if(g.fnValCheck(value)){
+
+        try{
+          setState(() {
+            for(var e  in value){
+              var type = e["TYPE"];
+              if(type == "SUPER"){
+                supPrice = g.mfnDbl(e["PRICE"].toString());
+              }else if(type == "BOX"){
+                boxPrice = g.mfnDbl(e["PRICE"].toString());
+              }else if(type == "AB"){
+                twoPrice = g.mfnDbl(e["PRICE"].toString());
+              }else if(type == "A"){
+                onePrice = g.mfnDbl(e["PRICE"].toString());
+              }
+            }
+          });
+        }catch(e){
+          dprint(e);
+        }
+
       }
     }
   }
