@@ -156,8 +156,10 @@ class _UserListState extends State<UserList> {
               ),
             ),
             gapHC(10),
-            Expanded(child: Column(
-              children: wUserList(),
+            Expanded(child: SingleChildScrollView(
+              child: Column(
+                children: wUserList(),
+              ),
             )),
             Bounce(
               onPressed: (){

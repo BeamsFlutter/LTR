@@ -227,43 +227,30 @@ class _BookingState extends State<Booking> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Row(
-                        children: [
-                          wNumberCard(1),
-                          gapWC(5),
-                          wNumberCard(2),
-                          gapWC(5),
-                          wNumberCard(3),
-                        ],
-                      ),
+                      wNumberCard(1),
+                      gapWC(5),
+                      wNumberCard(2),
+                      gapWC(5),
+                      wNumberCard(3),
+                      gapWC(20),
+                      Expanded(child: Container(
+                        height: 35,
+                        padding: const EdgeInsets.symmetric(horizontal: 15),
+                        decoration: boxBaseDecoration(greyLight, 5),
+                        child: TextFormField(
+                          controller: txtName,
+                          focusNode: fnName,
+                          decoration: const InputDecoration(
+                            hintText: 'Name',
+                            counterText: "",
+                            border: InputBorder.none,
+                          ),
+                          onChanged: (val){
 
-                      Row(
-                        children: [
-                          // wRS("R"),
-                          // gapWC(5),
-                          // wRS("S"),
-                          SizedBox(
-                            width: 200,
-                            child:   Container(
-                              height: 30,
-                              padding: const EdgeInsets.symmetric(horizontal: 15),
-                              decoration: boxBaseDecoration(greyLight, 5),
-                              child: TextFormField(
-                                controller: txtName,
-                                focusNode: fnName,
-                                decoration: const InputDecoration(
-                                  hintText: 'Name',
-                                  counterText: "",
-                                  border: InputBorder.none,
-                                ),
-                                onChanged: (val){
+                          },
+                        ),
+                      ))
 
-                                },
-                              ),
-                            )
-                          )
-                        ],
-                      ),
                     ],
                   ),
                   gapHC(5),
@@ -1745,7 +1732,6 @@ class _BookingState extends State<Booking> {
   fnCancel(){
     Get.back();
   }
-
   fnGameTime(){
      
   }

@@ -9,6 +9,7 @@ import 'package:ltr/controller/navigation/navigation_controller.dart';
 import 'package:ltr/services/apiController.dart';
 import 'package:ltr/views/components/common/common.dart';
 import 'package:ltr/views/pages/booking/booking.dart';
+import 'package:ltr/views/pages/booking/bookingview.dart';
 import 'package:ltr/views/pages/booking/publishresult.dart';
 import 'package:ltr/views/pages/booking/result.dart';
 import 'package:ltr/views/pages/home/countview.dart';
@@ -146,9 +147,10 @@ class _MainPageState extends State<MainPage> {
                       ),
                       gapHC(5),
                       wMenuCard('Booking',2),
+                      wMenuCard('Bill Edit/Delete',13),
                       wMenuCard('Results',3),
                       wMenuCard('Result Publish',12),
-                      wMenuCard('Count View',7),
+
                       g.wstrUserRole != "AGENT"?
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -191,6 +193,7 @@ class _MainPageState extends State<MainPage> {
                       ),
                       gapHC(5),
                       wMenuCard('All Reports',9),
+                      wMenuCard('Count View',7),
                       tc('Settings', Colors.black , 14),
                       gapHC(5),
                       const Divider(
@@ -451,7 +454,10 @@ class _MainPageState extends State<MainPage> {
         } else if(nav == 12){
           Navigator.push(context, MaterialPageRoute(builder: (context) =>   const PublishResult()));
 
-        }  else{
+        }else if(nav == 13){
+          Navigator.push(context, MaterialPageRoute(builder: (context) =>   const BookingView()));
+
+        }   else{
           Navigator.push(context, MaterialPageRoute(builder: (context) =>   UserList(pRoleCode: text,)));
 
         }

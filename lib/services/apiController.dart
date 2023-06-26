@@ -625,4 +625,56 @@ class ApiCall  with BaseController{
     return response;
 
   }
+
+
+  Future<dynamic> apiGetBooking(mode,docno) async {
+    var request = jsonEncode(<dynamic, dynamic>{
+      "VIEW_TYPE":"PREVIOUS",
+      "DOCNO":"00000016"
+    });
+    dprint('api/getBooking');
+    dprint(request);
+    var response = await ApiManager().post('api/getBooking',request).catchError((error){
+      if (error is BadRequestException) {
+        dprint(error.toString());
+      } else {
+        handleError(error);
+      }
+    });
+    dprint(response);
+    if (response == null) return;
+    return response;
+  }
+
+
+
+  Future<dynamic> apiGetBookingList(search,company,createUser,gameCode) async {
+    var request = jsonEncode(<dynamic, dynamic>{
+      "DOCNO":"",
+      "DOCTYPE":"",
+      "GAME_DOCNO": "",
+      "GAME_DOCTYPE": "",
+      "USER_COMPANY": company,
+      "USER_CODE": createUser,
+      "AGENT_CODE": "",
+      "GAME_CODE": gameCode,
+      "DRAW_DATE": null,//2023-06-23
+      "PAGE": 1,
+      "PAGESIZE":10,
+      "SEARCH":search
+    });
+    dprint('api/getBookingList');
+    dprint(request);
+    var response = await ApiManager().post('api/getBookingList',request).catchError((error){
+      if (error is BadRequestException) {
+        dprint(error.toString());
+      } else {
+        handleError(error);
+      }
+    });
+    dprint(response);
+    if (response == null) return;
+    return response;
+  }
+
 }
