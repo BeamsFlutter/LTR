@@ -288,6 +288,136 @@ class PageDialog{
       },
     );
   }
+  Future<void> postDialog(context,fnDelete) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        Size size = MediaQuery.of(context).size;
+        return AlertDialog(
+            backgroundColor: Colors.transparent,
+            content: Container(
+                width: 300,
+                height: 200,
+                decoration: boxDecoration(Colors.white, 30),
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        th("Publish",Colors.black,13),
+                        IconButton(onPressed: (){
+                          Navigator.pop(context);
+                        }, icon: const Icon(Icons.close,color: Colors.black,size: 30,))
+                      ],
+                    ),
+                    gapHC(5),
+                    Container(
+                      height: 100,
+                      width: 300,
+                      child: SingleChildScrollView(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              tcn('Do you want to publish ?',Colors.black,12),
+                              gapHC(20),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  GestureDetector(
+                                    onTap: (){
+                                      fnDelete();
+                                    },
+                                    child: Container(
+                                      height: 40,
+                                      width: 100,
+                                      margin: const EdgeInsets.only(right: 5),
+                                      decoration: boxDecoration(Colors.blueGrey, 30),
+                                      child: Center(
+                                        child: tc('Yes', Colors.white, 15),
+                                      ),
+                                    ),
+                                  )
+                                ],
+                              )
+                            ],
+                          )
+                      ),
+                    )
+                  ],
+                )
+
+            )
+        );
+      },
+    );
+  }
+  Future<void> unPostDialog(context,fnDelete) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        Size size = MediaQuery.of(context).size;
+        return AlertDialog(
+            backgroundColor: Colors.transparent,
+            content: Container(
+                width: 300,
+                height: 200,
+                decoration: boxDecoration(Colors.white, 30),
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        th("Un Publish",Colors.black,13),
+                        IconButton(onPressed: (){
+                          Navigator.pop(context);
+                        }, icon: const Icon(Icons.close,color: Colors.black,size: 30,))
+                      ],
+                    ),
+                    gapHC(5),
+                    Container(
+                      height: 100,
+                      width: 300,
+                      child: SingleChildScrollView(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              tcn('Do you want to un publish ?',Colors.black,12),
+                              gapHC(20),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  GestureDetector(
+                                    onTap: (){
+                                      fnDelete();
+                                    },
+                                    child: Container(
+                                      height: 40,
+                                      width: 100,
+                                      margin: const EdgeInsets.only(right: 5),
+                                      decoration: boxDecoration(Colors.blueGrey, 30),
+                                      child: Center(
+                                        child: tc('Yes', Colors.white, 15),
+                                      ),
+                                    ),
+                                  )
+                                ],
+                              )
+                            ],
+                          )
+                      ),
+                    )
+                  ],
+                )
+
+            )
+        );
+      },
+    );
+  }
   Future<void> cancelDialog(context,fnCancel) async {
     return showDialog<void>(
       context: context,

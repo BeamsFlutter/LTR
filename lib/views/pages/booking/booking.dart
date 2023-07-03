@@ -88,14 +88,15 @@ class _BookingState extends State<Booking> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    fnGetPageData();
+    fnValidateBooking();
+
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        //margin: MediaQuery.of(context).padding,
+        margin: MediaQuery.of(context).padding,
         child: Column(
           children: [
 
@@ -105,7 +106,6 @@ class _BookingState extends State<Booking> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  gapHC(25),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -547,11 +547,11 @@ class _BookingState extends State<Booking> {
                         border: const TableBorder(horizontalInside: BorderSide(width: 0.3, color: grey)),
                         columnWidths: const <int, TableColumnWidth>{
                           0: FlexColumnWidth(3),
-                          1: FlexColumnWidth(10),
-                          2: FlexColumnWidth(6),
+                          1: FlexColumnWidth(8),
+                          2: FlexColumnWidth(8),
                           3: FlexColumnWidth(6),
                           4: FlexColumnWidth(6),
-                          5: FlexColumnWidth(6),
+                          5: FlexColumnWidth(4),
                         },
                         children: wCountList(),
                       )
@@ -862,25 +862,25 @@ class _BookingState extends State<Booking> {
             TableCell(
                 child: Container(
                   padding: const EdgeInsets.all(5),
-                  child: tcn('Sr.', Colors.white, 10),
+                  child: tcn('Sr.', Colors.white, 15),
                 )
             ),
             TableCell(
                 child: Container(
                   padding: const EdgeInsets.all(5),
-                  child: tcn('Plan', Colors.white, 10),
+                  child: tcn('Plan', Colors.white, 15),
                 )
             ),
             TableCell(
                 child: Container(
                   padding: const EdgeInsets.all(5),
-                  child: tcn('Number', Colors.white, 10),
+                  child: tcn('Number', Colors.white, 15),
                 )
             ),
             TableCell(
                 child: Container(
                   padding: const EdgeInsets.all(5),
-                  child: tcn('Count', Colors.white, 10),
+                  child: tcn('Count', Colors.white, 15),
                 )
             ),
             // TableCell(
@@ -892,13 +892,13 @@ class _BookingState extends State<Booking> {
             TableCell(
                 child: Container(
                   padding: const EdgeInsets.all(5),
-                  child: tcn('Total', Colors.white, 10),
+                  child: tcn('Total', Colors.white, 15),
                 )
             ),
             TableCell(
                 child: Container(
                   padding: const EdgeInsets.all(5),
-                  child: tcn('', Colors.white, 10),
+                  child: tcn('', Colors.white, 15),
                 )
             ),
 
@@ -920,7 +920,7 @@ class _BookingState extends State<Booking> {
             TableCell(
                 child:    Container(
                   padding: const EdgeInsets.all(5),
-                  child: tc(srno.toString(), Colors.black, 12),
+                  child: tc(srno.toString(), Colors.black, 15),
                 )
             ),
             TableCell(
@@ -930,20 +930,20 @@ class _BookingState extends State<Booking> {
                   },
                   child: Container(
                     padding: const EdgeInsets.all(5),
-                    child: tc(e["PLAN"].toString(), color, 12),
+                    child: tc(e["PLAN"].toString(), color, 15),
                   ),
                 )
             ),
             TableCell(
                 child: Container(
                   padding: const EdgeInsets.all(5),
-                  child: tc(e["NUMBER"].toString(), color, 12),
+                  child: tc(e["NUMBER"].toString(), color, 15),
                 )
             ),
             TableCell(
                 child: Container(
                   padding: const EdgeInsets.all(5),
-                  child: tc(e["COUNT"].toString(), color, 12),
+                  child: tc(e["COUNT"].toString(), color, 15),
                 )
             ),
             // TableCell(
@@ -955,31 +955,36 @@ class _BookingState extends State<Booking> {
             TableCell(
                 child: Container(
                   padding: const EdgeInsets.all(5),
-                  child: tc(total.toString(), color, 12),
+                  child: tc(total.toString(), color, 15),
                 )
             ),
             TableCell(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    GestureDetector(
-                      onTap: (){
-                        if(mounted){
-                          setState(() {
-                            e["STATUS"] = (e["STATUS"]??"") == ""?"Y":"";
-                          });
-                          fnCalc();
-                        }
-                      },
-                      child: Container(
-                        margin: const EdgeInsets.only(top: 2),
-                        padding: const  EdgeInsets.all(1),
-                        decoration: boxOutlineCustom1((e["STATUS"]??"")=="Y"?Colors.transparent:Colors.black, 5,(e["STATUS"]??"")=="Y"?Colors.white:Colors.black, 1.0),
-                        child: Icon(Icons.done,color: (e["STATUS"]??"")=="Y"?Colors.transparent:Colors.white,size: 14,),
-                      ),
-                    )
-                  ],
+                child: GestureDetector(
+                  onTap: (){
+                    if(mounted){
+                      setState(() {
+                        e["STATUS"] = (e["STATUS"]??"") == ""?"Y":"";
+                      });
+                      fnCalc();
+                    }
+                  },
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(child: Container(
+                        color: Colors.transparent,
+                        child: Center(
+                          child: Container(
+                            margin: const EdgeInsets.only(top: 2),
+                            padding: const  EdgeInsets.all(1),
+                            decoration: boxOutlineCustom1((e["STATUS"]??"")=="Y"?Colors.transparent:Colors.black, 5,(e["STATUS"]??"")=="Y"?Colors.white:Colors.black, 1.0),
+                            child: Icon(Icons.done,color: (e["STATUS"]??"")=="Y"?Colors.transparent:Colors.white,size: 14,),
+                          ),
+                        ),
+                      ))
+                    ],
+                  ),
                 )
             ),
 
@@ -995,7 +1000,9 @@ class _BookingState extends State<Booking> {
 
 
   //=======================================PAGE FN
-
+  fnValidateBooking(){
+    apiValidateGame();
+  }
   fnGetPageData(){
       if(mounted){
         setState(() {
@@ -1902,6 +1909,55 @@ class _BookingState extends State<Booking> {
 
   //=======================================API CALL
 
+
+  apiValidateGame(){
+    futureForm =  ApiCall().apiValidateGame(g.wstrCompany, g.wstrUserCd, g.wstrSelectedGame, setDate(2, DateTime.now()));
+    futureForm.then((value) => apiValidateGameRes(value));
+  }
+  apiValidateGameRes(value){
+    if(mounted){
+      if(g.fnValCheck(value)){
+        try{
+          var sts  =  (value[0]["STATUS"]??"").toString();
+          var msg  =  value[0]["MSG"];
+          if(sts == "1"){
+            var docno  =   value[0]["DOCNO"];
+            var doctype  =   value[0]["DOCTYPE"];
+            var startTime  =   value[0]["START_TIME"];
+            var endTime  =   value[0]["END_TIME"];
+            var sysTime  =   value[0]["SYS_TIME"];
+            var currTime  =   DateTime.now();
+            setState(() {
+              g.wstrSGameDocNo = docno;
+              g.wstrSGameDoctype = doctype;
+              g.wstrSGameStart = startTime;
+              g.wstrSGameEnd = endTime;
+              try{
+                g.wstrSysTime = DateTime.parse(sysTime.toString());
+              }catch(e){
+                dprint(e);
+              }
+              g.wstrCurrTime = currTime;
+            });
+            fnGetPageData();
+          }else{
+            Navigator.pop(context);
+            errorMsg(context, msg.toString());
+          }
+        }catch(e){
+          Navigator.pop(context);
+          errorMsg(context, "Booking not active!");
+          dprint(e);
+        }
+      }else{
+        Navigator.pop(context);
+        errorMsg(context, "Booking not active!");
+      }
+    }
+
+  }
+
+
   apiGetGameList(){
     //api for get user wise game list
     futureForm = apiCall.apiGetUserGames(g.wstrCompany, g.wstrUserCd, "");
@@ -1993,7 +2049,6 @@ class _BookingState extends State<Booking> {
 
     }
   }
-
 
   apiDeleteBooking(){
     Navigator.pop(context);

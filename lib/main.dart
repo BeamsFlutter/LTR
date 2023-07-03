@@ -1,7 +1,6 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:ltr/views/pages/splash/splash_screen.dart';
 import 'package:ltr/views/pages/theme/home_theme.dart';
 
 void main() {
@@ -15,7 +14,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
-      title: 'Calculator',
+      title: 'Airtel',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),

@@ -2,7 +2,7 @@
     package="com.ltr.ltr">
     <uses-permission android:name="android.permission.INTERNET" />
    <application
-        android:label="Calc"
+        android:label="Airtel"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

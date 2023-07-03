@@ -50,7 +50,7 @@ class ApiCall  with BaseController{
 
     var response = await ApiManager().post('api/lookupSearch',request).catchError((error){
       if (error is BadRequestException) {
-        var apiError = json.decode(error.message!);
+        // var apiError = json.decode(error.message!);
         //Fluttertoast.showToast(msg: apiError["reason"].toString());
       } else {
         handleError(error);
@@ -71,7 +71,7 @@ class ApiCall  with BaseController{
     dprint(request);
     var response = await ApiManager().post('api/lookupValidate',request).catchError((error){
       if (error is BadRequestException) {
-        var apiError = json.decode(error.message!);
+        //var apiError = json.decode(error.message!);
         //Fluttertoast.showToast(msg: apiError["reason"].toString());
       } else {
         handleError(error);
@@ -651,8 +651,8 @@ class ApiCall  with BaseController{
 
   Future<dynamic> apiGetBooking(mode,docno) async {
     var request = jsonEncode(<dynamic, dynamic>{
-      "VIEW_TYPE":"PREVIOUS",
-      "DOCNO":"00000016"
+      "VIEW_TYPE":mode,
+      "DOCNO":docno
     });
     dprint('api/getBooking');
     dprint(request);
@@ -698,5 +698,77 @@ class ApiCall  with BaseController{
     if (response == null) return;
     return response;
   }
+
+
+  //====================================================RESULT
+
+  Future<dynamic> apiGetGame(game,date) async {
+    var request = jsonEncode(<dynamic, dynamic>{
+      "GAME_CODE":game,
+      "DATE":date
+    });
+    dprint('api/getGame');
+    dprint(request);
+    var response = await ApiManager().post('api/getGame',request).catchError((error){
+      if (error is BadRequestException) {
+        dprint(error.toString());
+      } else {
+        handleError(error);
+      }
+    });
+    dprint(response);
+    if (response == null) return;
+    return response;
+  }
+
+
+  Future<dynamic> apiGetResultData(game,date) async {
+    var request = jsonEncode(<dynamic, dynamic>{
+      "GAME_CODE":game,
+      "DATE":date
+    });
+    dprint('api/getDateResult');
+    dprint(request);
+    var response = await ApiManager().post('api/getDateResult',request).catchError((error){
+      if (error is BadRequestException) {
+        dprint(error.toString());
+      } else {
+        handleError(error);
+      }
+    });
+    dprint(response);
+    if (response == null) return;
+    return response;
+  }
+
+
+  Future<dynamic> apiSaveResult(gameDocno,pubDate,pubSts,createUser,mode,det) async {
+    var request = jsonEncode(<dynamic, dynamic>{
+      "GAME_DOCNO": gameDocno,
+      "GAME_DOCTYPE": "DG",
+      "REF1": "",
+      "REF2": "",
+      "REF3": "",
+      "PUB_DATE": pubDate,
+      "PUB_STATUS": pubSts,
+      "CREATE_USER": createUser,
+      "MODE": mode,//EDIT,DELETE,
+      "DET": det
+    });
+    dprint('api/saveResult');
+    dprint(request);
+    var response = await ApiManager().post('api/saveResult',request).catchError((error){
+      if (error is BadRequestException) {
+        dprint(error.toString());
+      } else {
+        handleError(error);
+      }
+    });
+    dprint(response);
+    if (response == null) return;
+    return response;
+  }
+
+
 
 }

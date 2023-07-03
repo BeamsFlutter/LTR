@@ -208,7 +208,7 @@ class ApiManager {
     request.fields['MACHINENAME'] = machine;
     var fileDescpStr ='';
     for (int i = 0; i < filesArray.length; i++) {
-      File imageFile = filesArray[i];
+      //File imageFile = filesArray[i];
       fileDescpStr = fileDescpStr+"{'SRNO':"+i.toString()+",'FILE_DESCP':''},";
     }
     fileDescpStr= "["+fileDescpStr+"]";

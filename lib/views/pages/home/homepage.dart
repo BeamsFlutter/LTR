@@ -9,6 +9,7 @@ import 'package:ltr/services/apiController.dart';
 import 'package:ltr/views/components/common/common.dart';
 import 'package:ltr/views/pages/home/mainscreen.dart';
 import 'package:ltr/views/styles/colors.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -18,7 +19,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   //Global
   var g = Global();
@@ -28,6 +29,28 @@ class _HomePageState extends State<HomePage> {
 
   //Page Variable
   var gameList  = [];
+
+
+  var webController = WebViewController()
+    ..setJavaScriptMode(JavaScriptMode.unrestricted)
+    ..setBackgroundColor(const Color(0x00000000))
+    ..setNavigationDelegate(
+      NavigationDelegate(
+        onProgress: (int progress) {
+          // Update loading bar.
+        },
+        onPageStarted: (String url) {},
+        onPageFinished: (String url) {},
+        onWebResourceError: (WebResourceError error) {},
+        onNavigationRequest: (NavigationRequest request) {
+          if (request.url.startsWith('https://www.youtube.com/')) {
+            return NavigationDecision.prevent;
+          }
+          return NavigationDecision.navigate;
+        },
+      ),
+    )
+    ..loadRequest(Uri.parse('https://www.airtel.in/'));
 
   @override
   void initState() {
@@ -40,35 +63,15 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        decoration: boxBaseDecoration(greyLight, 0),
-        margin: MediaQuery.of(context).padding,
+      key: _scaffoldKey,
+      endDrawer:  Drawer(
+        width: 240,
         child: Container(
-          decoration: boxDecoration(Colors.white, 0),
-          padding: const EdgeInsets.all(10),
+          margin: MediaQuery.of(context).padding,
+          padding: EdgeInsets.all(10),
           child: Column(
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  GestureDetector(
-                    onTap: (){
-                      //Navigator.pop(context);
-                    },
-                    child: const Icon(Icons.menu,color: Colors.white,size: 30,),
-                  ),
-                  GestureDetector(
-                    onTap: (){
-                      Navigator.pop(context);
-                    },
-                    child: Container(
-                      decoration: boxBaseDecoration(Colors.grey.withOpacity(0.1), 30),
-                      padding: const EdgeInsets.all(5),
-                      child: const Icon(Icons.power_settings_new,color: Colors.black,size: 30,),
-                    ),
-                  )
-                ],
-              ),
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
               Row(
                 children: [
                   tcn('Select Game', Colors.black, 15),
@@ -80,6 +83,50 @@ class _HomePageState extends State<HomePage> {
                   children: wGameList(),
                 ),
               ))
+            ],
+          ),
+        ),
+      ),
+      // Disable opening the end drawer with a swipe gesture.
+      endDrawerEnableOpenDragGesture: false,
+      body: Container(
+        decoration: boxBaseDecoration(greyLight, 0),
+        margin: MediaQuery.of(context).padding,
+        child: Container(
+          decoration: boxDecoration(Colors.white, 0),
+          child: Stack(
+            children: [
+
+              WebViewWidget(
+                controller: webController,
+              ),
+              Positioned(
+                top: 10,
+                left:10 ,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    GestureDetector(
+                      onTap: (){
+                        //Navigator.pop(context);
+                      },
+                      onLongPress: (){
+                        _scaffoldKey.currentState!.openEndDrawer();
+                      },
+                      child: const Icon(Icons.menu,color: Colors.white,size: 30,),
+                    ),
+                    // GestureDetector(
+                    //   onTap: (){
+                    //     Navigator.pop(context);
+                    //   },
+                    //   child: Container(
+                    //     decoration: boxBaseDecoration(Colors.grey.withOpacity(0.1), 30),
+                    //     padding: const EdgeInsets.all(5),
+                    //     child: const Icon(Icons.power_settings_new,color: Colors.black,size: 30,),
+                    //   ),
+                    // )
+                  ],
+                ),),
 
 
             ],
@@ -100,7 +147,7 @@ class _HomePageState extends State<HomePage> {
         duration: const Duration(milliseconds: 110),
         child: Container(
           decoration: boxBaseDecoration(color, 10),
-          padding: const EdgeInsets.all(10),
+          padding: const EdgeInsets.all(5),
           margin: const EdgeInsets.only(bottom: 5),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -108,11 +155,10 @@ class _HomePageState extends State<HomePage> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  tc(text, Colors.white, 30),
+                  tc(text, Colors.white, 15),
                   const Icon(Icons.navigate_next_sharp,color: Colors.white,size: 30,)
                 ],
               ),
-              tcn('Start @ $start', Colors.white, 10)
             ],
           ),
         ),

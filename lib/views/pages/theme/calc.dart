@@ -1,17 +1,18 @@
 
 
-import 'package:connectivity_plus/connectivity_plus.dart';
+
+
+
+
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bounce/flutter_bounce.dart';
 import 'package:get/get.dart';
 import 'package:ltr/controller/global/globalValues.dart';
-import 'package:ltr/views/components/alertDialog/alertDialog.dart';
 import 'package:ltr/views/components/common/common.dart';
 import 'package:ltr/views/pages/booking/booking.dart';
 import 'package:ltr/views/pages/login/login.dart';
 import 'package:ltr/views/styles/colors.dart';
-import 'package:webview_flutter/webview_flutter.dart';
 
 class HomeTheme extends StatefulWidget {
   const HomeTheme({Key? key}) : super(key: key);
@@ -31,53 +32,11 @@ class _HomeThemeState extends State<HomeTheme> {
   String res = "", text = "";
   String opp= "";
 
-  var blInternet = true;
-
-
-  var webController = WebViewController()
-    ..setJavaScriptMode(JavaScriptMode.unrestricted)
-    ..setBackgroundColor(Colors.white)
-    ..setNavigationDelegate(
-      NavigationDelegate(
-        onProgress: (int progress) {
-          // Update loading bar.
-
-        },
-        onPageStarted: (String url) {
-
-        },
-        onPageFinished: (String url) {},
-        onWebResourceError: (WebResourceError error) {
-
-        },
-        onNavigationRequest: (NavigationRequest request) {
-          if (request.url.startsWith('https://www.youtube.com/')) {
-            return NavigationDecision.prevent;
-          }
-          return NavigationDecision.navigate;
-        },
-      ),
-    )
-    ..loadRequest(Uri.parse('https://www.airtel.in/'));
-
-  var subscription;
-
   @override
   void initState() {
     // TODO: implement initState
     g.wstrCompany = "01";
     super.initState();
-    fnGetPageData();
-    subscription = Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
-      // Got a new connectivity status!
-      fnUpdateNetwork(result);
-    });
-  }
-
-  @override
-  dispose() {
-    subscription.cancel();
-    super.dispose();
   }
 
 
@@ -86,38 +45,94 @@ class _HomeThemeState extends State<HomeTheme> {
     return Scaffold(
       body: Container(
         margin: MediaQuery.of(context).padding,
-        decoration: boxBaseDecoration(Colors.white, 0),
-        child: blInternet?Stack(
+        decoration: boxBaseDecoration(Colors.black, 0),
+        padding: const EdgeInsets.all(10),
+        child: Column(
           children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                gapWC(5),
+                Container(
+                  padding: const EdgeInsets.all(3),
+                  decoration: boxBaseDecoration(Colors.white, 10),
+                  child: Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(10),
+                        decoration: boxBaseDecoration(Colors.grey.withOpacity(0.5), 10),
+                        child: const Icon(Icons.wb_sunny_outlined,color: Colors.black,size: 12,),
+                      ),
+                      gapWC(5),
+                      Container(
+                        padding: const EdgeInsets.all(10),
+                        decoration: boxBaseDecoration(Colors.white.withOpacity(0.5), 10),
+                        child: const Icon(Icons.nightlight_outlined,color: Colors.black,size: 12,),
+                      )
 
-            WebViewWidget(
-              controller: webController,
-            ),
-            Positioned(
-              top: 10,
-              right:10 ,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  GestureDetector(
-                    onTap: (){
-                      //Navigator.pop(context);
-                    },
-                    onLongPress: (){
-                      fnGoLogin();
-                    },
-                    child: const Icon(Icons.menu,color: Colors.white,size: 30,),
+                    ],
                   ),
+                ),
+                const Icon(Icons.menu,color:Colors.white,size: 25,)
+              ],
+            ),
+            Expanded(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Row(),
+                  tcn(lstrNumber.toString(), Colors.white  , 30)
                 ],
-              ),),
+              ),
+            ),
+            gapHC(20),
+            Row(
+              children: [
+                wButton("AC","O"),
+                wButton("<","O"),
+                wButton("%","O"),
+                wButton("/","O"),
+              ],
+            ),
+            gapHC(5),
+            Row(
+              children: [
+                wButton("7","B"),
+                wButton("8","B"),
+                wButton("9","B"),
+                wButton("x","O"),
+              ],
+            ),
+            gapHC(5),
+            Row(
+              children: [
+                wButtonSpcl("4","B"),
+                wButton("5","B"),
+                wButton("6","B"),
+                wButton("-","O"),
+              ],
+            ),
+            gapHC(5),
+            Row(
+              children: [
+                wButton("1","B"),
+                wButton("2","B"),
+                wButton("3","B"),
+                wButton("+","O"),
+              ],
+            ),
+            gapHC(5),
+            Row(
+              children: [
+                wButton("C","O"),
+                wButton("0","B"),
+                wButton(".","B"),
+                wButton("=","O"),
+              ],
+            )
 
 
-          ],
-        ):Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Row(),
-            tcn('No Internet ', Colors.grey, 25)
           ],
         ),
       ),
@@ -174,12 +189,6 @@ class _HomeThemeState extends State<HomeTheme> {
 
   //=====================================Page Fn
 
-
-  fnGetPageData() async{
-    final result = await (Connectivity().checkConnectivity());
-    fnUpdateNetwork(result);
-  }
-
   fnUpdate(btnText){
     if(mounted){
       try{
@@ -225,22 +234,6 @@ class _HomeThemeState extends State<HomeTheme> {
       setState(() {
         lstrNumber = res;
       });
-    }
-  }
-
-  fnUpdateNetwork(result){
-    if(mounted){
-      var sts = false;
-      if (result == ConnectivityResult.mobile) {
-        // I am connected to a mobile network.
-        sts = true;
-      } else if (result == ConnectivityResult.wifi) {
-        // I am connected to a wifi network.
-        sts = true;
-      }
-     setState(() {
-       blInternet = sts;
-     });
     }
   }
 

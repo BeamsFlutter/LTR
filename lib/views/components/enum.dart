@@ -3,5 +3,6 @@ enum TextFormFieldType{
   confirmPasswrd,
   weeklyCreditLimit,
   dailyCreditLimit,
+  gift
 
 }

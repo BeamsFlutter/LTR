@@ -70,8 +70,21 @@ class _LoginPageState extends State<LoginPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               gapHC(60),
-              tc('Calculator', Colors.black, 25.0),
-              gapHC(15),
+              Row(
+                children: [
+                  GestureDetector(
+                    onTap: (){
+                      Navigator.pop(context);
+                    },
+                    child: Icon(Icons.navigate_before_rounded,size: 35,),
+                  ),
+                  gapWC(10),
+                  tc('Login', Colors.black, 25.0),
+                ],
+              ),
+              gapHC(5),
+              tc(lstrErrorMsg, Colors.red, 12),
+              gapHC(5),
 
               TextFormField(
                 controller: txtUserName,
@@ -218,6 +231,7 @@ class _LoginPageState extends State<LoginPage> {
       fnGoHome();
 
     }catch(e){
+      errorMsg(context, "Login Failed!");
       dprint(e);
     }
 

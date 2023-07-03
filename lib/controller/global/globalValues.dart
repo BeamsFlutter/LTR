@@ -5,7 +5,6 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:ltr/views/components/common/common.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class Global {
 

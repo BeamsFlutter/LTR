@@ -19,6 +19,7 @@ import 'package:ltr/views/pages/number/globalcount.dart';
 import 'package:ltr/views/pages/number/numbercount.dart';
 import 'package:ltr/views/pages/report/report.dart';
 import 'package:ltr/views/pages/settings/settings.dart';
+import 'package:ltr/views/pages/theme/home_theme.dart';
 import 'package:ltr/views/pages/user/userlist.dart';
 import 'package:ltr/views/styles/colors.dart';
 
@@ -54,6 +55,8 @@ class _MainPageState extends State<MainPage> {
 
   var fnNum = FocusNode();
   var fnCount = FocusNode();
+
+  var fMenu =[];
 
 
 
@@ -209,17 +212,23 @@ class _MainPageState extends State<MainPage> {
                   ),
                 ),
               )),
-              Container(
-                margin: const EdgeInsets.all(10),
-                padding: const EdgeInsets.symmetric(horizontal: 10,vertical: 10),
-                decoration: boxBaseDecoration(grey, 30),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Icon(Icons.power_settings_new,color: Colors.white,size: 18,),
-                    gapWC(10),
-                    tcn('Exit', Colors.white, 18)
-                  ],
+              Bounce(
+                onPressed: (){
+                  Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) =>   const HomeTheme()), (route) => false);
+                },
+                duration: const Duration(milliseconds: 110),
+                child: Container(
+                  margin: const EdgeInsets.all(10),
+                  padding: const EdgeInsets.symmetric(horizontal: 10,vertical: 10),
+                  decoration: boxBaseDecoration(grey, 30),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(Icons.power_settings_new,color: Colors.white,size: 18,),
+                      gapWC(10),
+                      tcn('Exit', Colors.white, 18)
+                    ],
+                  ),
                 ),
               )
             ],
@@ -227,7 +236,7 @@ class _MainPageState extends State<MainPage> {
 
         ),
       body: Container(
-        //padding: MediaQuery.of(context).padding,
+        margin: MediaQuery.of(context).padding,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -237,7 +246,6 @@ class _MainPageState extends State<MainPage> {
              child: Column(
                crossAxisAlignment: CrossAxisAlignment.start,
                children: [
-                 gapHC(25),
                  Row(
                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                    children: [
@@ -424,8 +432,8 @@ class _MainPageState extends State<MainPage> {
       onTap: (){
 
         if(nav == 2){
-          apiValidateGame();
-         // Navigator.push(context, MaterialPageRoute(builder: (context) =>   const Booking()));
+          //apiValidateGame();
+          Navigator.push(context, MaterialPageRoute(builder: (context) =>   const Booking()));
 
         }else if(nav == 3){
           Navigator.push(context, MaterialPageRoute(builder: (context) =>   const Results()));
@@ -544,6 +552,53 @@ class _MainPageState extends State<MainPage> {
         var now = DateTime.now();
         setState(() {
           frDate = setDate(6, DateTime.now());
+          fMenu = [
+            {
+              "MENU":"Booking",
+              "CODE":"1",
+              "PARENT_CODE":"000"
+            },
+            {
+              "MENU":"BOOKING",
+              "CODE":"011",
+              "PARENT_CODE":"1"
+            },
+            {
+              "MENU":"EDIT/DELETE",
+              "CODE":"012",
+              "PARENT_CODE":"1"
+            },
+            {
+              "MENU":"RESULT",
+              "CODE":"013",
+              "PARENT_CODE":"1"
+            },
+            {
+              "MENU":"RESULT PUBLISH",
+              "CODE":"014",
+              "PARENT_CODE":"1"
+            },
+            {
+              "MENU":"Users",
+              "CODE":"2",
+              "PARENT_CODE":"000"
+            },
+            {
+              "MENU":"Stockist",
+              "CODE":"021",
+              "PARENT_CODE":"2"
+            },
+            {
+              "MENU":"Dealer",
+              "CODE":"022",
+              "PARENT_CODE":"2"
+            },
+            {
+              "MENU":"Agent",
+              "CODE":"023",
+              "PARENT_CODE":"2"
+            },
+          ];
         });
       }
     }
