@@ -597,9 +597,10 @@ class ApiCall  with BaseController{
   }
 
 
-  Future<dynamic> apiSaveBooking(docno,doctype,company,user,custName,custDet,device,agentCode,mode,det) async {
+  Future<dynamic> apiSaveBooking(docno,gameDocno,doctype,company,user,custName,custDet,device,agentCode,mode,det) async {
     var request = jsonEncode(<dynamic, dynamic>{
-      "GAME_DOCNO":docno,
+      "DOCNO":docno,
+      "GAME_DOCNO":gameDocno,
       "GAME_DOCTYPE":"DG",
       "USER_COMPANY":company,
       "USER_CODE":user,
@@ -609,6 +610,27 @@ class ApiCall  with BaseController{
       "AGENT_CODE":agentCode,
       "MODE":mode,
       "DET":det
+    });
+    dprint('api/saveBooking');
+    dprint(request);
+    var response = await ApiManager().post('api/saveBooking',request).catchError((error){
+      if (error is BadRequestException) {
+        dprint(error.toString());
+      } else {
+        handleError(error);
+      }
+    });
+    dprint(response);
+    if (response == null) return;
+
+    return response;
+
+  }
+
+  Future<dynamic> apiDeleteBooking(docno) async {
+    var request = jsonEncode(<dynamic, dynamic>{
+      "DOCNO":docno,
+      "MODE":"DELETE",
     });
     dprint('api/saveBooking');
     dprint(request);

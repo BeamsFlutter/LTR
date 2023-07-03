@@ -5,6 +5,7 @@ import 'package:flutter_bounce/flutter_bounce.dart';
 import 'package:ltr/controller/global/globalValues.dart';
 import 'package:ltr/services/apiController.dart';
 import 'package:ltr/views/components/common/common.dart';
+import 'package:ltr/views/pages/booking/booking.dart';
 import 'package:ltr/views/styles/colors.dart';
 
 class BookingView extends StatefulWidget {
@@ -68,7 +69,7 @@ class _BookingViewState extends State<BookingView> {
                     ),
                   ),
                   gapWC(5),
-                  tcn("Bill Details", Colors.white, 20)
+                  tcn("Bill Details (${g.wstrSelectedGame})", Colors.white, 20)
                 ],
               ),
             ),
@@ -119,6 +120,7 @@ class _BookingViewState extends State<BookingView> {
       var GAME_CODE =   (e["GAME_CODE"]??"").toString();
       var AGENT_CODE =   (e["AGENT_CODE"]??"").toString();
       var NET_AMT =   (e["NET_AMT"]??"").toString();
+      var QTY =   (e["QTY"]??"").toString();
       var crDate  ="";
       try{
         crDate =  setDate(7, DateTime.parse(DOCDATE)).toString();
@@ -128,6 +130,7 @@ class _BookingViewState extends State<BookingView> {
 
       rtnList.add(Bounce(
         onPressed: (){
+          Navigator.push(context, MaterialPageRoute(builder: (context) =>  Booking(mode: "EDIT", pDocno: docno,pData: [e],fnCallBack: apiGetBooking,)  ));
 
         },
         duration: const Duration(milliseconds: 110),
@@ -139,8 +142,8 @@ class _BookingViewState extends State<BookingView> {
               Expanded(child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Row(),
-                  tc("$docno ($GAME_CODE)", Colors.black, 12),
+                  Row(),
+                  tc("$docno - $GAME_CODE", Colors.black, 12),
                   Row(
                     children: [
                       const Icon(Icons.person_outline,color: Colors.black,size: 12,),
@@ -149,6 +152,12 @@ class _BookingViewState extends State<BookingView> {
                     ],
                   ),
                   Row(
+                    children: [
+                      const Icon(Icons.access_time,color: Colors.black,size: 12,),
+                      gapWC(5),
+                      tcn("COUNT ${QTY.toString().toUpperCase()}", Colors.black, 12)
+                    ],
+                  ),Row(
                     children: [
                       const Icon(Icons.access_time,color: Colors.black,size: 12,),
                       gapWC(5),

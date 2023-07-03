@@ -248,7 +248,6 @@ class PageDialog{
                       ],
                     ),
                     gapHC(5),
-
                     Container(
                       height: 100,
                       width: 300,
@@ -269,7 +268,7 @@ class PageDialog{
                                       height: 40,
                                       width: 100,
                                       margin: const EdgeInsets.only(right: 5),
-                                      decoration: boxDecoration(subColor, 30),
+                                      decoration: boxDecoration(Colors.blueGrey, 30),
                                       child: Center(
                                         child: tc('Yes', Colors.white, 15),
                                       ),

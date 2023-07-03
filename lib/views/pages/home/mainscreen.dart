@@ -469,7 +469,9 @@ class _MainPageState extends State<MainPage> {
           Row(
             children: [
               gapWC(10),
-              tcn(text.toString(), Colors.black, 16),
+              Expanded(
+                child: tcn(text.toString(), Colors.black, 16),
+              )
             ],
           ),
           const Divider(
@@ -587,7 +589,7 @@ class _MainPageState extends State<MainPage> {
                 });
                Navigator.push(context, MaterialPageRoute(builder: (context) =>   const Booking()));
             }else{
-              errorMsg(context, "TRY AGAIN");
+              errorMsg(context, msg.toString());
             }
           }catch(e){
             errorMsg(context, "Booking not active!");

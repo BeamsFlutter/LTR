@@ -5,6 +5,7 @@ import 'package:flutter_bounce/flutter_bounce.dart';
 import 'package:get/get.dart';
 import 'package:ltr/controller/global/globalValues.dart';
 import 'package:ltr/services/apiController.dart';
+import 'package:ltr/views/components/alertDialog/alertDialog.dart';
 import 'package:ltr/views/components/common/common.dart';
 import 'package:ltr/views/components/inputfield/commonTextField.dart';
 import 'package:ltr/views/pages/user/usersearch.dart';
@@ -12,7 +13,11 @@ import 'package:ltr/views/styles/colors.dart';
 import 'package:marquee/marquee.dart';
 
 class Booking extends StatefulWidget {
-  const Booking({Key? key}) : super(key: key);
+  final String? mode;
+  final String? pDocno;
+  final List<dynamic>? pData;
+  final Function? fnCallBack;
+  const Booking({Key? key, this.mode, this.pDocno, this.pData, this.fnCallBack}) : super(key: key);
 
   @override
   _BookingState createState() => _BookingState();
@@ -53,6 +58,13 @@ class _BookingState extends State<Booking> {
   var twoPrice  = 9.0;
   var onePrice  = 10.0;
 
+  //Edit
+  var editDocno = "";
+  var editCustomer = "";
+  var editAgent = "";
+  var editNetAmount = "";
+  var editGameDocno = "";
+
 
 
   //Controller
@@ -86,6 +98,7 @@ class _BookingState extends State<Booking> {
         //margin: MediaQuery.of(context).padding,
         child: Column(
           children: [
+
             Container(
               padding: const EdgeInsets.all(10),
               decoration: boxDecoration(g.wstrGameColor, 0),
@@ -98,11 +111,16 @@ class _BookingState extends State<Booking> {
                     children: [
                       Row(
                         children: [
-                          const Icon(Icons.arrow_back_ios,color: Colors.white,size: 20,),
+                          GestureDetector(
+                             onTap: (){
+                               Navigator.pop(context);
+                             },
+                             child: const Icon(Icons.arrow_back_ios,color: Colors.white,size: 20,)),
                           gapWC(5),
                           tcn('$lstrSelectedGame Game', Colors.white, 20)
                         ],
                       ),
+                      widget.mode != "EDIT"?
                       PopupMenuButton<Menu>(
                         position: PopupMenuPosition.under,
                         tooltip: "",
@@ -119,7 +137,7 @@ class _BookingState extends State<Booking> {
                           ),
                         ],
                         child:   const Icon(Icons.dashboard_outlined,color: Colors.white,size: 20,),
-                      )
+                      ):gapHC(0)
 
                     ],
                   ),
@@ -127,6 +145,7 @@ class _BookingState extends State<Booking> {
               ),
             ),
             gapHC(5),
+            widget.mode != "EDIT"?
             Container(
               margin: const EdgeInsets.symmetric(horizontal: 5),
               padding: const EdgeInsets.all(10),
@@ -483,6 +502,36 @@ class _BookingState extends State<Booking> {
 
                 ],
               ),
+            ):
+            Container(
+              padding: EdgeInsets.all(10),
+              margin: EdgeInsets.symmetric(horizontal: 10),
+              decoration:  boxDecoration( Colors.white, 10),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  tcn("BILL ID : ", Colors.black, 12),
+                  tc(widget.pDocno.toString(), Colors.black, 12),
+                  gapWC(20),
+                  Expanded(child: Container(
+                    height: 35,
+                    padding: const EdgeInsets.symmetric(horizontal: 15),
+                    decoration: boxBaseDecoration(greyLight, 5),
+                    child: TextFormField(
+                      controller: txtName,
+                      focusNode: fnName,
+                      decoration: const InputDecoration(
+                        hintText: 'Name',
+                        counterText: "",
+                        border: InputBorder.none,
+                      ),
+                      onChanged: (val){
+
+                      },
+                    ),
+                  ))
+                ],
+              ),
             ),
             gapHC(5),
 
@@ -544,6 +593,7 @@ class _BookingState extends State<Booking> {
               ),
             ),
             gapHC(5),
+            widget.mode != "EDIT"?
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Row(
@@ -566,6 +616,72 @@ class _BookingState extends State<Booking> {
                       ),
                     ),
                   ),),
+                  Bounce(
+                    onPressed: (){
+                      fnCancel();
+                    },
+                    duration: const Duration(milliseconds: 110),
+                    child: Container(
+                      decoration: boxBaseDecoration(greyLight, 30),
+                      padding: const EdgeInsets.symmetric(vertical: 12,horizontal: 20),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(Icons.cancel_outlined,color: Colors.black,size: 15,),
+                          gapWC(5),
+                          tcn('Cancel', Colors.black, 12)
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ):
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                children: [
+                  Expanded(child: Bounce(
+                    onPressed: (){
+                      fnSave();
+                    },
+                    duration: const Duration(milliseconds: 110),
+                    child: Container(
+                      decoration: boxDecoration(g.wstrGameBColor, 30),
+                      padding: const EdgeInsets.symmetric(vertical: 10),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.task_alt,color: g.wstrGameOTColor,size: 15,),
+                          gapWC(5),
+                          tcn('Update', g.wstrGameOTColor, 15)
+                        ],
+                      ),
+                    ),
+                  ),),
+                  gapWC(10),
+                  Expanded(child: Bounce(
+                    onPressed: (){
+                      //fnSave();
+                      if(widget.mode == "EDIT"){
+                        PageDialog().deleteDialog(context, apiDeleteBooking);
+                      }
+                    },
+                    duration: const Duration(milliseconds: 110),
+                    child: Container(
+                      decoration: boxDecoration(Colors.redAccent  , 30),
+                      padding: const EdgeInsets.symmetric(vertical: 10),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.delete,color: g.wstrGameOTColor,size: 15,),
+                          gapWC(5),
+                          tcn('Delete', g.wstrGameOTColor, 15)
+                        ],
+                      ),
+                    ),
+                  ),),
+
                   Bounce(
                     onPressed: (){
                       fnCancel();
@@ -904,9 +1020,11 @@ class _BookingState extends State<Booking> {
       }catch(e){
         dprint(e);
       }
-
-
-        apiAvailableGames();
+        if((widget.pDocno??"").isNotEmpty){
+          fnEditFill();
+        }else{
+          apiAvailableGames();
+        }
       }
     }
   fnSearchCallBack(rolecode,usercd){
@@ -1090,11 +1208,11 @@ class _BookingState extends State<Booking> {
       return;
     }
 
-    if(txtCount.text.isEmpty && plan == "BOX" && txtBoxCount.text.isNotEmpty){
+    if(g.mfnDbl(txtCount.text) <=0 && plan == "BOX" && txtBoxCount.text.isNotEmpty){
       txtCount.text =  txtBoxCount.text;
     }
 
-    if(txtCount.text.isEmpty ){
+    if(g.mfnDbl(txtCount.text) <=0 ){
       if(!(gCountNum == 3 && blFromTo && gOption == "Book")){
         return;
       }
@@ -1325,7 +1443,7 @@ class _BookingState extends State<Booking> {
           return;
         }
 
-        if(txtCount.text.isEmpty){
+        if(g.mfnDbl(txtCount.text) <=0){
           return;
         }
 
@@ -1576,7 +1694,7 @@ class _BookingState extends State<Booking> {
       if(txtNum.text.toString().length != gCountNum ){
         return;
       }
-      if(txtCount.text.isEmpty){
+      if(g.mfnDbl(txtCount.text) <=0){
         return;
       }
 
@@ -1699,8 +1817,54 @@ class _BookingState extends State<Booking> {
       return;
     }
 
-    apiSaveBooking(det);
+    if(widget.mode == "EDIT"){
+      apiEditBooking(det);
+    }else{
+      apiSaveBooking(det);
+    }
 
+
+  }
+
+  fnEditFill(){
+    if(mounted){
+
+      var dataList = [];
+      dataList = (widget.pData??[]);
+      if(dataList.isEmpty){
+        Navigator.pop(context);
+        return;
+      }
+      else{
+
+        var detData =  dataList[0]["DET"];
+
+       setState(() {
+
+         txtName.text =   (dataList[0]["CUSTOMER_NAME"]??"").toString();
+
+         editDocno = (dataList[0]["DOCNO"]??"").toString();
+         editCustomer = (dataList[0]["CUSTOMER_NAME"]??"").toString();
+         editAgent = (dataList[0]["AGENT_CODE"]??"").toString();
+         editGameDocno = (dataList[0]["GAME_DOCNO"]??"").toString();
+
+         for(var e in detData){
+           countList.add({
+             "PLAN":e["GAME_TYPE"],
+             "NUMBER":e["NUMBER"],
+             "COUNT":e["QTY"],
+             "AMOUNT":e["RATE"],
+           });
+         }
+       });
+
+      }
+
+
+      fnCalc();
+
+
+    }
   }
 
   List<List<int>> permute(List<int> digits) {
@@ -1771,7 +1935,7 @@ class _BookingState extends State<Booking> {
   }
 
   apiSaveBooking(det){
-    futureForm = apiCall.apiSaveBooking(g.wstrSGameDocNo, g.wstrSGameDoctype, g.wstrCompany, g.wstrUserCd, txtName.text, txtName.text, g.wstrDeivceId, fAgentCode, "ADD", det);
+    futureForm = apiCall.apiSaveBooking("",g.wstrSGameDocNo, g.wstrSGameDoctype, g.wstrCompany, g.wstrUserCd, txtName.text, txtName.text, g.wstrDeivceId, fAgentCode, "ADD", det);
     futureForm.then((value) => apiSaveBookingRes(value));
   }
   apiSaveBookingRes(value){
@@ -1796,9 +1960,70 @@ class _BookingState extends State<Booking> {
         errorMsg(context, "Failed");
       }
 
-      if(value == "1"){
-        successMsg(context, "BOOKING SAVED");
+    }
+  }
+
+  apiEditBooking(det){
+    futureForm = apiCall.apiSaveBooking(editDocno,editGameDocno, g.wstrSGameDoctype, g.wstrCompany, g.wstrUserCd, txtName.text, txtName.text, g.wstrDeivceId, editAgent, "EDIT", det);
+    futureForm.then((value) => apiEditBookingRes(value));
+  }
+  apiEditBookingRes(value){
+    if(mounted){
+
+      if(g.fnValCheck(value)){
+
+        try{
+          var sts = (value[0]["STATUS"])??"";
+          var msg = (value[0]["MSG"])??"";
+          if(sts == "1"){
+            widget.fnCallBack!();
+            Get.back();
+            successMsg(context, "BOOKING UPDATED");
+          }else{
+            errorMsg(context, msg);
+          }
+        }catch(e){
+          dprint(e);
+          errorMsg(context, "Try Again!");
+        }
+
+      }else{
+        errorMsg(context, "Failed");
       }
+
+    }
+  }
+
+
+  apiDeleteBooking(){
+    Navigator.pop(context);
+    futureForm = apiCall.apiSaveBooking(editDocno,editGameDocno, g.wstrSGameDoctype, g.wstrCompany, g.wstrUserCd, txtName.text, txtName.text, g.wstrDeivceId, editAgent, "DELETE", []);
+    futureForm.then((value) => apiDeleteBookingRes(value));
+  }
+  apiDeleteBookingRes(value){
+    if(mounted){
+
+      if(g.fnValCheck(value)){
+
+        try{
+          var sts = (value[0]["STATUS"])??"";
+          var msg = (value[0]["MSG"])??"";
+          if(sts == "1"){
+            widget.fnCallBack!();
+            Get.back();
+            successMsg(context, "BOOKING DELTED");
+          }else{
+            errorMsg(context, msg);
+          }
+        }catch(e){
+          dprint(e);
+          errorMsg(context, "Try Again!");
+        }
+
+      }else{
+        errorMsg(context, "Failed");
+      }
+
     }
   }
 
