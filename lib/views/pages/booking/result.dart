@@ -276,7 +276,7 @@ class _ResultsState extends State<Results> {
     }
 
   _launchURL() async {
-    const url = 'https://www.youtube.com/';
+    var url = 'https://www.youtube.com/';
     if (await canLaunchUrl(Uri.parse(url))) {
       await launchUrl(Uri.parse(url));
     } else {
