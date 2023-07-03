@@ -13,6 +13,8 @@ import 'package:ltr/views/pages/number/globalcount.dart';
 import 'package:ltr/views/pages/number/numbercount.dart';
 import 'package:ltr/views/pages/settings/blockedusers.dart';
 import 'package:ltr/views/pages/settings/emergency.dart';
+import 'package:ltr/views/pages/settings/gametime.dart';
+import 'package:ltr/views/pages/settings/lockedusers.dart';
 import 'package:ltr/views/styles/colors.dart';
 
 class Settings extends StatefulWidget {
@@ -89,7 +91,7 @@ class _ReportsState extends State<Settings> {
           }else if(e["CODE"] == 002){
             Navigator.push(context, MaterialPageRoute(builder: (context) =>   const GameSettings()));
           }else if(e["CODE"] == 003){
-            Navigator.push(context, MaterialPageRoute(builder: (context) =>   const BlockedUsers(pRoleCode: 'Stockist',)));
+            Navigator.push(context, MaterialPageRoute(builder: (context) =>   const LockedUsers()));
           }else if(e["CODE"] == 004){
             Navigator.push(context, MaterialPageRoute(builder: (context) =>   const GlobalPrize()));
           }else if(e["CODE"] == 005){
@@ -104,6 +106,9 @@ class _ReportsState extends State<Settings> {
           }
           else if(e["CODE"] == 009){
             Navigator.push(context, MaterialPageRoute(builder: (context) =>   const NumberCount()));
+          }
+          else if(e["CODE"] == 010){
+            Navigator.push(context, MaterialPageRoute(builder: (context) =>   const GameTimeSettings()));
           }
         },
         duration: const Duration(milliseconds: 110),
@@ -141,6 +146,11 @@ class _ReportsState extends State<Settings> {
             "CODE":001,
             "NAME":"Emergency Settings",
             "ICON":Icons.warning_amber_outlined
+          },
+          {
+            "CODE":010,
+            "NAME":"Game Time Settings",
+            "ICON":Icons.access_time_rounded
           },
           {
             "CODE":002,
@@ -190,4 +200,7 @@ class _ReportsState extends State<Settings> {
   }
 
 //===============================API CALL
+
+
+
 }

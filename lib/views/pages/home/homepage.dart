@@ -30,7 +30,6 @@ class _HomePageState extends State<HomePage> {
   //Page Variable
   var gameList  = [];
 
-
   var webController = WebViewController()
     ..setJavaScriptMode(JavaScriptMode.unrestricted)
     ..setBackgroundColor(const Color(0x00000000))
@@ -68,7 +67,7 @@ class _HomePageState extends State<HomePage> {
         width: 240,
         child: Container(
           margin: MediaQuery.of(context).padding,
-          padding: EdgeInsets.all(10),
+          padding: const EdgeInsets.all(10),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
@@ -96,7 +95,6 @@ class _HomePageState extends State<HomePage> {
           decoration: boxDecoration(Colors.white, 0),
           child: Stack(
             children: [
-
               WebViewWidget(
                 controller: webController,
               ),
@@ -140,9 +138,12 @@ class _HomePageState extends State<HomePage> {
     Widget wLotCard(color,text,start,e,bcolor,tcolor,otcolor){
       var code = g.mfnTxt(e["CODE"]);
       var name = g.mfnTxt(e["DESCP"]);
+      var link = g.mfnTxt(e["LIVE_LINK"]);
+      var editTime = g.mfnTxt(e["EDIT_MINUT"]);
+      var end = g.mfnTxt(e["END_TIME"]);
       return Bounce(
         onPressed: (){
-          fnSelectGame(code,name,color,bcolor,tcolor,otcolor);
+          fnSelectGame(code,name,color,bcolor,tcolor,otcolor,link,editTime,end);
         },
         duration: const Duration(milliseconds: 110),
         child: Container(
@@ -172,6 +173,7 @@ class _HomePageState extends State<HomePage> {
 
         var code = g.mfnTxt(e["CODE"]);
         var name = g.mfnTxt(e["DESCP"]);
+
         var start = "";
         var colorCode  =  g.mfnTxt(e["CODE"]);
        // var color  =  colorCode == "1PM"?Colors.blueAccent:colorCode == "3PM"?Colors.amber:colorCode == "6PM"?Colors.green:colorCode == "8PM"?Colors.redAccent:Colors.amber;
@@ -191,7 +193,7 @@ class _HomePageState extends State<HomePage> {
     apiGetGameList();
   }
 
-  fnSelectGame(code,name,color,bcolor,tcolor,otcolor){
+  fnSelectGame(code,name,color,bcolor,tcolor,otcolor,link,editTime,end){
     if(mounted){
       setState(() {
         g.wstrSelectedGame = code;
@@ -200,6 +202,9 @@ class _HomePageState extends State<HomePage> {
         g.wstrGameBColor = bcolor;
         g.wstrGameTColor = tcolor;
         g.wstrGameOTColor = otcolor;
+        g.wstrSGameLink = link;
+        g.wstrSGameEdit = editTime;
+        g.wstrSGameEnd = end;
       });
     }
       Navigator.push(context, n.pageRoute(1));
@@ -210,7 +215,6 @@ class _HomePageState extends State<HomePage> {
     //api for get user wise game list
     futureForm = apiCall.apiGetUserGames(g.wstrCompany, g.wstrUserCd, "");
     futureForm.then((value) => apiGetGameListRes(value));
-
   }
   apiGetGameListRes(value){
     if(mounted){

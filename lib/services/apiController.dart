@@ -725,7 +725,26 @@ class ApiCall  with BaseController{
   Future<dynamic> apiGetResultData(game,date) async {
     var request = jsonEncode(<dynamic, dynamic>{
       "GAME_CODE":game,
-      "DATE":date
+      "DATE":date,
+    });
+    dprint('api/getDateResult');
+    dprint(request);
+    var response = await ApiManager().post('api/getDateResult',request).catchError((error){
+      if (error is BadRequestException) {
+        dprint(error.toString());
+      } else {
+        handleError(error);
+      }
+    });
+    dprint(response);
+    if (response == null) return;
+    return response;
+  }
+  Future<dynamic> apiGetLiveResult(game,date) async {
+    var request = jsonEncode(<dynamic, dynamic>{
+      "GAME_CODE":game,
+      "DATE":date,
+      "PUB_STATUS":"1"//OPTIONAL
     });
     dprint('api/getDateResult');
     dprint(request);
@@ -758,6 +777,84 @@ class ApiCall  with BaseController{
     dprint('api/saveResult');
     dprint(request);
     var response = await ApiManager().post('api/saveResult',request).catchError((error){
+      if (error is BadRequestException) {
+        dprint(error.toString());
+      } else {
+        handleError(error);
+      }
+    });
+    dprint(response);
+    if (response == null) return;
+    return response;
+  }
+
+  //==========================================SETTINGS
+
+  Future<dynamic> apiUpdateGameMast(game,start,end,editMinutes) async {
+    var request = jsonEncode(<dynamic, dynamic>{
+      "CODE":game,
+      "START_TIME":start,//"12:58:00.0000000",(null MEANS NO CHANGE)
+      "END_TIME":end,//"12:58:00.0000000",(null MEANS NO CHANGE)
+      "GLOBAL_STATUS":null,//0,1,OR null (null MEANS NO CHANGE)
+      "EDIT_MINUT":editMinutes// null (null MEANS NO CHANGE)
+    });
+    dprint('api/updateGameMast');
+    dprint(request);
+    var response = await ApiManager().post('api/updateGameMast',request).catchError((error){
+      if (error is BadRequestException) {
+        dprint(error.toString());
+      } else {
+        handleError(error);
+      }
+    });
+    dprint(response);
+    if (response == null) return;
+    return response;
+  }
+  Future<dynamic> apiGetGameMast(game) async {
+    var request = jsonEncode(<dynamic, dynamic>{
+      "CODE":game
+    });
+    dprint('api/getGameMast');
+    dprint(request);
+    var response = await ApiManager().post('api/getGameMast',request).catchError((error){
+      if (error is BadRequestException) {
+        dprint(error.toString());
+      } else {
+        handleError(error);
+      }
+    });
+    dprint(response);
+    if (response == null) return;
+    return response;
+  }
+
+  Future<dynamic> apiGetLockedUsers(company) async {
+    var request = jsonEncode(<dynamic, dynamic>{
+      "COMPANY":company
+    });
+    dprint('api/getLockedUser');
+    dprint(request);
+    var response = await ApiManager().post('api/getLockedUser',request).catchError((error){
+      if (error is BadRequestException) {
+        dprint(error.toString());
+      } else {
+        handleError(error);
+      }
+    });
+    dprint(response);
+    if (response == null) return;
+    return response;
+  }
+
+  Future<dynamic> apiUnLockUser(company,user) async {
+    var request = jsonEncode(<dynamic, dynamic>{
+      "COMPANY":company,
+      "USERCD":user//null FOR ALL
+    });
+    dprint('api/unLockUser');
+    dprint(request);
+    var response = await ApiManager().post('api/unLockUser',request).catchError((error){
       if (error is BadRequestException) {
         dprint(error.toString());
       } else {

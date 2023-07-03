@@ -8,6 +8,7 @@ import 'package:ltr/controller/global/globalValues.dart';
 import 'package:ltr/services/apiController.dart';
 import 'package:ltr/views/components/common/common.dart';
 import 'package:ltr/views/styles/colors.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class Results extends StatefulWidget {
@@ -27,11 +28,13 @@ class _ResultsState extends State<Results> {
   //Page Variable
   var frResultData = [];
   var fResDate = DateTime.now();
+  var fLiveLink  = "";
   
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    fnGetPageData();
   }
   
   
@@ -65,17 +68,23 @@ class _ResultsState extends State<Results> {
                       tcn("Results (${g.wstrSelectedGame.toString()})", Colors.white, 20)
                     ],
                   ),
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 15,vertical: 5),
-                    decoration: boxDecoration(Colors.white, 30),
-                    child: Row(
-                      children: [
+                  GestureDetector(
+                    onTap: (){
+                      fnShare();
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 15,vertical: 5),
+                      decoration: boxDecoration(Colors.white, 30),
+                      child: Row(
+                        children: [
                           tcn('Share', grey, 15),
                           gapWC(5),
                           const Icon(Icons.share_outlined,color: grey,size: 15,)
-                      ],
+                        ],
+                      ),
                     ),
                   )
+
                 ],
               ),
             ),
@@ -264,27 +273,16 @@ class _ResultsState extends State<Results> {
         ),
       ));
     }
-
-    fnGetNumber(index){
-      var num  = "";
-      for(var e in frResultData){
-        if(e["RANK"].toString() == (index).toString()){
-          num =  (e["NUMBER"]??"").toString();
-        }
-      }
-      return num;
-    }
-
-  _launchURL() async {
-    var url = 'https://www.youtube.com/';
-    if (await canLaunchUrl(Uri.parse(url))) {
-      await launchUrl(Uri.parse(url));
-    } else {
-      throw 'Could not launch $url';
-    }
-  }
   //=================================================PAGE FN
 
+  fnGetPageData(){
+    if(mounted){
+      setState(() {
+        fLiveLink = g.wstrSGameLink;
+      });
+      apiGetResultData();
+    }
+  }
   Future<void> _selectResultDate(BuildContext context) async {
     final DateTime? pickedDate = await showDatePicker(
         context: context,
@@ -302,12 +300,34 @@ class _ResultsState extends State<Results> {
   fnFill(){
 
   }
+  fnGetNumber(index){
+    var num  = "";
+    for(var e in frResultData){
+      if(e["RANK"].toString() == (index).toString()){
+        num =  (e["NUMBER"]??"").toString();
+      }
+    }
+    return num;
+  }
+  _launchURL() async {
+    var url = fLiveLink;
+    if (await canLaunchUrl(Uri.parse(url))) {
+      await launchUrl(Uri.parse(url));
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
+  fnShare() {
+    Share.share('*RESULT ${g.wstrSelectedGame}* \n ${setDate(6, fResDate)}');
+  }
+
   //=================================================API CALL
+
   apiGetResultData(){
     setState(() {
       frResultData = [];
     });
-    futureForm =  ApiCall().apiGetResultData(g.wstrSelectedGame, setDate(2, fResDate));
+    futureForm =  ApiCall().apiGetLiveResult(g.wstrSelectedGame, setDate(2, fResDate));
     futureForm.then((value) => apiGetResultDataRes(value));
   }
   apiGetResultDataRes(value){
@@ -319,8 +339,15 @@ class _ResultsState extends State<Results> {
           //Result already entered
           var header = (value["HEADER"]?? {});
           var det = (value["DET"]?? {});
+          var gameDet = (value["GAME_DET"]?? {});
           setState(() {
-            frResultData = det??[];
+             frResultData = det??[];
+            // try{
+            //   fLiveLink = gameDet[0]["LIVE_LINK"];
+            // }catch(e){
+            //   fLiveLink = "";
+            //   dprint(e);
+            // }
           });
           fnFill();
         }else{

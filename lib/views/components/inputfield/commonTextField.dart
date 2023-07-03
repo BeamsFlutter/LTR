@@ -4,12 +4,13 @@ import 'package:ltr/views/components/enum.dart';
 
 class CustomTextField extends StatefulWidget {
   const CustomTextField({Key? key,required this.controller,this.textFormFieldType,required this.hintText,
-    this.keybordType, this.editable
+    this.keybordType, this.editable, this.maxCount
   }) : super(key: key);
 
   final TextEditingController controller;
   final TextFormFieldType? textFormFieldType;
   final String? hintText;
+  final int? maxCount;
   final bool? editable;
   final TextInputType ? keybordType;
 
@@ -98,6 +99,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      maxLength: widget.maxCount == 0?1000:widget.maxCount,
       controller: widget.controller,
       obscureText:
       widget.textFormFieldType == TextFormFieldType.passwrd ||  widget.textFormFieldType == TextFormFieldType.confirmPasswrd
@@ -105,6 +107,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
           : false,keyboardType: widget.keybordType,
       enabled: widget.editable??true,
       decoration:  InputDecoration(
+          counterText: "",
           border: const OutlineInputBorder(),
           suffixIcon: getSuffixIcon(widget.textFormFieldType),
           labelText: widget.hintText,

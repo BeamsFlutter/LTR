@@ -45,7 +45,8 @@ class Global {
     _wstrSGameEnd = "";
     _wstrDeviceName ='';
     _wstrDeivceId ='';
-
+    _wstrSGameLink = "";
+    _wstrSGameEdit = "";
   }
   var _wstrToken  = '';
   var _wstrCompany = '';
@@ -84,11 +85,25 @@ class Global {
   var _wstrSGameDoctype = "";
   var _wstrSGameStart = "";
   var _wstrSGameEnd = "";
+  var _wstrSGameEdit = "";
+  var _wstrSGameLink = "";
 
   var _wstrGameColor = Colors.white;
   var _wstrGameBColor = Colors.white;
   var _wstrGameTColor = Colors.white;
   var _wstrGameOTColor = Colors.white;
+
+  get wstrSGameEdit => _wstrSGameEdit;
+
+  set wstrSGameEdit(value) {
+    _wstrSGameEdit = value;
+  }
+
+  get wstrSGameLink => _wstrSGameLink;
+
+  set wstrSGameLink(value) {
+    _wstrSGameLink = value;
+  }
 
   get wstrSysTime => _wstrSysTime;
 
