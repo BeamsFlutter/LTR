@@ -21,6 +21,7 @@ import 'package:ltr/views/pages/report/report.dart';
 import 'package:ltr/views/pages/settings/settings.dart';
 import 'package:ltr/views/pages/theme/home_theme.dart';
 import 'package:ltr/views/pages/user/userlist.dart';
+import 'package:ltr/views/pages/user/usersearch.dart';
 import 'package:ltr/views/styles/colors.dart';
 
 class MainPage extends StatefulWidget {
@@ -46,6 +47,14 @@ class _MainPageState extends State<MainPage> {
   var frTimeStatus = "";
   var fSelectedGame = "";
   var today = "";
+  var fResDate = DateTime.now();
+
+
+  var fStockistCode = "ALL";
+  var fDealerCode = "ALL";
+  var fAgentCode = "ALL";
+
+  var fTotalCountReport  = [];
 
   //Game
   var gCountNum = 3;
@@ -57,7 +66,6 @@ class _MainPageState extends State<MainPage> {
   var fnCount = FocusNode();
 
   var fMenu =[];
-
 
 
   @override
@@ -151,8 +159,9 @@ class _MainPageState extends State<MainPage> {
                       gapHC(5),
                       wMenuCard('Booking',2),
                       wMenuCard('Bill Edit/Delete',13),
-                      wMenuCard('Results',3),
-                      wMenuCard('Result Publish',12),
+                      wMenuCard('Result View',3),
+                      g.wstrUserRole == "ADMIN"?
+                      wMenuCard('Result Publish',12):gapHC(0),
 
                       g.wstrUserRole != "AGENT"?
                       Column(
@@ -180,7 +189,7 @@ class _MainPageState extends State<MainPage> {
                                 thickness: 0.5,
                                 height: 15,
                               ),
-                              wMenuCard('Games',8),
+                              // wMenuCard('Games',8),
                               wMenuCard('Game Count',10),
                               wMenuCard('Number Count',5),
                               wMenuCard('Favorite Numbers',6),
@@ -196,7 +205,7 @@ class _MainPageState extends State<MainPage> {
                       ),
                       gapHC(5),
                       wMenuCard('All Reports',9),
-                      wMenuCard('Count View',7),
+                      // wMenuCard('Count View',7),
                       tc('Settings', Colors.black , 14),
                       gapHC(5),
                       const Divider(
@@ -204,8 +213,9 @@ class _MainPageState extends State<MainPage> {
                         height: 15,
                       ),
                       gapHC(5),
-                      wMenuCard('App Settings',11),
-                      wMenuCard('Update',4),
+                      g.wstrUserRole == "ADMIN"?
+                      wMenuCard('App Settings',11):gapHC(0),
+                      wMenuCard('App Update',4),
 
 
                     ],
@@ -249,7 +259,7 @@ class _MainPageState extends State<MainPage> {
                  Row(
                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                    children: [
-                     tc((g.wstrSelectedGameName??"").toString(), Colors.white, 25),
+                     tcn("Total Count (${g.wstrSelectedGameName??""})", Colors.white, 20),
                      GestureDetector(
                        onTap: (){
                          scaffoldKey.currentState?.openEndDrawer();
@@ -309,7 +319,8 @@ class _MainPageState extends State<MainPage> {
                                    child: Row(
                                      children: [
                                        // wButton("BOTH",Colors.red),
-                                       //  gapWC(5),
+                                       wButton("ALL",Colors.pink),
+                                         gapWC(5),
                                        wButton("BOX",Colors.pink),
                                        gapWC(5),
                                        wButton("SUPER",bgColorDark),
@@ -320,26 +331,28 @@ class _MainPageState extends State<MainPage> {
                                  Expanded(
                                    child: Row(
                                      children: [
+                                       wButton("ALL",bgColorDark),
+                                       gapWC(5),
                                        wButton("AB",Colors.green),
                                        gapWC(5),
                                        wButton("BC",Colors.green),
                                        gapWC(5),
                                        wButton("AC",Colors.green),
-                                       gapWC(5),
-                                       wButton("ALL",bgColorDark),
                                      ],
                                    ),
                                  ):
                                  Expanded(
                                    child: Row(
                                      children: [
+                                       wButton("ALL",bgColorDark),
+                                       gapWC(5),
                                        wButton("A",Colors.orange),
                                        gapWC(5),
                                        wButton("B",Colors.orange),
                                        gapWC(5),
                                        wButton("C",Colors.orange),
-                                       gapWC(5),
-                                       wButton("ALL",bgColorDark),
+
+
                                      ],
                                    ),
                                  ),
@@ -373,26 +386,123 @@ class _MainPageState extends State<MainPage> {
                                ),
                              ),
                            ),
-                           Container(
-                             margin: const EdgeInsets.all(5),
-                             padding: const EdgeInsets.symmetric(horizontal: 15,vertical: 10),
-                             decoration: boxBaseDecoration(greyLight, 10),
-                             child: Row(
-                               children: [
-                                 const Icon(Icons.calendar_month,color: grey,size: 18,),
-                                 gapWC(5),
-                                 tcn(frDate.toString(), Colors.black, 14)
-                               ],
-                             ),
-                           ),
-                           gapWC(10),
                            GestureDetector(
                              onTap: (){
-
+                               _selectResultDate(context);
                              },
                              child: Container(
+                               margin: const EdgeInsets.all(5),
+                               padding: const EdgeInsets.symmetric(horizontal: 15,vertical: 10),
+                               decoration: boxBaseDecoration(greyLight, 10),
+                               child: Row(
+                                 children: [
+                                   const Icon(Icons.calendar_month,color: grey,size: 18,),
+                                   gapWC(5),
+                                   tcn(setDate(6, fResDate).toString(), Colors.black, 14)
+                                 ],
+                               ),
+                             ),
+                           ),
+
+                         ],
+                       ),
+                       Row(
+                         children: [
+                           (g.wstrUserRole == "ADMIN")?
+                           Expanded(child: Bounce(
+                             onPressed: (){
+                               Navigator.push(context, MaterialPageRoute(builder: (context) =>   UserSearch(pRoleCode: "Stockist", pUserCode: g.wstrUserCd.toString(), pFnCallBack: fnSearchCallBack,pAllYn: "Y")));
+                             },
+                             duration: const Duration(milliseconds: 110),
+                             child: Container(
+                               margin:const  EdgeInsets.symmetric(horizontal: 2),
+                               padding: const EdgeInsets.all(5),
+                               decoration: boxOutlineCustom1(Colors.white, 5, Colors.black, 1.0),
+                               child: Row(
+                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                 children: [
+                                   Row(
+                                     children: [
+                                       tcn('Stockist ', Colors.black, 10),
+                                       tc(fStockistCode.toString(), Colors.black, 13),
+                                     ],
+                                   ),
+                                   const Icon(Icons.search,color: Colors.grey,size: 18,)
+                                 ],
+                               ),
+                             ),
+                           )):gapHC(0),
+                           ( g.wstrUserRole.toString().toUpperCase() == "STOCKIST")?
+                           Expanded(child: Bounce(
+                             onPressed: (){
+
+                               if(fStockistCode.isEmpty){
+                                 errorMsg(context, "Choose Stockist");
+                                 return;
+                               }
+
+                               Navigator.push(context, MaterialPageRoute(builder: (context) =>   UserSearch(pRoleCode: "Dealer", pUserCode: fStockistCode, pFnCallBack: fnSearchCallBack,pAllYn: "Y")));
+
+                             },
+                             duration: const Duration(milliseconds: 110),
+                             child: Container(
+                               margin:const  EdgeInsets.symmetric(horizontal: 2),
+                               padding: const EdgeInsets.all(5),
+                               decoration: boxOutlineCustom1(Colors.white, 5, Colors.black, 1.0),
+                               child: Row(
+                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                 children: [
+                                   Row(
+                                     children: [
+                                       tcn('Dealer ', Colors.black, 10),
+                                       tc(fDealerCode.toString(), Colors.black, 13),
+                                     ],
+                                   ),
+                                   const Icon(Icons.search,color: Colors.grey,size: 18,)
+                                 ],
+                               ),
+                             ),
+                           )):gapHC(0),
+                           (g.wstrUserRole.toString().toUpperCase() == "DEALER")?
+                           Expanded(child: Bounce(
+                             onPressed: (){
+
+                               if(fDealerCode.isEmpty){
+                                 errorMsg(context, "Choose Dealer");
+                                 return;
+                               }
+
+                               Navigator.push(context, MaterialPageRoute(builder: (context) =>   UserSearch(pRoleCode: "Agent", pUserCode: fDealerCode, pFnCallBack: fnSearchCallBack,pAllYn: "Y",)));
+
+                             },
+                             duration: const Duration(milliseconds: 110),
+                             child: Container(
+                               margin:const  EdgeInsets.symmetric(horizontal: 2),
+                               padding: const EdgeInsets.all(5),
+                               decoration: boxOutlineCustom1(Colors.white, 5, Colors.black, 1.0),
+                               child: Row(
+                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                 children: [
+                                   Row(
+                                     children: [
+                                       tcn('Agent ', Colors.black, 10),
+                                       tc(fAgentCode.toString(), Colors.black, 13),
+                                     ],
+                                   ),
+                                   Icon(Icons.search,color: Colors.grey,size: 18,)
+                                 ],
+                               ),
+                             ),
+                           )):gapHC(0),
+                           gapWC(10),
+                           Bounce(
+                             onPressed: (){
+                               apiCountReport();
+                             },
+                             duration: const Duration(milliseconds: 110),
+                             child: Container(
                                height: 40,
-                               padding: const EdgeInsets.symmetric(vertical: 5,horizontal: 20),
+                               padding: const EdgeInsets.symmetric(vertical: 5,horizontal: 40),
                                decoration: boxBaseDecoration(g.wstrGameBColor, 30),
                                child: Center(
                                  child: tcn('Search', g.wstrGameOTColor, 15),
@@ -400,8 +510,7 @@ class _MainPageState extends State<MainPage> {
                              ),
                            )
                          ],
-                       ),
-
+                       )
                      ],
                    ),
                  ),
@@ -411,6 +520,63 @@ class _MainPageState extends State<MainPage> {
                    child: Column(
                      children: [
                        Row(),
+                       Container(
+                         decoration: boxBaseDecorationC(Colors.blueGrey, 10,10,0,0),
+                         padding: EdgeInsets.all(5),
+                         child: Row(
+                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                           children: [
+                             tc('Count', Colors.white, 12),
+                             tc('Total', Colors.white, 12),
+                           ],
+                         ),
+                       ),
+                       Container(
+                         decoration: boxBaseDecoration(greyLight, 0),
+                         padding: EdgeInsets.symmetric(vertical: 5,horizontal: 10),
+                         child: Row(
+                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                           children: [
+                             Flexible(
+                               flex: 3,
+                               child: Row(
+                                 children: [
+                                   tc('Game', Colors.black, 15),
+                                 ],
+                               ),
+                             ),
+                             Flexible(
+                               flex: 3,
+                               child: Row(
+                                 children: [
+                                   tc('Number', Colors.black, 15),
+                                 ],
+                               ),
+                             ),
+                             Flexible(
+                               flex: 2,
+                               child: Row(
+                                 children: [
+                                   tc('Count', Colors.black, 15),
+                                 ],
+                               ),
+                             ),
+                             Flexible(
+                               flex: 2,
+                               child: Row(
+                                 children: [
+                                   tc('Amount', Colors.black, 15),
+                                 ],
+                               ),
+                             ),
+                           ],
+                         ),
+                       ),
+                       Expanded(child: SingleChildScrollView(
+                         child: Column(
+                           children: wNumberList(),
+                         ),
+                       ))
                      ],
                    ),
                  ))
@@ -533,8 +699,8 @@ class _MainPageState extends State<MainPage> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  text == "SUPER"?const Icon(Icons.star_border,color: Colors.white,size: 15,):gapHC(0),
-                  text == "SUPER"?gapWC(5):gapWC(0),
+                  text == "ALL"?
+                  Icon(Icons.star_border,color:fSelectedGame == text? Colors.white :g.wstrGameTColor,size: 15,):
                   tc(text.toString(),fSelectedGame == text? Colors.white :g.wstrGameTColor, 14)
                 ],
               )
@@ -543,6 +709,59 @@ class _MainPageState extends State<MainPage> {
         ),
       ),
     );
+  }
+
+  List<Widget> wNumberList(){
+    List<Widget> rtnList =[];
+    var srno =1;
+    for(var e in fTotalCountReport){
+      rtnList.add(
+          Container(
+            decoration: boxBaseDecoration(srno%2==0?greyLight.withOpacity(0.5):blueLight.withOpacity(0.5), 0),
+            margin: EdgeInsets.symmetric(vertical: 2),
+            padding: const EdgeInsets.symmetric(vertical: 5,horizontal: 10),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Flexible(
+                  flex: 3,
+                  child: Row(
+                    children: [
+                      tcn((e["GAME_TYPE"]??"").toString(), Colors.black, 14),
+                    ],
+                  ),
+                ),
+                Flexible(
+                  flex: 3,
+                  child: Row(
+                    children: [
+                      tcn((e["NUMBER"]??"").toString(), Colors.black, 14),
+                    ],
+                  ),
+                ),
+                Flexible(
+                  flex: 2,
+                  child: Row(
+                    children: [
+                      tcn((e["COUNT"]??"").toString(), Colors.black, 14),
+                    ],
+                  ),
+                ),
+                Flexible(
+                  flex: 2,
+                  child: Row(
+                    children: [
+                      tcn((e["AMT"]??"").toString(), Colors.black, 14),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          )
+      );
+      srno =srno+1;
+    }
+    return rtnList;
   }
 
   //===================================PAGE FN
@@ -600,6 +819,21 @@ class _MainPageState extends State<MainPage> {
             },
           ];
         });
+
+        if(g.wstrUserRole.toString().toUpperCase() == "STOCKIST" ){
+          setState(() {
+            fStockistCode = g.wstrUserCd;
+          });
+        }else if( g.wstrUserRole.toString().toUpperCase() == "DEALER" ){
+          setState(() {
+            fDealerCode = g.wstrUserCd;
+          });
+        }else if( g.wstrUserRole.toString().toUpperCase() == "AGENT" ){
+          setState(() {
+            fAgentCode = g.wstrUserCd;
+          });
+        }
+
       }
     }
 
@@ -610,6 +844,56 @@ class _MainPageState extends State<MainPage> {
         });
       }
     }
+
+  fnSearchCallBack(rolecode,usercd){
+    if(mounted){
+      setState(() {
+        if(rolecode == "Stockist"){
+          if(fStockistCode != usercd){
+            fDealerCode = "";
+            fAgentCode = "";
+          }
+          fStockistCode = usercd;
+        }else if(rolecode == "Dealer"){
+          if(fDealerCode != usercd){
+            fAgentCode = "";
+          }
+          fDealerCode = usercd;
+
+        }else if(rolecode == "Agent"){
+          fAgentCode = usercd;
+
+        }
+      });
+    }
+  }
+
+  Future<void> _selectResultDate(BuildContext context) async {
+    final DateTime? pickedDate = await showDatePicker(
+        context: context,
+        initialDate: fResDate,
+        firstDate: DateTime(2020),
+        lastDate: DateTime.now(),
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: ColorScheme.light(
+              primary: g.wstrGameColor,
+            ),
+          ),
+          child: child!,
+        );
+      },
+    );
+
+
+    if (pickedDate != null && pickedDate != fResDate) {
+      setState(() {
+        fResDate = pickedDate;
+      });
+
+    }
+  }
 
   //===================================API CALL
 
@@ -658,5 +942,33 @@ class _MainPageState extends State<MainPage> {
       }
 
     }
+
+
+
+  apiCountReport(){
+
+
+    var stockist = fStockistCode.isEmpty || fStockistCode == "ALL"?null:fStockistCode;
+    var dealer = fDealerCode.isEmpty || fDealerCode == "ALL"?null:fDealerCode;
+    var agent = fAgentCode.isEmpty || fAgentCode == "ALL"?null:fAgentCode;
+    var type = fSelectedGame.isEmpty || fSelectedGame == "ALL"?null:fSelectedGame;
+    var number = txtNum.text.isEmpty ?null:txtNum.text;
+
+    futureForm =  ApiCall().apiCountReport(g.wstrCompany, setDate(2, fResDate), g.wstrSelectedGame, stockist, dealer, agent, type, number);
+    futureForm.then((value) => apiCountReportRes(value));
+  }
+
+  apiCountReportRes(value){
+    if(mounted){
+      setState(() {
+        fTotalCountReport = [];
+        if(g.fnValCheck(value)){
+          fTotalCountReport =  value;
+        }
+      });
+    }
+  }
+
+
 
 }

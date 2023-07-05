@@ -227,6 +227,7 @@ class _GameTimeSettingsState extends State<GameTimeSettings> {
           child: child!,
         );
       },
+
     );
     if (newTime != null) {
       setState(() {

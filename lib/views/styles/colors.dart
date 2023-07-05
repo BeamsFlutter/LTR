@@ -25,8 +25,8 @@ const Color subTitleColor = Color(0xFF707070);
 
 //Game Color
 
-const Color oneColor = Color(0xFF0984E3);
-const Color oneButtonColor = Color(0xFF0984E3);
+const Color oneColor = Color(0xFF1289A7);
+const Color oneButtonColor = Color(0xFF1289A7);
 const Color oneTextColor = Color(0xFF000000);
 const Color oneOnTextColor = Color(0xFFFFFFFF);
 
@@ -37,14 +37,14 @@ const Color threeTextColor = Color(0xFF000000);
 const Color threeOnTextColor = Color(0xFFFFFFFF);
 
 
-const Color sixColor = Color(0xFF00B894);
-const Color sixButtonColor = Color(0xFF00B894);
+const Color sixColor = Color(0xFF16A085);
+const Color sixButtonColor = Color(0xFF16A085);
 const Color sixTextColor = Color(0xFF000000);
 const Color sixOnTextColor = Color(0xFFFFFFFF);
 
 
-const Color eightColor = Color(0xFFB33939);
-const Color eightButtonColor = Color(0xFFB33939);
+const Color eightColor = Color(0xFFD35400);
+const Color eightButtonColor = Color(0xFFD35400);
 const Color eightTextColor = Color(0xFF000000);
 const Color eightOnTextColor = Color(0xFFFFFFFF);
 

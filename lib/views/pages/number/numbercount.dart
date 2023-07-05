@@ -293,46 +293,49 @@ class _NumberCountState extends State<NumberCount> {
     rtnList.add( Row());
     var srNo  = 1;
     for(var e in fNumberLimit){
-      rtnList.add(Container(
-        margin:const  EdgeInsets.only(bottom: 5),
-        padding: const EdgeInsets.all(5),
-        decoration: boxBaseDecoration(bgColorDark.withOpacity(0.1), 5),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Row(
-              children: [
-                Container(
-                  decoration: boxGradientDecorationBase(20, 5),
-                  padding: const EdgeInsets.symmetric(vertical: 5,horizontal: 20),
-                  child: Column(
+      if(g.mfnDbl(e["COUNT"].toString()) != -1){
+        rtnList.add(Container(
+          margin:const  EdgeInsets.only(bottom: 5),
+          padding: const EdgeInsets.all(5),
+          decoration: boxBaseDecoration(bgColorDark.withOpacity(0.1), 5),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                children: [
+                  Container(
+                    decoration: boxGradientDecorationBase(20, 5),
+                    padding: const EdgeInsets.symmetric(vertical: 5,horizontal: 20),
+                    child: Column(
+                      children: [
+                        tcn("NUMBER", Colors.white, 8),
+                        tc((e["NUMBER"]??"").toString(), Colors.white, 20),
+                      ],
+                    ),
+                  ),
+                  gapWC(15),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      tcn("NUMBER", Colors.white, 8),
-                      tc((e["NUMBER"]??"").toString(), Colors.white, 20),
+                      tc("${e["TYPE"]??""}", Colors.black, 15),
+                      tcn(g.mfnDbl(e["COUNT"].toString()).toStringAsFixed(0)+" NOS", Colors.black, 18),
                     ],
                   ),
-                ),
-                gapWC(15),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    tc("${e["TYPE"]??""}", Colors.black, 15),
-                    tcn(g.mfnDbl(e["COUNT"].toString()).toStringAsFixed(0)+" NOS", Colors.black, 18),
-                  ],
-                ),
 
-              ],
-            ),
-            GestureDetector(
-                onTap: (){
-                  if(mounted){
-                    apiRemoveNumberCount((e["TYPE"]??""),(e["NUMBER"]??""));
-                  }
-                },
-                child: const Icon(Icons.close,color: Colors.grey,size: 25,))
-          ],
-        ),
-      ));
+                ],
+              ),
+              GestureDetector(
+                  onTap: (){
+                    if(mounted){
+                      apiRemoveNumberCount((e["TYPE"]??""),(e["NUMBER"]??""));
+                    }
+                  },
+                  child: const Icon(Icons.close,color: Colors.grey,size: 25,))
+            ],
+          ),
+        ));
+      }
+
     }
 
     return rtnList;

@@ -196,7 +196,7 @@ class ApiCall  with BaseController{
     });
     dprint('api/saveuser');
     dprint(request);
-    var response = await ApiManager().post('api/saveuser',request).catchError((error){
+    var response = await ApiManager().postLoading('api/saveuser',request,"S").catchError((error){
       if (error is BadRequestException) {
         dprint(error.toString());
       } else {
@@ -241,7 +241,7 @@ class ApiCall  with BaseController{
     });
     dprint('api/saveGameWinning');
     dprint(request);
-    var response = await ApiManager().post('api/saveGameWinning',request).catchError((error){
+    var response = await ApiManager().postLoading('api/saveGameWinning',request,"S").catchError((error){
       if (error is BadRequestException) {
         dprint(error.toString());
       } else {
@@ -265,7 +265,7 @@ class ApiCall  with BaseController{
     });
     dprint('api/saveGamePrice');
     dprint(request);
-    var response = await ApiManager().post('api/saveGamePrice',request).catchError((error){
+    var response = await ApiManager().postLoading('api/saveGamePrice',request,"S").catchError((error){
       if (error is BadRequestException) {
         dprint(error.toString());
       } else {
@@ -314,7 +314,7 @@ class ApiCall  with BaseController{
     });
     dprint('api/saveGameCountLimit');
     dprint(request);
-    var response = await ApiManager().post('api/saveGameCountLimit',request).catchError((error){
+    var response = await ApiManager().postLoading('api/saveGameCountLimit',request,"S").catchError((error){
       if (error is BadRequestException) {
         dprint(error.toString());
       } else {
@@ -340,7 +340,7 @@ class ApiCall  with BaseController{
     });
     dprint('api/saveNumberCountLimit');
     dprint(request);
-    var response = await ApiManager().post('api/saveNumberCountLimit',request).catchError((error){
+    var response = await ApiManager().postLoading('api/saveNumberCountLimit',request,"S").catchError((error){
       if (error is BadRequestException) {
         dprint(error.toString());
       } else {
@@ -366,7 +366,7 @@ class ApiCall  with BaseController{
     });
     dprint('api/removeNumberCountLimit');
     dprint(request);
-    var response = await ApiManager().post('api/removeNumberCountLimit',request).catchError((error){
+    var response = await ApiManager().postLoading('api/removeNumberCountLimit',request,"S").catchError((error){
       if (error is BadRequestException) {
         dprint(error.toString());
       } else {
@@ -391,7 +391,7 @@ class ApiCall  with BaseController{
     });
     dprint('api/blockunblock');
     dprint(request);
-    var response = await ApiManager().post('api/blockunblock',request).catchError((error){
+    var response = await ApiManager().postLoading('api/blockunblock',request,"S").catchError((error){
       if (error is BadRequestException) {
         dprint(error.toString());
       } else {
@@ -416,7 +416,7 @@ class ApiCall  with BaseController{
     });
     dprint('api/saveGlobGameCountLimit');
     dprint(request);
-    var response = await ApiManager().post('api/saveGlobGameCountLimit',request).catchError((error){
+    var response = await ApiManager().postLoading('api/saveGlobGameCountLimit',request,"S").catchError((error){
       if (error is BadRequestException) {
         dprint(error.toString());
       } else {
@@ -442,7 +442,7 @@ class ApiCall  with BaseController{
     });
     dprint('api/saveGlobNumberCountLimit');
     dprint(request);
-    var response = await ApiManager().post('api/saveGlobNumberCountLimit',request).catchError((error){
+    var response = await ApiManager().postLoading('api/saveGlobNumberCountLimit',request,"S").catchError((error){
       if (error is BadRequestException) {
         dprint(error.toString());
       } else {
@@ -466,7 +466,7 @@ class ApiCall  with BaseController{
     });
     dprint('api/removeGlobNumberCountLimit');
     dprint(request);
-    var response = await ApiManager().post('api/removeGlobNumberCountLimit',request).catchError((error){
+    var response = await ApiManager().postLoading('api/removeGlobNumberCountLimit',request,"S").catchError((error){
       if (error is BadRequestException) {
         dprint(error.toString());
       } else {
@@ -512,7 +512,7 @@ class ApiCall  with BaseController{
     });
     dprint('api/saveGlobGamePrice');
     dprint(request);
-    var response = await ApiManager().post('api/saveGlobGamePrice',request).catchError((error){
+    var response = await ApiManager().postLoading('api/saveGlobGamePrice',request,"S").catchError((error){
       if (error is BadRequestException) {
         dprint(error.toString());
       } else {
@@ -534,7 +534,7 @@ class ApiCall  with BaseController{
     });
     dprint('api/saveGlobGameWinning');
     dprint(request);
-    var response = await ApiManager().post('api/saveGlobGameWinning',request).catchError((error){
+    var response = await ApiManager().postLoading('api/saveGlobGameWinning',request,"S").catchError((error){
       if (error is BadRequestException) {
         dprint(error.toString());
       } else {
@@ -613,7 +613,7 @@ class ApiCall  with BaseController{
     });
     dprint('api/saveBooking');
     dprint(request);
-    var response = await ApiManager().post('api/saveBooking',request).catchError((error){
+    var response = await ApiManager().postLoading('api/saveBooking',request,"S").catchError((error){
       if (error is BadRequestException) {
         dprint(error.toString());
       } else {
@@ -634,7 +634,7 @@ class ApiCall  with BaseController{
     });
     dprint('api/saveBooking');
     dprint(request);
-    var response = await ApiManager().post('api/saveBooking',request).catchError((error){
+    var response = await ApiManager().postLoading('api/saveBooking',request,"S").catchError((error){
       if (error is BadRequestException) {
         dprint(error.toString());
       } else {
@@ -800,7 +800,7 @@ class ApiCall  with BaseController{
     });
     dprint('api/updateGameMast');
     dprint(request);
-    var response = await ApiManager().post('api/updateGameMast',request).catchError((error){
+    var response = await ApiManager().postLoading('api/updateGameMast',request,"S").catchError((error){
       if (error is BadRequestException) {
         dprint(error.toString());
       } else {
@@ -855,6 +855,59 @@ class ApiCall  with BaseController{
     dprint('api/unLockUser');
     dprint(request);
     var response = await ApiManager().post('api/unLockUser',request).catchError((error){
+      if (error is BadRequestException) {
+        dprint(error.toString());
+      } else {
+        handleError(error);
+      }
+    });
+    dprint(response);
+    if (response == null) return;
+    return response;
+  }
+
+  Future<dynamic> apiCountReport(company,date,game,stockist,dealer,agent,type,number) async {
+    var request = jsonEncode(<dynamic, dynamic>{
+      "COMPANY":company,
+      "DATE": date,
+      "GAME_CODE": game,//null
+      "STOCKIST_CODE":stockist,
+      "DEALER_CODE":dealer,
+      "AGENT_CODE":agent,
+      "TYPE":type,
+      "NUMBER":number
+    });
+    dprint('api/countReport');
+    dprint(request);
+    var response = await ApiManager().post('api/countReport',request).catchError((error){
+      if (error is BadRequestException) {
+        dprint(error.toString());
+      } else {
+        handleError(error);
+      }
+    });
+    dprint(response);
+    if (response == null) return;
+    return response;
+  }
+
+  Future<dynamic> apiWinningReport(company,date,toDate,game,stockist,dealer,agent,type,number) async {
+    var request = jsonEncode(<dynamic, dynamic>{
+      "COMPANY":company,
+      "DATE_FROM": date,
+      "DATE_TO": toDate,
+      "GAME_CODE": game,//null
+      "STOCKIST_CODE":stockist,
+      "DEALER_CODE":dealer,
+      "AGENT_CODE":agent,
+      "TYPE":type,
+      "NUMBER":number,
+      "RANK":null,
+      "MODE":"RANK"//RAK or DET
+    });
+    dprint('api/winningReport');
+    dprint(request);
+    var response = await ApiManager().post('api/winningReport',request).catchError((error){
       if (error is BadRequestException) {
         dprint(error.toString());
       } else {

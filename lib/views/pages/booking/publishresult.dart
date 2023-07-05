@@ -1,4 +1,6 @@
 
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bounce/flutter_bounce.dart';
 import 'package:ltr/controller/global/globalValues.dart';
@@ -27,10 +29,12 @@ class _PublishResultState extends State<PublishResult> {
   //Page Variable
   var blEdit =  false;
   var blPostSts =  false;
+  var blOldEdit =  false;
   var wstrPageMode =  "VIEW";
   var fResDate = DateTime.now();
   var frResultData = [];
   var frGameData  =[];
+  var frCapthaKey  = "";
 
   List<TextEditingController>  txtControllerList = [];
 
@@ -78,6 +82,8 @@ class _PublishResultState extends State<PublishResult> {
   var txtP29 = TextEditingController();
   var txtP30 = TextEditingController();
 
+  var txtCaptcha = TextEditingController();
+
 
   @override
   void initState() {
@@ -101,10 +107,10 @@ class _PublishResultState extends State<PublishResult> {
         decoration: boxBaseDecoration(Colors.white, 0),
         child: Column(
           children: [
-            const Row(),
+             Row(),
             Container(
               padding: const EdgeInsets.symmetric(vertical: 13,horizontal: 5),
-              decoration: boxBaseDecoration(g.wstrGameBColor, 0),
+              decoration: boxBaseDecoration( blOldEdit? Colors.redAccent: g.wstrGameBColor, 0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -121,26 +127,37 @@ class _PublishResultState extends State<PublishResult> {
                         ),
                       ),
                       gapWC(5),
+                      blOldEdit?
+                      tcn("Old Result Entry", Colors.white, 18):
                       tcn("Publish Result (${g.wstrSelectedGame.toString()})", Colors.white, 18),
                     ],
                   ),
-                  wstrPageMode == "VIEW" && blPostSts && frResultData.isNotEmpty?
                   GestureDetector(
                     onTap: (){
-                      fnShare();
+
+                      PageDialog().cDialog(context, "Update", "Do you want to edit old result entry?",(){
+                        fnShowCaptcha(fnOldEditCaptchaSuccess);
+                      });
                     },
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 15,vertical: 5),
-                      decoration: boxDecoration(Colors.white, 30),
-                      child: Row(
-                        children: [
-                          tcn('Share', grey, 15),
-                          gapWC(5),
-                          const Icon(Icons.share_outlined,color: grey,size: 15,)
-                        ],
-                      ),
-                    ),
-                  ):gapWC(5),
+                    child: const Icon(Icons.history,color: Colors.white,size: 22,),
+                  )
+                  // wstrPageMode == "VIEW" && blPostSts && frResultData.isNotEmpty?
+                  // GestureDetector(
+                  //   onTap: (){
+                  //     fnShare();
+                  //   },
+                  //   child: Container(
+                  //     padding: const EdgeInsets.symmetric(horizontal: 15,vertical: 5),
+                  //     decoration: boxDecoration(Colors.white, 30),
+                  //     child: Row(
+                  //       children: [
+                  //         tcn('Share', grey, 15),
+                  //         gapWC(5),
+                  //         const Icon(Icons.share_outlined,color: grey,size: 15,)
+                  //       ],
+                  //     ),
+                  //   ),
+                  // ):gapWC(5),
                 ],
               ),
             ),
@@ -214,13 +231,15 @@ class _PublishResultState extends State<PublishResult> {
                       textFormFieldType: TextFormFieldType.gift,
                     ),
                     gapHC(10),
+                    tcn('COMPLIMENTS', Colors.black, 13),
+                    gapHC(10),
                     Row(
                       children: [
                         Expanded(child: CustomTextField(
                           keybordType: TextInputType.number,
                           controller: txtP6,
                           editable: blEdit,
-                          hintText: "6",
+                          hintText: "1",
                           textFormFieldType: TextFormFieldType.gift,
                         ),),
                         gapWC(5),
@@ -228,7 +247,7 @@ class _PublishResultState extends State<PublishResult> {
                           keybordType: TextInputType.number,
                           controller: txtP7,
                           editable: blEdit,
-                          hintText: "7",
+                          hintText: "2",
                           textFormFieldType: TextFormFieldType.gift,
                         ),),
                         gapWC(5),
@@ -236,7 +255,7 @@ class _PublishResultState extends State<PublishResult> {
                           keybordType: TextInputType.number,
                           controller: txtP8,
                           editable: blEdit,
-                          hintText: "8",
+                          hintText: "3",
                           textFormFieldType: TextFormFieldType.gift,
                         ),),
                       ],
@@ -248,7 +267,7 @@ class _PublishResultState extends State<PublishResult> {
                           keybordType: TextInputType.number,
                           controller: txtP9,
                           editable: blEdit,
-                          hintText: "9",
+                          hintText: "4",
                           textFormFieldType: TextFormFieldType.gift,
                         ),),
                         gapWC(5),
@@ -256,7 +275,7 @@ class _PublishResultState extends State<PublishResult> {
                           keybordType: TextInputType.number,
                           controller: txtP10,
                           editable: blEdit,
-                          hintText: "10",
+                          hintText: "5",
                           textFormFieldType: TextFormFieldType.gift,
                         ),),
                         gapWC(5),
@@ -264,7 +283,7 @@ class _PublishResultState extends State<PublishResult> {
                           keybordType: TextInputType.number,
                           controller: txtP11,
                           editable: blEdit,
-                          hintText: "11",
+                          hintText: "6",
                           textFormFieldType: TextFormFieldType.gift,
                         ),),
                       ],
@@ -276,7 +295,7 @@ class _PublishResultState extends State<PublishResult> {
                           keybordType: TextInputType.number,
                           controller: txtP12,
                           editable: blEdit,
-                          hintText: "12",
+                          hintText: "7",
                           textFormFieldType: TextFormFieldType.gift,
                         ),),
                         gapWC(5),
@@ -284,7 +303,7 @@ class _PublishResultState extends State<PublishResult> {
                           keybordType: TextInputType.number,
                           controller: txtP13,
                           editable: blEdit,
-                          hintText: "13",
+                          hintText: "8",
                           textFormFieldType: TextFormFieldType.gift,
                         ),),
                         gapWC(5),
@@ -292,7 +311,7 @@ class _PublishResultState extends State<PublishResult> {
                           keybordType: TextInputType.number,
                           controller: txtP14,
                           editable: blEdit,
-                          hintText: "14",
+                          hintText: "9",
                           textFormFieldType: TextFormFieldType.gift,
                         ),),
                       ],
@@ -304,7 +323,7 @@ class _PublishResultState extends State<PublishResult> {
                           keybordType: TextInputType.number,
                           controller: txtP15,
                           editable: blEdit,
-                          hintText: "15",
+                          hintText: "10",
                           textFormFieldType: TextFormFieldType.gift,
                         ),),
                         gapWC(5),
@@ -312,7 +331,7 @@ class _PublishResultState extends State<PublishResult> {
                           keybordType: TextInputType.number,
                           controller: txtP16,
                           editable: blEdit,
-                          hintText: "16",
+                          hintText: "11",
                           textFormFieldType: TextFormFieldType.gift,
                         ),),
                         gapWC(5),
@@ -320,7 +339,7 @@ class _PublishResultState extends State<PublishResult> {
                           keybordType: TextInputType.number,
                           controller: txtP17,
                           editable: blEdit,
-                          hintText: "17",
+                          hintText: "12",
                           textFormFieldType: TextFormFieldType.gift,
                         ),),
                       ],
@@ -332,7 +351,7 @@ class _PublishResultState extends State<PublishResult> {
                           keybordType: TextInputType.number,
                           controller: txtP18,
                           editable: blEdit,
-                          hintText: "18",
+                          hintText: "13",
                           textFormFieldType: TextFormFieldType.gift,
                         ),),
                         gapWC(5),
@@ -340,7 +359,7 @@ class _PublishResultState extends State<PublishResult> {
                           keybordType: TextInputType.number,
                           controller: txtP19,
                           editable: blEdit,
-                          hintText: "19",
+                          hintText: "14",
                           textFormFieldType: TextFormFieldType.gift,
                         ),),
                         gapWC(5),
@@ -348,7 +367,7 @@ class _PublishResultState extends State<PublishResult> {
                           keybordType: TextInputType.number,
                           controller: txtP20,
                           editable: blEdit,
-                          hintText: "20",
+                          hintText: "15",
                           textFormFieldType: TextFormFieldType.gift,
                         ),),
                       ],
@@ -360,7 +379,7 @@ class _PublishResultState extends State<PublishResult> {
                           keybordType: TextInputType.number,
                           controller: txtP21,
                           editable: blEdit,
-                          hintText: "21",
+                          hintText: "16",
                           textFormFieldType: TextFormFieldType.gift,
                         ),),
                         gapWC(5),
@@ -368,7 +387,7 @@ class _PublishResultState extends State<PublishResult> {
                           keybordType: TextInputType.number,
                           controller: txtP22,
                           editable: blEdit,
-                          hintText: "22",
+                          hintText: "17",
                           textFormFieldType: TextFormFieldType.gift,
                         ),),
                         gapWC(5),
@@ -376,7 +395,7 @@ class _PublishResultState extends State<PublishResult> {
                           keybordType: TextInputType.number,
                           controller: txtP23,
                           editable: blEdit,
-                          hintText: "23",
+                          hintText: "18",
                           textFormFieldType: TextFormFieldType.gift,
                         ),),
                       ],
@@ -388,7 +407,7 @@ class _PublishResultState extends State<PublishResult> {
                           keybordType: TextInputType.number,
                           controller: txtP24,
                           editable: blEdit,
-                          hintText: "24",
+                          hintText: "19",
                           textFormFieldType: TextFormFieldType.gift,
                         ),),
                         gapWC(5),
@@ -396,7 +415,7 @@ class _PublishResultState extends State<PublishResult> {
                           keybordType: TextInputType.number,
                           controller: txtP25,
                           editable: blEdit,
-                          hintText: "25",
+                          hintText: "20",
                           textFormFieldType: TextFormFieldType.gift,
                         ),),
                         gapWC(5),
@@ -404,7 +423,7 @@ class _PublishResultState extends State<PublishResult> {
                           keybordType: TextInputType.number,
                           controller: txtP26,
                           editable: blEdit,
-                          hintText: "26",
+                          hintText: "21",
                           textFormFieldType: TextFormFieldType.gift,
                         ),),
                       ],
@@ -416,7 +435,7 @@ class _PublishResultState extends State<PublishResult> {
                           keybordType: TextInputType.number,
                           controller: txtP27,
                           editable: blEdit,
-                          hintText: "27",
+                          hintText: "22",
                           textFormFieldType: TextFormFieldType.gift,
                         ),),
                         gapWC(5),
@@ -424,7 +443,7 @@ class _PublishResultState extends State<PublishResult> {
                           keybordType: TextInputType.number,
                           controller: txtP28,
                           editable: blEdit,
-                          hintText: "28",
+                          hintText: "23",
                           textFormFieldType: TextFormFieldType.gift,
                         ),),
                         gapWC(5),
@@ -432,19 +451,7 @@ class _PublishResultState extends State<PublishResult> {
                           keybordType: TextInputType.number,
                           controller: txtP29,
                           editable: blEdit,
-                          hintText: "29",
-                          textFormFieldType: TextFormFieldType.gift,
-                        ),),
-                      ],
-                    ),
-                    gapHC(5),
-                    Row(
-                      children: [
-                        Expanded(child: CustomTextField(
-                          keybordType: TextInputType.number,
-                          controller: txtP30,
-                          editable: blEdit,
-                          hintText: "30",
+                          hintText: "24",
                           textFormFieldType: TextFormFieldType.gift,
                         ),),
                       ],
@@ -460,9 +467,33 @@ class _PublishResultState extends State<PublishResult> {
               child: wstrPageMode == "VIEW" && blPostSts && frResultData.isNotEmpty?
               Row(
                 children: [
+                  blOldEdit?
                   Expanded(child: Bounce(
                     onPressed: (){
-                      PageDialog().unPostDialog(context, fnUnPost);
+                      PageDialog().cDialog(context, "Update", "Do you want to update old result?\nit will directly effect all reports", fnUpdate);
+                    },
+                    duration: const Duration(milliseconds: 110),
+                    child: Container(
+                      decoration: boxDecoration(bgColorDark, 30),
+                      padding: const EdgeInsets.symmetric(vertical: 10),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.done,color: g.wstrGameOTColor,size: 15,),
+                          gapWC(5),
+                          tcn('UPDATE', g.wstrGameOTColor, 15)
+                        ],
+                      ),
+                    ),
+                  ),):gapWC(0),
+                  blOldEdit?
+                  gapWC(10):gapWC(0),
+                  Expanded(child: Bounce(
+                    onPressed: (){
+
+                      PageDialog().unPostDialog(context, (){
+                        fnShowCaptcha(fnUnPost);
+                      });
                     },
                     duration: const Duration(milliseconds: 110),
                     child: Container(
@@ -483,8 +514,30 @@ class _PublishResultState extends State<PublishResult> {
               wstrPageMode == "VIEW" && !blPostSts && frResultData.isNotEmpty?
               Row(
                 children: [
+                  blOldEdit?
                   Expanded(child: Bounce(
                     onPressed: (){
+                      PageDialog().cDialog(context, "Update", "Do you want to update old result?\nit will directly effect all reports", fnUpdate);
+                    },
+                    duration: const Duration(milliseconds: 110),
+                    child: Container(
+                      decoration: boxDecoration(bgColorDark, 30),
+                      padding: const EdgeInsets.symmetric(vertical: 10),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.done,color: g.wstrGameOTColor,size: 15,),
+                          gapWC(5),
+                          tcn('UPDATE', g.wstrGameOTColor, 15)
+                        ],
+                      ),
+                    ),
+                  ),):gapWC(0),
+                  blOldEdit?
+                  gapWC(10):gapWC(0),
+                  Expanded(child: Bounce(
+                    onPressed: (){
+
                       PageDialog().postDialog(context, fnPost);
                     },
                     duration: const Duration(milliseconds: 110),
@@ -503,7 +556,7 @@ class _PublishResultState extends State<PublishResult> {
                   ),),
                 ],
               ):
-              gDocno.isNotEmpty?
+              gDocno.isNotEmpty && !blOldEdit?
               Row(
                 children: [
                   Expanded(child: Bounce(
@@ -559,7 +612,18 @@ class _PublishResultState extends State<PublishResult> {
         context: context,
         initialDate: fResDate,
         firstDate: DateTime(2020),
-        lastDate: DateTime.now());
+        lastDate: DateTime.now(),
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: ColorScheme.light(
+              primary: g.wstrGameColor,
+            ),
+          ),
+          child: child!,
+        );
+      },
+    );
     if (pickedDate != null && pickedDate != fResDate) {
       setState(() {
         fResDate = pickedDate;
@@ -601,8 +665,7 @@ class _PublishResultState extends State<PublishResult> {
           txtP26,
           txtP27,
           txtP28,
-          txtP29,
-          txtP30
+          txtP29
         ];
       });
     }
@@ -626,12 +689,12 @@ class _PublishResultState extends State<PublishResult> {
       errorMsg(context, "Choose Valid Game Date");
       return;
     }
-    
+
     if(errorSts){
       errorMsg(context, "Fill Result");
       return;
     }
-    
+
     var det = [];
     var rank = 1;
     for(var e in txtControllerList){
@@ -644,7 +707,6 @@ class _PublishResultState extends State<PublishResult> {
     apiSaveResult(det);
 
   }
-
 
   fnPost(){
     Navigator.pop(context);
@@ -663,6 +725,7 @@ class _PublishResultState extends State<PublishResult> {
     }
     apiPostResult(det,1);
   }
+
   fnUnPost(){
     Navigator.pop(context);
     if(gDocno.isEmpty){
@@ -681,9 +744,30 @@ class _PublishResultState extends State<PublishResult> {
     apiPostResult(det,0);
   }
 
+  fnUpdate(){
+    Navigator.pop(context);
+    if(gDocno.isEmpty){
+      errorMsg(context, "Choose Valid Game Date");
+      return;
+    }
+    var det = [];
+    var rank = 1;
+    for(var e in txtControllerList){
+      det.add( {
+        "RANK": rank,
+        "NUMBER": e.text
+      });
+      rank = rank+1;
+    }
+    apiPostResult(det,blPostSts?1:0);
+  }
+
   fnFill(){
     if(mounted){
       setState(() {
+        blEdit = blOldEdit;
+        dprint(blOldEdit.toString());
+        dprint(blEdit.toString());
         var rank = 0;
         for(var e in frResultData){
           if(e["RANK"].toString() == (rank+1).toString()){
@@ -703,7 +787,7 @@ class _PublishResultState extends State<PublishResult> {
        wstrPageMode = "ADD";
        blPostSts = false;
        blEdit = true;
-       
+
        for(var e in txtControllerList){
          e.clear();
        }
@@ -713,6 +797,75 @@ class _PublishResultState extends State<PublishResult> {
 
   fnShare() {
     Share.share('check out my website https://example.com');
+  }
+
+  fnShowCaptcha(fnSuccessCall){
+    var rng = Random();
+    var code = rng.nextInt(900000) + 100000;
+    setState(() {
+      frCapthaKey = code.toString();
+      txtCaptcha.clear();
+    });
+    Navigator.pop(context);
+    PageDialog().showCaptcha(context, 
+        Container(
+          child: Column(
+            children: [
+              Row(),
+              tc('KEY $frCapthaKey', Colors.black, 15),
+              gapHC(5),
+              CustomTextField(
+                keybordType: TextInputType.number,
+                controller: txtCaptcha,
+                hintText: "Captcha",
+                textFormFieldType: TextFormFieldType.gift,
+              ),
+              gapHC(15),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  GestureDetector(
+                    onTap: (){
+                      Navigator.pop(context);
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(vertical: 7,horizontal: 10),
+                      decoration: boxBaseDecoration(greyLight, 30),
+                      child: tcn('Cancel', Colors.black, 15),
+                    ),
+                  ),
+                  gapWC(5),
+                  GestureDetector(
+                    onTap: (){
+                      if(txtCaptcha.text == frCapthaKey){
+                        fnSuccessCall();
+
+                      }
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(vertical: 7,horizontal: 35),
+                      decoration: boxBaseDecoration(Colors.blueGrey, 30),
+                      child: tcn('OK', Colors.white, 15),
+                    ),
+                  )
+
+                ],
+              )
+
+            ],
+          ),
+        ),
+        "Captcha");
+  }
+
+  fnOldEditCaptchaSuccess(){
+    if(mounted){
+      setState(() {
+        blOldEdit = true;
+      });
+      Navigator.pop(context);
+      apiGetResultData();
+    }
   }
 
 
@@ -795,6 +948,9 @@ class _PublishResultState extends State<PublishResult> {
         var msg  =  value[0]["MSG"];
         if(sts == "1"){
           successMsg(context, "Saved Successfully!");
+          setState(() {
+            blOldEdit =false;
+          });
           apiGetResultData();
         }else{
           errorMsg(context, msg.toString());
@@ -816,6 +972,9 @@ class _PublishResultState extends State<PublishResult> {
         var msg  =  value[0]["MSG"];
         if(sts == "1"){
           successMsg(context, "Updated Successfully!");
+          setState(() {
+            blOldEdit =false;
+          });
           apiGetResultData();
         }else{
           errorMsg(context, msg.toString());

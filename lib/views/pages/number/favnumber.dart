@@ -273,47 +273,50 @@ class _FavNumberState extends State<FavNumber> {
     rtnList.add( Row());
     var srNo  = 1;
     for(var e in fNumberLimit){
-      rtnList.add(Container(
-        margin:const  EdgeInsets.only(bottom: 5),
-        padding: const EdgeInsets.all(5),
-        decoration: boxBaseDecoration(bgColorDark.withOpacity(0.1), 5),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Row(
-              children: [
-                Container(
-                  decoration: boxBaseDecoration(g.wstrGameBColor, 10),
-                  padding: const EdgeInsets.symmetric(vertical: 5,horizontal: 20),
-                  child: Column(
+      if(g.mfnDbl(e["COUNT"].toString()) == -1){
+        rtnList.add(Container(
+          margin:const  EdgeInsets.only(bottom: 5),
+          padding: const EdgeInsets.all(5),
+          decoration: boxBaseDecoration(bgColorDark.withOpacity(0.1), 5),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                children: [
+                  Container(
+                    decoration: boxBaseDecoration(g.wstrGameBColor, 10),
+                    padding: const EdgeInsets.symmetric(vertical: 5,horizontal: 20),
+                    child: Column(
+                      children: [
+                        tcn("NUMBER", g.wstrGameOTColor, 8),
+                        tc((e["NUMBER"]??"").toString(), g.wstrGameOTColor, 20),
+                      ],
+                    ),
+                  ),
+                  gapWC(15),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      tcn("NUMBER", g.wstrGameOTColor, 8),
-                      tc((e["NUMBER"]??"").toString(), g.wstrGameOTColor, 20),
+                      tc("${e["TYPE"]??""}", Colors.black, 15),
                     ],
                   ),
-                ),
-                gapWC(15),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    tc("${e["TYPE"]??""}", Colors.black, 15),
-                  ],
-                ),
 
-              ],
-            ),
-            GestureDetector(
-                onTap: (){
-                  if(mounted){
-                    setState(() {
-                      fNumberLimit.remove(e);
-                    });
-                  }
-                },
-                child: const Icon(Icons.close,color: Colors.grey,size: 25,))
-          ],
-        ),
-      ));
+                ],
+              ),
+              GestureDetector(
+                  onTap: (){
+                    if(mounted){
+                      setState(() {
+                        fNumberLimit.remove(e);
+                      });
+                    }
+                  },
+                  child: const Icon(Icons.close,color: Colors.grey,size: 25,))
+            ],
+          ),
+        ));
+      }
+
     }
 
     return rtnList;

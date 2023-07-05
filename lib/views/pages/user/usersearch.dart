@@ -15,8 +15,9 @@ import 'package:ltr/views/styles/colors.dart';
 class UserSearch extends StatefulWidget {
   final String pRoleCode;
   final String pUserCode;
+  final String? pAllYn;
   final Function pFnCallBack;
-  const UserSearch({Key? key, required this.pRoleCode, required this.pUserCode, required this.pFnCallBack}) : super(key: key);
+  const UserSearch({Key? key, required this.pRoleCode, required this.pUserCode, required this.pFnCallBack, this.pAllYn}) : super(key: key);
 
   @override
   _UserSearchState createState() => _UserSearchState();
@@ -110,6 +111,33 @@ class _UserSearchState extends State<UserSearch> {
   List<Widget> wUserList(){
     List<Widget> rtnList = [];
     var srno = 1;
+    if(widget.pAllYn == "Y"){
+      rtnList.add(Bounce(
+        onPressed: (){
+          Navigator.pop(context);
+          widget.pFnCallBack(wstrRole,"ALL");
+        },
+        duration: const Duration(milliseconds: 110),
+        child: Container(
+          margin: const EdgeInsets.only(bottom: 0),
+          padding: const EdgeInsets.symmetric(horizontal: 15,vertical: 15),
+          decoration: boxBaseDecoration( (srno%2 == 0)? Colors.white: Colors.blueGrey.withOpacity(0.1), 0),
+          child: Row(
+            children: [
+              Expanded(child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  tcn("All ${wstrRole.toString()}", Colors.black , 15)
+                ],
+              ))
+            ],
+          ),
+        ),
+      ));
+      srno =2;
+    }
+
+
     for(var e in frUserList){
       rtnList.add(Bounce(
         onPressed: (){
@@ -171,6 +199,7 @@ class _UserSearchState extends State<UserSearch> {
       setState(() {
         frUserList = [];
         if(g.fnValCheck(value)){
+
           frUserList = value;
         }
       });

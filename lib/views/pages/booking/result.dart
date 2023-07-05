@@ -128,85 +128,88 @@ class _ResultsState extends State<Results> {
                       wResultCard(3,Colors.green.withOpacity(0.5)),
                       wResultCard(4,Colors.orange.withOpacity(0.5)),
                       wResultCard(5,Colors.blue.withOpacity(0.5)),
-                      wResultCard(6,Colors.indigo.withOpacity(0.5)),
+                      gapHC(10),
+                      tcn('COMPLIMENTS', Colors.black, 13),
                       gapHC(10),
                       Row(
                         children: [
+                          w30Card(6),
+                          gapWC(5),
                           w30Card(7),
                           gapWC(5),
                           w30Card(8),
-                          gapWC(5),
-                          w30Card(9),
+
                         ],
                       ),
                       gapHC(5),
                       Row(
                         children: [
+                          w30Card(9),
+                          gapWC(5),
                           w30Card(10),
                           gapWC(5),
                           w30Card(11),
-                          gapWC(5),
-                          w30Card(12),
                         ],
                       ),
                       gapHC(5),
                       Row(
                         children: [
+                          w30Card(12),
+                          gapWC(5),
                           w30Card(13),
                           gapWC(5),
                           w30Card(14),
-                          gapWC(5),
-                          w30Card(15),
                         ],
                       ),
                       gapHC(5),
                       Row(
                         children: [
+                          w30Card(15),
+                          gapWC(5),
                           w30Card(16),
                           gapWC(5),
                           w30Card(17),
-                          gapWC(5),
-                          w30Card(18),
                         ],
                       ),
                       gapHC(5),
                       Row(
                         children: [
+                          w30Card(18),
+                          gapWC(5),
                           w30Card(19),
                           gapWC(5),
                           w30Card(20),
-                          gapWC(5),
-                          w30Card(21),
                         ],
                       ),
                       gapHC(5),
                       Row(
                         children: [
+
+                          w30Card(21),
+                          gapWC(5),
                           w30Card(22),
                           gapWC(5),
                           w30Card(23),
-                          gapWC(5),
-                          w30Card(24),
                         ],
                       ),
                       gapHC(5),
                       Row(
                         children: [
+                          w30Card(24),
+                          gapWC(5),
                           w30Card(25),
                           gapWC(5),
                           w30Card(26),
-                          gapWC(5),
-                          w30Card(27),
                         ],
                       ),
                       gapHC(5),
                       Row(
                         children: [
+                          w30Card(27),
+                          gapWC(5),
                           w30Card(28),
                           gapWC(5),
                           w30Card(29),
-                          gapWC(5),
-                          w30Card(30),
                         ],
                       )
 
@@ -288,7 +291,19 @@ class _ResultsState extends State<Results> {
         context: context,
         initialDate: fResDate,
         firstDate: DateTime(2020),
-        lastDate: DateTime.now());
+        lastDate: DateTime.now(),
+
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: ColorScheme.light(
+              primary: g.wstrGameColor,
+            ),
+          ),
+          child: child!,
+        );
+      },
+    );
     if (pickedDate != null && pickedDate != fResDate) {
       setState(() {
         fResDate = pickedDate;
@@ -318,8 +333,38 @@ class _ResultsState extends State<Results> {
     }
   }
   fnShare() {
-    Share.share('*RESULT ${g.wstrSelectedGame}* \n ${setDate(6, fResDate)}');
+
+
+    var result = "";
+    var index  = 0;
+    for(var e in frResultData){
+      var num = "";
+      var k = 0;
+      if(e["RANK"].toString() == (index+1).toString()){
+        num =  (e["NUMBER"]??"").toString();
+        if((index)<=6){
+          result = "$result\n${index+1}.$num";
+        }else{
+          if(k == 3){
+            k = 0;
+            result = "$result \n $num,";
+          }else{
+            result = "$result $num,";
+            k= k+1;
+          }
+
+        }
+
+      }
+
+      index= index+1;
+    }
+
+
+    Share.share('*RESULT ${g.wstrSelectedGame}* \n ${setDate(6, fResDate)}\n$result');
   }
+
+
 
   //=================================================API CALL
 

@@ -560,7 +560,7 @@ class _UserPrizeState extends State<UserPrize> {
      prizeList.add({
        "GAME_CODE": "ALL",
        "TYPE": "SUPER",
-       "PLACE": 1,
+       "PLACE": 4,
        "WINNING": g.mfnDbl(txtSup4p.text),
        "COMMISSION": g.mfnDbl(txtSup4c.text),
        "SP": 0

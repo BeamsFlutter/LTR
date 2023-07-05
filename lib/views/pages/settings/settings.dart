@@ -152,11 +152,11 @@ class _ReportsState extends State<Settings> {
             "NAME":"Game Time Settings",
             "ICON":Icons.access_time_rounded
           },
-          {
-            "CODE":002,
-            "NAME":"Games Settings",
-            "ICON":Icons.token_outlined
-          },
+          // {
+          //   "CODE":002,
+          //   "NAME":"Games Settings",
+          //   "ICON":Icons.token_outlined
+          // },
           {
             "CODE":003,
             "NAME":"Locked Users",
@@ -172,12 +172,12 @@ class _ReportsState extends State<Settings> {
             "NAME":"Ticket Prize",
             "ICON":Icons.currency_rupee
           },
-
-          {
-            "CODE":006,
-            "NAME":"Sales commission",
-            "ICON":Icons.currency_rupee
-          },
+          //
+          // {
+          //   "CODE":006,
+          //   "NAME":"Sales commission",
+          //   "ICON":Icons.currency_rupee
+          // },
 
           {
             "CODE":007,

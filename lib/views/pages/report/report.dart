@@ -76,7 +76,7 @@ class _ReportsState extends State<Reports> {
     for(var e in reportList){
       rtnList.add(Bounce(
         onPressed: (){
-          Navigator.push(context, MaterialPageRoute(builder: (context) =>    ReportDetails(reportName: e["NAME"])));
+          Navigator.push(context, MaterialPageRoute(builder: (context) =>    ReportDetails(reportName: e["NAME"], reportCode: e["CODE"].toString(),)));
         },
         duration: Duration(milliseconds: 110),
         child: Container(

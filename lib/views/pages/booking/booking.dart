@@ -32,7 +32,7 @@ class _BookingState extends State<Booking> {
   var wstrPageMode = "ADD";
 
   //Page variable
-  var lstrSelectedGame = "1PM";
+  var lstrSelectedGame = "";
   var countList = [];
   var frGameList = [];
   var blFromTo = false;
@@ -94,7 +94,7 @@ class _BookingState extends State<Booking> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return WillPopScope(child: Scaffold(
       body: Container(
         margin: MediaQuery.of(context).padding,
         child: Column(
@@ -112,10 +112,10 @@ class _BookingState extends State<Booking> {
                       Row(
                         children: [
                           GestureDetector(
-                             onTap: (){
-                               Navigator.pop(context);
-                             },
-                             child: const Icon(Icons.arrow_back_ios,color: Colors.white,size: 20,)),
+                              onTap: (){
+                                Navigator.pop(context);
+                              },
+                              child: const Icon(Icons.arrow_back_ios,color: Colors.white,size: 20,)),
                           gapWC(5),
                           tcn('$lstrSelectedGame Game', Colors.white, 20)
                         ],
@@ -157,8 +157,17 @@ class _BookingState extends State<Booking> {
                       (g.wstrUserRole == "ADMIN")?
                       Expanded(child: Bounce(
                         onPressed: (){
-                          Navigator.push(context, MaterialPageRoute(builder: (context) =>   UserSearch(pRoleCode: "Stockist", pUserCode: g.wstrUserCd.toString(), pFnCallBack: fnSearchCallBack,)));
-                        },
+
+                          if(countList.isNotEmpty){
+                            PageDialog().cDialog(context, "WARNING!!", "Do you want to change?\nSelected numbers will Lost.", (){
+                              Navigator.pop(context);
+                              Navigator.push(context, MaterialPageRoute(builder: (context) =>   UserSearch(pRoleCode: "Stockist", pUserCode: g.wstrUserCd.toString(), pFnCallBack: fnSearchCallBack,)));
+                            });
+                          }else{
+                            Navigator.push(context, MaterialPageRoute(builder: (context) =>   UserSearch(pRoleCode: "Stockist", pUserCode: g.wstrUserCd.toString(), pFnCallBack: fnSearchCallBack,)));
+                          }
+
+                         },
                         duration: const Duration(milliseconds: 110),
                         child: Container(
                           margin:const  EdgeInsets.symmetric(horizontal: 2),
@@ -187,7 +196,15 @@ class _BookingState extends State<Booking> {
                             return;
                           }
 
-                          Navigator.push(context, MaterialPageRoute(builder: (context) =>   UserSearch(pRoleCode: "Dealer", pUserCode: fStockistCode, pFnCallBack: fnSearchCallBack,)));
+                          if(countList.isNotEmpty){
+                            PageDialog().cDialog(context, "WARNING!!", "Do you want to change?\nSelected numbers will Lost.", (){
+                              Navigator.pop(context);
+                              Navigator.push(context, MaterialPageRoute(builder: (context) =>   UserSearch(pRoleCode: "Dealer", pUserCode: fStockistCode, pFnCallBack: fnSearchCallBack,)));
+                            });
+                          }else{
+                            Navigator.push(context, MaterialPageRoute(builder: (context) =>   UserSearch(pRoleCode: "Dealer", pUserCode: fStockistCode, pFnCallBack: fnSearchCallBack,)));
+                          }
+
 
                         },
                         duration: const Duration(milliseconds: 110),
@@ -218,7 +235,15 @@ class _BookingState extends State<Booking> {
                             return;
                           }
 
-                          Navigator.push(context, MaterialPageRoute(builder: (context) =>   UserSearch(pRoleCode: "Agent", pUserCode: fDealerCode, pFnCallBack: fnSearchCallBack,)));
+                          if(countList.isNotEmpty){
+                            PageDialog().cDialog(context, "WARNING!!", "Do you want to change?\nSelected numbers will Lost.", (){
+                              Navigator.pop(context);
+                              Navigator.push(context, MaterialPageRoute(builder: (context) =>   UserSearch(pRoleCode: "Agent", pUserCode: fDealerCode, pFnCallBack: fnSearchCallBack,)));
+                            });
+                          }else{
+                            Navigator.push(context, MaterialPageRoute(builder: (context) =>   UserSearch(pRoleCode: "Agent", pUserCode: fDealerCode, pFnCallBack: fnSearchCallBack,)));
+                          }
+
 
                         },
                         duration: const Duration(milliseconds: 110),
@@ -535,7 +560,7 @@ class _BookingState extends State<Booking> {
             ),
             gapHC(5),
 
-            
+
             Expanded(
               child: Container(
                 margin: const EdgeInsets.symmetric(horizontal: 10),
@@ -580,14 +605,14 @@ class _BookingState extends State<Booking> {
                     height: 5,
                   ),
                   Container(
-                    height: 15,
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: Marquee(text: "BOOKING CLOSE @ $fEndTime",blankSpace: 30.0,style: TextStyle(color: Colors.black,fontSize: 12),),
-                        ),
-                      ],
-                    )
+                      height: 15,
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: Marquee(text: "BOOKING CLOSE @ $fEndTime",blankSpace: 30.0,style: TextStyle(color: Colors.black,fontSize: 12),),
+                          ),
+                        ],
+                      )
                   )
                 ],
               ),
@@ -707,7 +732,10 @@ class _BookingState extends State<Booking> {
           ],
         ),
       ),
-    );
+    ),
+        onWillPop: () async{
+          return fnBack();
+        });
   }
 
   //=======================================WIDGET
@@ -802,8 +830,6 @@ class _BookingState extends State<Booking> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  text == "SUPER"?const Icon(Icons.star_border,color: Colors.white,size: 15,):gapHC(0),
-                  text == "SUPER"?gapWC(5):gapHC(0),
                   tc(text.toString(), Colors.white, 15)
                 ],
               )
@@ -1041,15 +1067,20 @@ class _BookingState extends State<Booking> {
           if(fStockistCode != usercd){
             fDealerCode = "";
             fAgentCode = "";
+            countList = [];
           }
           fStockistCode = usercd;
         }else if(rolecode == "Dealer"){
           if(fDealerCode != usercd){
             fAgentCode = "";
+            countList = [];
           }
           fDealerCode = usercd;
 
         }else if(rolecode == "Agent"){
+          if(fAgentCode != usercd){
+            countList = [];
+          }
           fAgentCode = usercd;
 
         }
@@ -1894,17 +1925,26 @@ class _BookingState extends State<Booking> {
   }
 
   fnCheckNumberInList(number,plan){
-    if(countList.where((element) => element["NUMBER"].toString() == number.toString() && element["PLAN"].toString() == plan.toString()).isEmpty){
-      return true;
-    }else{
-      return false;
-    }
+    return true;
+    // if(countList.where((element) => element["NUMBER"].toString() == number.toString() && element["PLAN"].toString() == plan.toString()).isEmpty){
+    //   return true;
+    // }else{
+    //   return false;
+    // }
   }
   fnCancel(){
-    Get.back();
+    fnBack();
   }
   fnGameTime(){
      
+  }
+
+  fnClear(){
+    if(mounted){
+      setState(() {
+
+      });
+    }
   }
 
   //=======================================API CALL
@@ -2111,6 +2151,15 @@ class _BookingState extends State<Booking> {
 
       }
     }
+  }
+
+
+  fnBack(){
+    PageDialog().cDialog(context, "Close", "Do you want to close?", fnEnd);
+  }
+  fnEnd(){
+    Navigator.pop(context);
+    Navigator.pop(context);
   }
 
 

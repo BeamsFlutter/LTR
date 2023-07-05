@@ -106,10 +106,10 @@ class _HomePageState extends State<HomePage> {
                   children: [
                     GestureDetector(
                       onTap: (){
-                        //Navigator.pop(context);
+                        _scaffoldKey.currentState!.openEndDrawer();
                       },
                       onLongPress: (){
-                        _scaffoldKey.currentState!.openEndDrawer();
+
                       },
                       child: const Icon(Icons.menu,color: Colors.white,size: 30,),
                     ),
@@ -148,7 +148,7 @@ class _HomePageState extends State<HomePage> {
         duration: const Duration(milliseconds: 110),
         child: Container(
           decoration: boxBaseDecoration(color, 10),
-          padding: const EdgeInsets.all(5),
+          padding: const EdgeInsets.all(8),
           margin: const EdgeInsets.only(bottom: 5),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -156,7 +156,7 @@ class _HomePageState extends State<HomePage> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  tc(text, Colors.white, 15),
+                  tc(text, Colors.white, 17),
                   const Icon(Icons.navigate_next_sharp,color: Colors.white,size: 30,)
                 ],
               ),
