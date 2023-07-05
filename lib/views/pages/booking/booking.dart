@@ -1085,9 +1085,9 @@ class _BookingState extends State<Booking> {
 
         }
       });
-      if(rolecode == "Agent"){
-        apiGetDetails();
-      }
+      // if(rolecode == "Agent"){
+      //   apiGetDetails();
+      // }
     }
   }
   fnButtonPres(plan){
@@ -1979,6 +1979,7 @@ class _BookingState extends State<Booking> {
               }
               g.wstrCurrTime = currTime;
             });
+            apiGetDetails();
             fnGetPageData();
           }else{
             Navigator.pop(context);
@@ -2123,7 +2124,7 @@ class _BookingState extends State<Booking> {
   }
 
   apiGetDetails(){
-    futureForm  = apiCall.apiGetUserDetails(g.wstrCompany, fAgentCode, "PRICE");
+    futureForm  = apiCall.apiGetGlobalDetails(g.wstrCompany,"PRICE");
     futureForm.then((value) => apiGetDetailsRes(value));
   }
   apiGetDetailsRes(value){
