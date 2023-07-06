@@ -42,6 +42,10 @@ class _UserCreationState extends State<UserCreation> {
   var txtConfirmPwd = TextEditingController();
   var txtWeeklyCredit = TextEditingController();
   var txtDailyCredit = TextEditingController();
+  var txtSharePerc = TextEditingController();
+
+  var blDefaultAgent  = false;
+  var blCanViewComm  = false;
 
   @override
   void initState() {
@@ -146,7 +150,94 @@ class _UserCreationState extends State<UserCreation> {
                         textFormFieldType: TextFormFieldType.dailyCreditLimit,
 
                       ),
-                      gapHC(10,),
+                      wstrRole != "Agent"?
+                      Column(
+                        children: [
+                          gapHC(10,),
+                          Container(
+                            padding: const EdgeInsets.all(5),
+                            decoration: boxBaseDecoration(greyLight,0),
+                            child: Row(
+                              children: [
+                                tcn('Share Perc%', Colors.black, 12)
+                              ],
+                            ),
+                          ),
+                          gapHC(10,),
+                          CustomTextField(
+                            keybordType: TextInputType.number,
+                            controller: txtSharePerc,
+                            hintText: "Share %",
+                            maxCount: 3,
+                            textFormFieldType: TextFormFieldType.dailyCreditLimit,
+
+                          ),
+                          gapHC(10,),
+                        ],
+                      ): gapHC(10,),
+                      wstrRole == "Agent"?
+                      Column(
+                        children: [
+                          gapHC(10,),
+                          Container(
+                            padding: const EdgeInsets.all(5),
+                            decoration: boxBaseDecoration(greyLight,0),
+                            child: Row(
+                              children: [
+                                tcn('Permission', Colors.black, 12)
+                              ],
+                            ),
+                          ),
+                          gapHC(10,),
+                          Row(
+                            children: [
+                              tcn('Default Agent', Colors.black, 15),
+                              Transform.scale(
+                                  scale: 1.3,
+                                  child: Switch(
+                                    onChanged: (val){
+                                      if(mounted){
+                                        setState(() {
+                                          blDefaultAgent = !blDefaultAgent;
+                                        });
+                                      }
+                                    },
+                                    value: blDefaultAgent,
+                                    activeColor: g.wstrGameColor,
+                                    activeTrackColor: g.wstrGameColor.withOpacity(0.5),
+                                    inactiveThumbColor: Colors.grey.withOpacity(0.9),
+                                    inactiveTrackColor:Colors.grey.withOpacity(0.5),
+                                  )
+                              ),
+                            ],
+                          ),
+                          gapHC(5,),
+                          Row(
+                            children: [
+                              tcn('Can View Commission', Colors.black, 15),
+                              Transform.scale(
+                                  scale: 1.3,
+                                  child: Switch(
+                                    onChanged: (val){
+                                      if(mounted){
+                                        setState(() {
+                                          blCanViewComm = !blCanViewComm;
+                                        });
+                                      }
+                                    },
+                                    value: blCanViewComm,
+                                    activeColor: g.wstrGameColor,
+                                    activeTrackColor: g.wstrGameColor.withOpacity(0.5),
+                                    inactiveThumbColor: Colors.grey.withOpacity(0.9),
+                                    inactiveTrackColor:Colors.grey.withOpacity(0.5),
+                                  )
+                              ),
+                            ],
+                          ),
+                          gapHC(10,),
+                        ],
+                      ): gapHC(10,),
+
                       Container(
                         padding: const EdgeInsets.all(5),
                         decoration: boxBaseDecoration(greyLight,0),

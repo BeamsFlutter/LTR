@@ -81,7 +81,7 @@ class _UserListState extends State<UserList> {
                 (wstrRole == "Dealer" || wstrRole == "Agent") && g.wstrUserRole.toString().toUpperCase() == "ADMIN"?
                 Expanded(child: Bounce(
                   onPressed: (){
-                    Navigator.push(context, MaterialPageRoute(builder: (context) =>   UserSearch(pRoleCode: "Stockist", pUserCode: g.wstrUserCd.toString(), pFnCallBack: fnSearchCallBack,)));
+                    Navigator.push(context, MaterialPageRoute(builder: (context) =>   UserSearch(pRoleCode: "Stockist", pUserCode: g.wstrUserCd.toString(), pFnCallBack: fnSearchCallBack,pBlockMode: "ALL",)));
                   },
                   duration: const Duration(milliseconds: 110),
                   child: Container(
@@ -111,7 +111,7 @@ class _UserListState extends State<UserList> {
                       return;
                     }
 
-                    Navigator.push(context, MaterialPageRoute(builder: (context) =>   UserSearch(pRoleCode: "Dealer", pUserCode: fStockistCode, pFnCallBack: fnSearchCallBack,)));
+                    Navigator.push(context, MaterialPageRoute(builder: (context) =>   UserSearch(pRoleCode: "Dealer", pUserCode: fStockistCode, pFnCallBack: fnSearchCallBack,pBlockMode: "ALL",)));
 
                   },
                   duration: const Duration(milliseconds: 110),
@@ -204,7 +204,7 @@ class _UserListState extends State<UserList> {
     for(var e in frUserList){
       rtnList.add(Bounce(
         onPressed: (){
-          Navigator.push(context, MaterialPageRoute(builder: (context) =>  UserDetails(pUserCode: (e["USERCD"]??"").toString(), pUserRole:wstrRole,pStockistCode: fStockistCode, pDealerCode: fDealerCode, fnCallBack: fnSaveCallBack,) ));
+          Navigator.push(context, MaterialPageRoute(builder: (context) =>  UserDetails(pUserCode: (e["USERCD"]??"").toString(), pUserRole:wstrRole,pStockistCode: fStockistCode, pDealerCode: fDealerCode, fnCallBack: fnSaveCallBack,pBlockYn: (e["BLOCKED_YN"]??"").toString(),) ));
         },
         duration: const Duration(milliseconds: 110),
         child: Container(
@@ -224,7 +224,10 @@ class _UserListState extends State<UserList> {
                 children: [
                   tcn((e["USERCD"]??"").toString().toUpperCase(), Colors.black , 15)
                 ],
-              ))
+              )),
+              (e["BLOCKED_YN"]??"") == "Y"?
+              const Icon(Icons.block,color: Colors.red,size: 18,):
+              gapWC(0)
             ],
           ),
         ),
@@ -290,7 +293,7 @@ class _UserListState extends State<UserList> {
     }else if(wstrRole == "Agent"){
       user = fDealerCode;
     }
-    futureForm = apiCall.apiGetChildUser(g.wstrCompany, user,wstrRole,txtSearch.text);
+    futureForm = apiCall.apiGetChildUser(g.wstrCompany, user,wstrRole,txtSearch.text,"ALL");
     futureForm.then((value) => apiGetUserListRes(value));
   }
 

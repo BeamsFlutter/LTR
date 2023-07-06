@@ -17,7 +17,8 @@ class UserSearch extends StatefulWidget {
   final String pUserCode;
   final String? pAllYn;
   final Function pFnCallBack;
-  const UserSearch({Key? key, required this.pRoleCode, required this.pUserCode, required this.pFnCallBack, this.pAllYn}) : super(key: key);
+  final String? pBlockMode;
+  const UserSearch({Key? key, required this.pRoleCode, required this.pUserCode, required this.pFnCallBack, this.pAllYn, this.pBlockMode}) : super(key: key);
 
   @override
   _UserSearchState createState() => _UserSearchState();
@@ -190,7 +191,8 @@ class _UserSearchState extends State<UserSearch> {
     // if(wstrRole == "Stockist"){
     //   user = g.wstrUserCd;
     // }
-    futureForm = apiCall.apiGetChildUser(g.wstrCompany, user,wstrRole,txtSearch.text);
+    var srmode  = (widget.pBlockMode??"").toString().isEmpty?null:widget.pBlockMode;
+    futureForm = apiCall.apiGetChildUser(g.wstrCompany, user,wstrRole,txtSearch.text,srmode);
     futureForm.then((value) => apiGetUserListRes(value));
   }
 

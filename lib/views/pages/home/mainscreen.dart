@@ -20,6 +20,8 @@ import 'package:ltr/views/pages/number/numbercount.dart';
 import 'package:ltr/views/pages/report/report.dart';
 import 'package:ltr/views/pages/settings/settings.dart';
 import 'package:ltr/views/pages/theme/home_theme.dart';
+import 'package:ltr/views/pages/user/currentuserprize.dart';
+import 'package:ltr/views/pages/user/currentusersalesrate.dart';
 import 'package:ltr/views/pages/user/userlist.dart';
 import 'package:ltr/views/pages/user/usersearch.dart';
 import 'package:ltr/views/styles/colors.dart';
@@ -158,11 +160,10 @@ class _MainPageState extends State<MainPage> {
                       ),
                       gapHC(5),
                       wMenuCard('Booking',2),
+                      wMenuCard('Booking Extended',99),
                       wMenuCard('Bill Edit/Delete',13),
                       wMenuCard('Result View',3),
-                      g.wstrUserRole == "ADMIN"?
-                      wMenuCard('Result Publish',12):gapHC(0),
-
+                      wMenuCard('All Reports',9),
                       g.wstrUserRole != "AGENT"?
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -193,19 +194,29 @@ class _MainPageState extends State<MainPage> {
                               wMenuCard('Game Count',10),
                               wMenuCard('Number Count',5),
                               wMenuCard('Favorite Numbers',6),
+                              wMenuCard('Result Publish',12)
                             ],
                           ):gapHC(0),
                         ],
                       ):gapHC(5),
-                      tc('Reports', Colors.black , 14),
+                      // tc('Reports', Colors.black , 14),
+                      // gapHC(5),
+                      // const Divider(
+                      //   thickness: 0.5,
+                      //   height: 15,
+                      // ),
+                      // gapHC(5),
+                      // wMenuCard('All Reports',9),
+                      // // wMenuCard('Count View',7),
+                      tc('Details', Colors.black , 14),
                       gapHC(5),
                       const Divider(
                         thickness: 0.5,
                         height: 15,
                       ),
                       gapHC(5),
-                      wMenuCard('All Reports',9),
-                      // wMenuCard('Count View',7),
+                      wMenuCard('Sales Rate',16),
+                      wMenuCard('Prize and DC',17),
                       tc('Settings', Colors.black , 14),
                       gapHC(5),
                       const Divider(
@@ -631,7 +642,15 @@ class _MainPageState extends State<MainPage> {
         }else if(nav == 13){
           Navigator.push(context, MaterialPageRoute(builder: (context) =>   const BookingView()));
 
-        }   else{
+        }else if(nav == 16){
+          Navigator.push(context, MaterialPageRoute(builder: (context) =>   const CurrentUserSalesRate(pUserCode: "")));
+
+        }
+        else if(nav == 17){
+          Navigator.push(context, MaterialPageRoute(builder: (context) =>   const CurrentUserPrize(pUserCode: "")));
+
+        }
+        else{
           Navigator.push(context, MaterialPageRoute(builder: (context) =>   UserList(pRoleCode: text,)));
 
         }

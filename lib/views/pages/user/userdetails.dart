@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bounce/flutter_bounce.dart';
 import 'package:ltr/controller/global/globalValues.dart';
 import 'package:ltr/services/apiController.dart';
+import 'package:ltr/views/components/alertDialog/alertDialog.dart';
 import 'package:ltr/views/components/common/common.dart';
 import 'package:ltr/views/pages/user/usercreation.dart';
 import 'package:ltr/views/pages/user/usergamecount.dart';
@@ -16,8 +17,9 @@ class UserDetails extends StatefulWidget {
   final String pUserRole;
   final String pStockistCode;
   final String pDealerCode;
+  final String pBlockYn;
   final Function fnCallBack;
-  const UserDetails({Key? key, required this.pUserCode, required this.pUserRole, required this.pStockistCode, required this.pDealerCode, required this.fnCallBack}) : super(key: key);
+  const UserDetails({Key? key, required this.pUserCode, required this.pUserRole, required this.pStockistCode, required this.pDealerCode, required this.fnCallBack, required this.pBlockYn}) : super(key: key);
 
   @override
   _UserDetailsState createState() => _UserDetailsState();
@@ -90,9 +92,38 @@ class _UserDetailsState extends State<UserDetails> {
                       gapHC(3),
                       wUserMenu('NUMBER COUNT',Icons.numbers,"N"),
                       gapHC(10),
+                      widget.pBlockYn == "Y"?
                       Bounce(
                         onPressed: (){
-                          apiBlockUnblock();
+                          PageDialog().cDialog(context, "UNBLOCK", "Do you want to unblock?", (){
+                            apiBlockUnblock("UNBLOCK");
+                          });
+
+                        },
+                        duration: const Duration(milliseconds: 110),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(vertical: 5,horizontal: 10),
+                          decoration: boxBaseDecoration(Colors.blue.withOpacity(0.1), 10),
+                          child: Column(
+                            children: [
+                              Row(),
+                              Container(
+                                padding: const EdgeInsets.all(5),
+                                decoration: boxBaseDecoration(Colors.blue.withOpacity(0.1), 30),
+                                child: const Icon(Icons.block,color: Colors.blue,),
+                              ),
+                              gapHC(5),
+
+                              tcn('UN BLOCK', Colors.blue, 15)
+                            ],
+                          ),
+                        ),
+                      ):
+                      Bounce(
+                        onPressed: (){
+                          PageDialog().cDialog(context, "BLOCK", "Do you want to block?", (){
+                            apiBlockUnblock("BLOCK");
+                          });
                         },
                         duration: const Duration(milliseconds: 110),
                         child: Container(
@@ -107,6 +138,7 @@ class _UserDetailsState extends State<UserDetails> {
                                 child: const Icon(Icons.block,color: Colors.red,),
                               ),
                               gapHC(5),
+
                               tcn('BLOCK', Colors.red, 15)
                             ],
                           ),
@@ -177,8 +209,9 @@ class _UserDetailsState extends State<UserDetails> {
   //========================================API CALL
 
 
-  apiBlockUnblock(){
-    futureForm =  apiCall.apiBlockUnblock(g.wstrCompany, frSelectedUser, "BLOCK");
+  apiBlockUnblock(mode){
+    Navigator.pop(context);
+    futureForm =  apiCall.apiBlockUnblock(g.wstrCompany, frSelectedUser,mode);
     futureForm.then((value) => apiBlockUnblockRes(value));
   }
   apiBlockUnblockRes(value){
@@ -188,9 +221,9 @@ class _UserDetailsState extends State<UserDetails> {
         var sts = (value[0]["STATUS"]??"").toString();
         var msg = (value[0]["MSG"]??"").toString();
         if(sts == "1"){
-          Navigator.pop(context);
-          successMsg(context, "Blocked");
-          widget.fnCallBack();
+           Navigator.pop(context);
+           successMsg(context, "Blocked");
+           widget.fnCallBack();
 
         }else{
           errorMsg(context, msg.toString());

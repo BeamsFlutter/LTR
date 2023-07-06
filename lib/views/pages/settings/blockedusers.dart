@@ -202,7 +202,7 @@ class _BlockedUsersState extends State<BlockedUsers> {
     for(var e in frUserList){
       rtnList.add(Bounce(
         onPressed: (){
-          Navigator.push(context, MaterialPageRoute(builder: (context) =>  UserDetails(pUserCode: (e["USERCD"]??"").toString(), pUserRole:wstrRole,pStockistCode: fStockistCode, pDealerCode: fDealerCode, fnCallBack: fnSaveCallBack,) ));
+          Navigator.push(context, MaterialPageRoute(builder: (context) =>  UserDetails(pUserCode: (e["USERCD"]??"").toString(), pUserRole:wstrRole,pStockistCode: fStockistCode, pDealerCode: fDealerCode, fnCallBack: fnSaveCallBack, pBlockYn: '',) ));
         },
         duration: const Duration(milliseconds: 110),
         child: Container(
@@ -288,7 +288,7 @@ class _BlockedUsersState extends State<BlockedUsers> {
     }else if(wstrRole == "Agent"){
       user = fDealerCode;
     }
-    futureForm = apiCall.apiGetChildUser(g.wstrCompany, user,wstrRole,txtSearch.text);
+    futureForm = apiCall.apiGetChildUser(g.wstrCompany, user,wstrRole,txtSearch.text,null);
     futureForm.then((value) => apiGetUserListRes(value));
   }
 

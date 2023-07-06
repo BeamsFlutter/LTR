@@ -135,7 +135,9 @@ class _GameTimeSettingsState extends State<GameTimeSettings> {
                              tcn('From Time', grey, 15),
                            ],
                          ),
-                         tcn(lstrTimeFrom.toString(), Colors.black, 15)
+                         lstrTimeFrom.isNotEmpty?
+                         tcn(frTimeFrom.format(context).toString(), Colors.black, 15):
+                             gapWC(0)
                        ],
                      ),
                    ),
@@ -161,7 +163,8 @@ class _GameTimeSettingsState extends State<GameTimeSettings> {
                              tcn('To Time', grey, 15),
                            ],
                          ),
-                         tcn(lstrTimeTo.toString(), Colors.black, 15)
+                         lstrTimeTo.isNotEmpty?
+                         tcn(frTimeTo.format(context).toString(), Colors.black, 15):gapHC(0)
                        ],
                      ),
                    ),
@@ -221,18 +224,18 @@ class _GameTimeSettingsState extends State<GameTimeSettings> {
     final TimeOfDay? newTime = await showTimePicker(
       context: context,
       initialTime: frTimeFrom,
-      builder: (BuildContext context, Widget? child) {
-        return MediaQuery(
-          data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
-          child: child!,
-        );
-      },
+      // builder: (BuildContext context, Widget? child) {
+      //   return MediaQuery(
+      //     data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
+      //     child: child!,
+      //   );
+      // },
 
     );
     if (newTime != null) {
       setState(() {
         frTimeFrom = newTime;
-        lstrTimeFrom = "${frTimeFrom.hour}:${frTimeTo.minute}:00";
+        lstrTimeFrom = "${frTimeFrom.hour}:${frTimeFrom.minute}:00";
       });
     }
   }
@@ -240,12 +243,12 @@ class _GameTimeSettingsState extends State<GameTimeSettings> {
     final TimeOfDay? newTime = await showTimePicker(
       context: context,
       initialTime: frTimeTo,
-      builder: (BuildContext context, Widget? child) {
-        return MediaQuery(
-          data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
-          child: child!,
-        );
-      },
+      // builder: (BuildContext context, Widget? child) {
+      //   return MediaQuery(
+      //     data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
+      //     child: child!,
+      //   );
+      // },
     );
     if (newTime != null) {
       setState(() {
@@ -299,8 +302,15 @@ class _GameTimeSettingsState extends State<GameTimeSettings> {
       });
       if(g.fnValCheck(value)){
         setState(() {
+         
           lstrTimeFrom = g.mfnTxt(value["START_TIME"]);
+          if(lstrTimeFrom.contains(":")){
+            frTimeFrom = TimeOfDay(hour:int.parse(lstrTimeFrom.split(":")[0]),minute: int.parse(lstrTimeFrom.split(":")[1]));
+          }
           lstrTimeTo = g.mfnTxt(value["END_TIME"]);
+          if(lstrTimeTo.contains(":")){
+            frTimeTo = TimeOfDay(hour:int.parse(lstrTimeTo.split(":")[0]),minute: int.parse(lstrTimeTo.split(":")[1]));
+          }
           lstrEditMinutes = g.mfnTxt(value["EDIT_MINUT"]);
           txtEditMinutes.text = lstrEditMinutes;
         });

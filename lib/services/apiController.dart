@@ -208,13 +208,14 @@ class ApiCall  with BaseController{
     return response;
 
   }
-  Future<dynamic> apiGetChildUser(company,user,roleCode,search) async {
+  Future<dynamic> apiGetChildUser(company,user,roleCode,search,mode) async {
 
     var request = jsonEncode(<dynamic, dynamic>{
         "COMPANY":company,
         "USERCD":user,
         "ROLE_CODE":roleCode,
         "SEARCH":search,
+        "MODE":mode,
     });
     dprint('api/getChildUser');
     dprint(request);

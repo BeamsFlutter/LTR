@@ -297,14 +297,14 @@ class _NumberCountState extends State<NumberCount> {
         rtnList.add(Container(
           margin:const  EdgeInsets.only(bottom: 5),
           padding: const EdgeInsets.all(5),
-          decoration: boxBaseDecoration(bgColorDark.withOpacity(0.1), 5),
+          decoration: boxBaseDecoration(g.wstrGameColor.withOpacity(0.1), 5),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Row(
                 children: [
                   Container(
-                    decoration: boxGradientDecorationBase(20, 5),
+                    decoration: boxDecoration(g.wstrGameColor, 5),
                     padding: const EdgeInsets.symmetric(vertical: 5,horizontal: 20),
                     child: Column(
                       children: [

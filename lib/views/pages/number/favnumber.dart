@@ -277,14 +277,14 @@ class _FavNumberState extends State<FavNumber> {
         rtnList.add(Container(
           margin:const  EdgeInsets.only(bottom: 5),
           padding: const EdgeInsets.all(5),
-          decoration: boxBaseDecoration(bgColorDark.withOpacity(0.1), 5),
+          decoration: boxBaseDecoration(g.wstrGameBColor.withOpacity(0.1), 5),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Row(
                 children: [
                   Container(
-                    decoration: boxBaseDecoration(g.wstrGameBColor, 10),
+                    decoration: boxBaseDecoration(g.wstrGameBColor, 5),
                     padding: const EdgeInsets.symmetric(vertical: 5,horizontal: 20),
                     child: Column(
                       children: [
