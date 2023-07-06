@@ -160,10 +160,10 @@ class _MainPageState extends State<MainPage> {
                       ),
                       gapHC(5),
                       wMenuCard('Booking',2),
-                      wMenuCard('Booking Extended',99),
+                      wMenuCard('Booking Extended',2),
                       wMenuCard('Bill Edit/Delete',13),
                       wMenuCard('Result View',3),
-                      wMenuCard('All Reports',9),
+                      wMenuCard('Reports',9),
                       g.wstrUserRole != "AGENT"?
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,

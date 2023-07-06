@@ -78,7 +78,7 @@ class _ReportsState extends State<Reports> {
         onPressed: (){
           Navigator.push(context, MaterialPageRoute(builder: (context) =>    ReportDetails(reportName: e["NAME"], reportCode: e["CODE"].toString(),)));
         },
-        duration: Duration(milliseconds: 110),
+        duration: const Duration(milliseconds: 110),
         child: Container(
           margin: const EdgeInsets.only(bottom: 5),
           decoration: boxDecoration(Colors.white, 10),
@@ -110,32 +110,32 @@ class _ReportsState extends State<Reports> {
       setState(() {
         reportList = [
           {
-            "CODE":001,
+            "CODE":1,
             "NAME":"SALES REPORT",
             "ICON":Icons.bar_chart_rounded
           },
           {
-            "CODE":002,
+            "CODE":2,
             "NAME":"WINNING REPORT",
             "ICON":Icons.card_giftcard
           },
           {
-            "CODE":003,
+            "CODE":3,
             "NAME":"COUNT REPORT",
             "ICON":Icons.numbers
           },
           {
-            "CODE":004,
+            "CODE":4,
             "NAME":"DAILY REPORT",
             "ICON":Icons.calendar_month
           },
           {
-            "CODE":005,
+            "CODE":5,
             "NAME":"PAYMENT REPORT",
             "ICON":Icons.price_change_outlined
           },
           {
-            "CODE":006,
+            "CODE":6,
             "NAME":"BALANCE REPORT",
             "ICON":Icons.calculate
           },

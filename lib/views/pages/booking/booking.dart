@@ -7,6 +7,7 @@ import 'package:ltr/controller/global/globalValues.dart';
 import 'package:ltr/services/apiController.dart';
 import 'package:ltr/views/components/alertDialog/alertDialog.dart';
 import 'package:ltr/views/components/common/common.dart';
+import 'package:ltr/views/components/enum.dart';
 import 'package:ltr/views/components/inputfield/commonTextField.dart';
 import 'package:ltr/views/pages/user/usersearch.dart';
 import 'package:ltr/views/styles/colors.dart';
@@ -75,6 +76,7 @@ class _BookingState extends State<Booking> {
   var txtCount = TextEditingController();
   var txtBoxCount = TextEditingController();
   var txtName = TextEditingController();
+  var txtChangeQty = TextEditingController();
 
   var fnNum = FocusNode();
   var fnNumTo = FocusNode();
@@ -883,6 +885,7 @@ class _BookingState extends State<Booking> {
     List<TableRow> rtnList = [];
     rtnList.add(
       TableRow(
+
           decoration: boxBaseDecorationC(grey,10,10,0,0),
           children: [
             TableCell(
@@ -967,9 +970,67 @@ class _BookingState extends State<Booking> {
                 )
             ),
             TableCell(
-                child: Container(
-                  padding: const EdgeInsets.all(5),
-                  child: tc(e["COUNT"].toString(), color, 15),
+                child: GestureDetector(
+                  onTap: (){
+                    txtChangeQty.clear();
+                    txtChangeQty.text = e["COUNT"].toString();
+                   PageDialog().showCaptcha(context,
+
+                       Container(
+                         child: Column(
+                           children: [
+                             Row(),
+                             CustomTextField(
+                               keybordType: TextInputType.number,
+                               controller: txtChangeQty,
+                               hintText: "Count",
+                               textFormFieldType: TextFormFieldType.gift,
+                             ),
+                             gapHC(15),
+                             Row(
+                               mainAxisAlignment: MainAxisAlignment.end,
+                               children: [
+                                 GestureDetector(
+                                   onTap: (){
+                                     Navigator.pop(context);
+                                   },
+                                   child: Container(
+                                     padding: const EdgeInsets.symmetric(vertical: 7,horizontal: 10),
+                                     decoration: boxBaseDecoration(greyLight, 30),
+                                     child: tcn('Cancel', Colors.black, 15),
+                                   ),
+                                 ),
+                                 gapWC(5),
+                                 GestureDetector(
+                                   onTap: (){
+                                     if(mounted){
+                                       Navigator.pop(context);
+                                       setState(() {
+                                         if(txtChangeQty.text.isNotEmpty){
+                                           e["COUNT"] = txtChangeQty.text;
+                                         }
+                                       });
+                                       fnCalc();
+                                     }
+                                   },
+                                   child: Container(
+                                     padding: const EdgeInsets.symmetric(vertical: 7,horizontal: 35),
+                                     decoration: boxBaseDecoration(Colors.blueGrey, 30),
+                                     child: tcn('OK', Colors.white, 15),
+                                   ),
+                                 )
+
+                               ],
+                             )
+
+                           ],
+                         ),
+                       ), "Update");
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.all(5),
+                    child: tc(e["COUNT"].toString(), color, 15),
+                  ),
                 )
             ),
             // TableCell(
@@ -1824,11 +1885,11 @@ class _BookingState extends State<Booking> {
       errorMsg(context, "Choose Numbers");
       return;
     }
-    if(txtName.text.isEmpty){
-      errorMsg(context, "Enter Name");
-      fnName.requestFocus();
-      return;
-    }
+    // if(txtName.text.isEmpty){
+    //   errorMsg(context, "Enter Name");
+    //   fnName.requestFocus();
+    //   return;
+    // }
 
     // Check time
     var det =[];

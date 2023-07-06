@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bounce/flutter_bounce.dart';
 import 'package:ltr/controller/global/globalValues.dart';
 import 'package:ltr/views/components/common/common.dart';
+import 'package:ltr/views/pages/report/salesReport.dart';
 import 'package:ltr/views/pages/report/winningreport.dart';
 import 'package:ltr/views/pages/user/usersearch.dart';
 import 'package:ltr/views/styles/colors.dart';
@@ -560,6 +561,9 @@ class _ReportsState extends State<ReportDetails> {
 
     if(widget.reportCode == "2"){
       Navigator.push(context, MaterialPageRoute(builder: (context) =>  WinningReport(pFilterData: filterData,)));
+    }else
+    if(widget.reportCode == "1"){
+      Navigator.push(context, MaterialPageRoute(builder: (context) =>  SalesReport(pFilterData: filterData,)));
     }
   }
 

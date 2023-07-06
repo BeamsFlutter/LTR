@@ -101,7 +101,6 @@ class _BookingViewState extends State<BookingView> {
                 ),
               ),
             )
-
           ],
         ),
       )
