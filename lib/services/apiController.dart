@@ -892,7 +892,7 @@ class ApiCall  with BaseController{
     return response;
   }
 
-  Future<dynamic> apiWinningReport(company,date,toDate,game,stockist,dealer,agent,type,number) async {
+  Future<dynamic> apiWinningReport(company,date,toDate,game,stockist,dealer,agent,type,number,mode) async {
     var request = jsonEncode(<dynamic, dynamic>{
       "COMPANY":company,
       "DATE_FROM": date,
@@ -904,11 +904,70 @@ class ApiCall  with BaseController{
       "TYPE":type,
       "NUMBER":number,
       "RANK":null,
-      "MODE":"RANK"//RAK or DET
+      "MODE":mode//RAK or DET
     });
     dprint('api/winningReport');
     dprint(request);
     var response = await ApiManager().post('api/winningReport',request).catchError((error){
+      if (error is BadRequestException) {
+        dprint(error.toString());
+      } else {
+        handleError(error);
+      }
+    });
+    dprint(response);
+    if (response == null) return;
+    return response;
+  }
+
+
+  Future<dynamic> apiSalesReport(company,date,toDate,game,admCode,stockist,dealer,agent,type,number,docno,childPrice) async {
+    var request = jsonEncode(<dynamic, dynamic>{
+      "COMPANY":company,
+      "DATE_FROM": date,
+      "DATE_TO": toDate,
+      "GAME_CODE": game,//null
+      "ADMIN_CODE":admCode,
+      "STOCKIST_CODE":stockist,
+      "DEALER_CODE":dealer,
+      "AGENT_CODE":agent,
+      "TYPE":type,
+      "NUMBER":number,
+      "RANK":null,
+      "BOOKING_DOCNO":docno,
+      "CHILD_PRICE":childPrice
+    });
+    dprint('api/salesReport');
+    dprint(request);
+    var response = await ApiManager().postLoading('api/salesReport',request,"S").catchError((error){
+      if (error is BadRequestException) {
+        dprint(error.toString());
+      } else {
+        handleError(error);
+      }
+    });
+    dprint(response);
+    if (response == null) return;
+    return response;
+  }
+
+
+  Future<dynamic> apiCountSummaryReport(company,date,toDate,game,admCode,stockist,dealer,agent,type,number) async {
+    var request = jsonEncode(<dynamic, dynamic>{
+      "COMPANY":company,
+      "DATE_FROM": date,
+      "DATE_TO": toDate,
+      "GAME_CODE": game,//null
+      "STOCKIST_CODE":stockist,
+      "DEALER_CODE":dealer,
+      "AGENT_CODE":agent,
+      "TYPE":type,
+      "NUMBER":number,
+      "RANK":null,
+    });
+    dprint('api/countSummaryReport');
+    dprint(request);
+    var response = await ApiManager().postLoading('api/countSummaryReport',request,"S").catchError((error){
       if (error is BadRequestException) {
         dprint(error.toString());
       } else {

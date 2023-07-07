@@ -1,27 +1,31 @@
 
 
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bounce/flutter_bounce.dart';
 import 'package:ltr/controller/global/globalValues.dart';
+import 'package:ltr/services/apiController.dart';
 import 'package:ltr/views/components/common/common.dart';
 import 'package:ltr/views/pages/report/salesReport.dart';
 import 'package:ltr/views/pages/report/winningreport.dart';
 import 'package:ltr/views/pages/user/usersearch.dart';
 import 'package:ltr/views/styles/colors.dart';
 
-class ReportDetails extends StatefulWidget {
+class CountReport extends StatefulWidget {
   final String reportName;
   final String reportCode;
-  const ReportDetails({Key? key, required this.reportName, required this.reportCode}) : super(key: key);
+  const CountReport({Key? key, required this.reportName, required this.reportCode}) : super(key: key);
 
   @override
-  State<ReportDetails> createState() => _ReportsState();
+  State<CountReport> createState() => _CountReportState();
 }
 
-class _ReportsState extends State<ReportDetails> {
+class _CountReportState extends State<CountReport> {
 
   //Global
   var g = Global();
+  var apiCall = ApiCall();
+  late Future<dynamic> futureForm;
 
   //Page Variable
   var reportList = [];
@@ -37,6 +41,8 @@ class _ReportsState extends State<ReportDetails> {
 
   var gCountNum = 0;
   var fSelectedGame = "";
+
+  var reportDate = [];
 
   //Controller
   var txtNum = TextEditingController();
@@ -219,122 +225,6 @@ class _ReportsState extends State<ReportDetails> {
                     ],
                   ),
                   gapHC(10),
-                  Row(
-                    children: [
-                      tcn('Full View', Colors.black, 15),
-                      Transform.scale(
-                          scale: 1.3,
-                          child: Switch(
-                            onChanged: (val){
-                              if(mounted){
-                                setState(() {
-                                  blFullView = !blFullView;
-                                });
-                              }
-                            },
-                            value: blFullView,
-                            activeColor: g.wstrGameColor,
-                            activeTrackColor: g.wstrGameColor.withOpacity(0.5),
-                            inactiveThumbColor: Colors.grey.withOpacity(0.9),
-                            inactiveTrackColor:Colors.grey.withOpacity(0.5),
-                          )
-                      ),
-                    ],
-                  ),
-                  gapHC(3),
-                  blFullView?
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 10),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Row(
-                          children: [
-                            wNumberCard(1),
-                            gapWC(5),
-                            wNumberCard(2),
-                            gapWC(5),
-                            wNumberCard(3),
-                            gapWC(5),
-                            wNumberCard(0),
-                          ],
-                        ),
-                        gapHC(10),
-                        Row(
-                          children: [
-                            gCountNum == 3?
-                            Expanded(
-                              child: Row(
-                                children: [
-                                  // wButton("BOTH",Colors.red),
-                                  wButton("ALL",Colors.pink),
-                                  gapWC(5),
-                                  wButton("BOX",Colors.pink),
-                                  gapWC(5),
-                                  wButton("SUPER",bgColorDark),
-                                ],
-                              ),
-                            ):
-                            gCountNum == 2?
-                            Expanded(
-                              child: Row(
-                                children: [
-                                  wButton("ALL",bgColorDark),
-                                  gapWC(5),
-                                  wButton("AB",Colors.green),
-                                  gapWC(5),
-                                  wButton("BC",Colors.green),
-                                  gapWC(5),
-                                  wButton("AC",Colors.green),
-                                ],
-                              ),
-                            ):
-                            gCountNum == 1?
-                            Expanded(
-                              child: Row(
-                                children: [
-                                  wButton("ALL",bgColorDark),
-                                  gapWC(5),
-                                  wButton("A",Colors.orange),
-                                  gapWC(5),
-                                  wButton("B",Colors.orange),
-                                  gapWC(5),
-                                  wButton("C",Colors.orange),
-
-
-                                ],
-                              ),
-                            ):gapHC(0),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ):gapHC(0),
-                  blFullView?
-                  gapHC(10):gapHC(0),
-                  blFullView?
-                  Container(
-                    height: 40,
-                    padding: const EdgeInsets.symmetric(horizontal: 15),
-                    decoration: boxBaseDecoration(greyLight, 5),
-                    child: TextFormField(
-                      controller: txtNum,
-                      focusNode: fnNum,
-                      maxLength: 3,
-                      inputFormatters: mfnInputFormatters(),
-                      keyboardType: TextInputType.number,
-                      decoration: const InputDecoration(
-                        hintText: 'Num',
-                        counterText: "",
-                        border: InputBorder.none,
-                      ),
-                      onChanged: (val){
-
-                      },
-                    ),
-                  ):gapHC(0),
-
-                  gapHC(3),
                   g.wstrUserRole != "AGENT"?
                   Row(
                     children: [
@@ -361,7 +251,7 @@ class _ReportsState extends State<ReportDetails> {
                   gapHC(5),
                   Bounce(
                     onPressed: (){
-                      fnShowReport();
+                      apiGetCountSummaryReport();
                     },
                     duration: const Duration(milliseconds: 110),
                     child: Container(
@@ -377,7 +267,25 @@ class _ReportsState extends State<ReportDetails> {
                         ],
                       ),
                     ),
-                  )
+                  ),
+                  gapHC(15),
+                  Container(
+                    decoration: boxBaseDecoration(Colors.grey.withOpacity(0.3), 3),
+                    padding: const EdgeInsets.symmetric(horizontal: 6,vertical: 5),
+                    child: Row(
+                      children: [
+                        wRowDet(2,'GAME'),
+                        wRowDet(2,'COUNT'),
+                        wRowDet(2,'RATE'),
+                        wRowDet(2,'CASH'),
+                      ],
+                    ),
+                  ),
+                  Column(
+                    children: wCountData(),
+                  ),
+                  Divider(),
+
 
 
                 ],
@@ -391,60 +299,43 @@ class _ReportsState extends State<ReportDetails> {
 
   //===============================WIDGET
 
-  Widget wNumberCard(num){
-    return  Bounce(
-      onPressed: (){
-        if(mounted){
-          setState(() {
-            gCountNum = num;
-            txtNum.clear();
-          });
-        }
-      },
-      duration: const Duration(milliseconds: 110),
-      child: Container(
-        height: 25,
-        width: 25,
-        alignment: Alignment.center,
-        decoration: gCountNum == num?boxBaseDecoration(g.wstrGameBColor, 5):boxOutlineCustom1(Colors.white, 5, g.wstrGameBColor, 1.0),
-        child:num == 0?Icon(Icons.star,color:  gCountNum == num?g.wstrGameOTColor:g.wstrGameBColor,size: 15,): tc( num.toString(), gCountNum == num?g.wstrGameOTColor:g.wstrGameBColor, 15),
-      ),
-    );
+  Widget wRowDet(flx,txt){
+    return  Flexible(
+        flex: flx,
+        child: Row(
+          children: [
+            tc(txt.toString(), Colors.black, 12)
+          ],
+        ));
   }
 
-  Widget wButton(text,color){
-    return Flexible(
-      child: Bounce(
-        onPressed: (){
-          //fnButtonPres(text);
-          //fnGenerateNumber(text);
-          if(mounted){
-            setState(() {
-              fSelectedGame =text;
-            });
-          }
-        },
-        duration: const Duration(milliseconds: 110),
-        child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 5),
-          decoration: fSelectedGame == text?boxBaseDecoration(g.wstrGameBColor, 5):boxOutlineCustom1(Colors.white, 5, g.wstrGameBColor, 1.0),
-          child: Column(
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  text == "ALL"?
-                  Icon(Icons.star_border,color:fSelectedGame == text? Colors.white :g.wstrGameTColor,size: 15,):
-                  tc(text.toString(),fSelectedGame == text? Colors.white :g.wstrGameTColor, 14)
-                ],
-              )
-            ],
-          ),
-        ),
-      ),
-    );
-  }
 
+  List<Widget> wCountData(){
+    List<Widget> rtnList  = [];
+
+    for(var e in reportDate){
+      var grandTotal = 0.0;
+      grandTotal  =  g.mfnDbl(e["TOTAL"].toString())+g.mfnDbl(e["COMM"].toString());
+
+
+
+      rtnList.add(
+          Container(
+            decoration: boxBaseDecoration(Colors.white.withOpacity(0.3), 3),
+            padding: const EdgeInsets.symmetric(horizontal: 6,vertical: 8),
+            child: Row(
+              children: [
+                wRowDet(2,(e["GAME_TYPE"]??"").toString()),
+                wRowDet(2,(e["QTY"]??"").toString()),
+                wRowDet(2,(e["TOT_AMT"]??"").toString()),
+                wRowDet(2,(grandTotal.toString()))
+              ]),
+          )
+      );
+    }
+
+    return rtnList;
+  }
 
   //===============================PAGE FN
 
@@ -489,10 +380,10 @@ class _ReportsState extends State<ReportDetails> {
 
   Future<void> _selectFromDate(BuildContext context) async {
     final DateTime? pickedDate = await showDatePicker(
-        context: context,
-        initialDate: fFromDate,
-        firstDate: DateTime(2020),
-        lastDate: DateTime.now(),
+      context: context,
+      initialDate: fFromDate,
+      firstDate: DateTime(2020),
+      lastDate: DateTime.now(),
       builder: (context, child) {
         return Theme(
           data: Theme.of(context).copyWith(
@@ -514,10 +405,10 @@ class _ReportsState extends State<ReportDetails> {
 
   Future<void> _selectToDate(BuildContext context) async {
     final DateTime? pickedDate = await showDatePicker(
-        context: context,
-        initialDate: fToDate,
-        firstDate: DateTime(2020),
-        lastDate: DateTime.now(),
+      context: context,
+      initialDate: fToDate,
+      firstDate: DateTime(2020),
+      lastDate: DateTime.now(),
       builder: (context, child) {
         return Theme(
           data: Theme.of(context).copyWith(
@@ -570,4 +461,32 @@ class _ReportsState extends State<ReportDetails> {
   }
 
 //===============================API CALL
+
+
+  apiGetCountSummaryReport(){
+
+
+    var stockist = fStockistCode.isEmpty || fStockistCode == "ALL"?null:fStockistCode;
+    var dealer = fDealerCode.isEmpty || fDealerCode == "ALL"?null:fDealerCode;
+    var agent = fAgentCode.isEmpty || fAgentCode == "ALL"?null:fAgentCode;
+    var type = fSelectedGame.isEmpty || fSelectedGame == "ALL"?null:fSelectedGame;
+    var number = txtNum.text.isEmpty ?null:txtNum.text;
+
+
+    futureForm =  ApiCall().apiCountSummaryReport(g.wstrCompany, setDate(2, fFromDate),setDate(2, fToDate), g.wstrSelectedGame, "",stockist, dealer, agent, type, number);
+    futureForm.then((value) => apiGetCountSummaryRes(value));
+  }
+  apiGetCountSummaryRes(value){
+    if(mounted){
+      setState(() {
+        reportDate = [];
+        if(g.fnValCheck(value)){
+          reportDate = value??[];
+        }else{
+          errorMsg(context, "No Result Found!!");
+        }
+      });
+    }
+  }
 }
+

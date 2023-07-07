@@ -1002,7 +1002,7 @@ class PageDialog{
         elevation: 0,
         backgroundColor: Colors.transparent,
         content: CircleAvatar(
-          backgroundColor: subColor,
+          backgroundColor: Colors.blueGrey,
           radius: 30,
           child: CupertinoActivityIndicator(
             color: Colors.white,

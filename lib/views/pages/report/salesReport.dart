@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:ltr/controller/global/globalValues.dart';
 import 'package:ltr/services/apiController.dart';
+import 'package:ltr/views/components/alertDialog/alertDialog.dart';
 import 'package:ltr/views/components/common/common.dart';
 
 class SalesReport extends StatefulWidget {
@@ -24,6 +25,8 @@ class _SalesReportState extends State<SalesReport> {
   var fGTotal = 0.0;
   var fTotal = 0.0;
   var fComm = 0.0;
+
+  var fPageMode = "";
 
   var reportDate = [];
 
@@ -116,93 +119,35 @@ class _SalesReportState extends State<SalesReport> {
                 ],
               ),
             ),
-            gapHC(10),
+            gapHC(5),
+            fPageMode != "SUM"?
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 6),
+              child: Row(
+                children: [
+                  wRowDet(2,'GAME'),
+                  wRowDet(2,'NUM'),
+                  wRowDet(2,'CNT'),
+                  wRowDet(2,'COM'),
+                  wRowDet(2,'AMT'),
+                  wRowDet(2,'TOTAL'),
+                ],
+              ),
+            ):gapHC(0),
+            fPageMode == "SUM"?
             Expanded(child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8),
               child: SingleChildScrollView(
                 child: Column(
-                  children: [
-                    Container(
-                      decoration: boxDecoration(Colors.white, 10),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Container(
-                            padding:const EdgeInsets.all(5),
-                            decoration: boxBaseDecorationC(Colors.blueGrey, 10,10,0,0),
-                            child: Row(
-                              children: [
-                                tc('Bill ID #12356', Colors.white, 15),
-                              ],
-                            ),
-                          ),
-                          gapHC(5),
-                          Padding(
-                            padding: const EdgeInsets.all(5),
-                            child: Row(
-                              children: [
-                                Expanded(
-                                  child: Column(children: [
-                                    wRow("Count","65"),
-                                    wRow("Stockist","HAKEEM"),
-                                    wRow("Dealer","HAKEEM"),
-                                    wRow("Agent","HAKEEM"),
-
-                                  ],),
-                                ),
-                                Expanded(child: Column(
-                                  children: [
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        tcn('Total', Colors.black, 13),
-                                        tc('1000', Colors.black, 15)
-                                      ],
-                                    ),
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        tcn('Comm', Colors.black, 13),
-                                        tc('500', Colors.black, 15)
-                                      ],
-                                    ),
-                                    Divider(
-                                      color: Colors.black,
-                                    ),
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        tc('Grand Total', Colors.black, 13),
-                                        tc('500.00', Colors.black, 15)
-                                      ],
-                                    ),
-                                  ],
-                                ))
-                              ],
-                            ),
-                          ) ,
-                          gapHC(10),
-                          Container(
-                            padding: const EdgeInsets.all(5),
-                            decoration: boxBaseDecorationC(Colors.grey.withOpacity(0.05), 0,0,10,10),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                    tcn('Customer', Colors.black, 12),
-                                Row(
-                                  children: [
-                                    const Icon(Icons.access_time_outlined,color: Colors.black,size: 12,),
-                                    gapWC(5),
-                                    tcn('12-06-2023 04:05 AM', Colors.black, 12)
-                                  ],
-                                )
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    )
-                  ],
+                  children: wSalesData(),
+                ),
+              ),
+            )):
+            Expanded(child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 0),
+              child: SingleChildScrollView(
+                child: Column(
+                  children: wSalesDataFull(),
                 ),
               ),
             ))
@@ -234,23 +179,391 @@ class _SalesReportState extends State<SalesReport> {
       ],
     );
   }
+  Widget wRowDet(flx,txt){
+    return  Flexible(
+        flex: flx,
+        child: Row(
+        children: [
+          tc(txt.toString(), Colors.black, 12)
+        ],
+    ));
+  }
+
+  Widget wRowDetWhite(flx,txt){
+    return  Flexible(
+        flex: flx,
+        child: Row(
+          children: [
+            tc(txt.toString(), Colors.white, 12)
+          ],
+        ));
+  }
+
+  List<Widget> wSalesData(){
+    List<Widget> rtnList  = [];
+
+    for(var e in reportDate){
+      var grandTotal = 0.0;
+      grandTotal  =  g.mfnDbl(e["TOTAL"].toString())+g.mfnDbl(e["COMM"].toString());
+
+      var det = [];
+
+      det = (e["DET"]??[]);
+      var actionDate = "";
+      try{
+        actionDate = setDate(7, DateTime.parse(e["DOCDATE"].toString()));
+      }catch(e){
+        actionDate = "";
+      }
+
+      rtnList.add(
+          GestureDetector(
+            onTap: (){
+              //PageDialog().showPhoneLookup(context, Container(), e["DOCNO"].toString());
+              bottomPopUpL(context,
+                  Container(
+                    decoration: boxBaseDecoration(Colors.white, 20),
+                    child: Column(
+                      children: [
+                        Container(
+                          padding:  EdgeInsets.all(10),
+                          decoration: boxBaseDecorationC(g.wstrGameColor, 20,20,0,0),
+                          child: Column(
+                            children: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  tc((e["DOCNO"]??"").toString(), Colors.white , 17),
+                                  GestureDetector(
+                                    onTap: (){
+                                      Navigator.pop(context);
+                                    },
+                                    child: const Icon(Icons.close,color: Colors.white,size: 20,),
+                                  )
+                                ],
+                              ),
+                              gapHC(5),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Expanded(
+                                    child: Row(
+                                      children: [
+                                        tcn('Count', Colors.white, 12),
+                                        gapWC(10),
+                                        tc((e["QTY"]??"").toString(), Colors.white, 14)
+                                      ],
+                                    ),
+                                  ),
+                                  Expanded(child: Row(
+                                    children: [
+                                      tcn('Grand Total', Colors.white, 12),
+                                      gapWC(10),
+                                      tc(grandTotal.toStringAsFixed(2), Colors.white, 14)
+                                    ],
+                                  ),)
+                                ],
+                              ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Expanded(
+                                    child: Row(
+                                      children: [
+                                        tcn('Total', Colors.white, 12),
+                                        gapWC(10),
+                                        tc((e["TOTAL"]??"").toString(), Colors.white, 14)
+                                      ],
+                                    ),
+                                  ),
+                                  Expanded(child: Row(
+                                    children: [
+                                      tcn('Commission', Colors.white, 12),
+                                      gapWC(10),
+                                      tc((e["COMM"]??"").toString(), Colors.white, 14)
+                                    ],
+                                  ),)
+                                ],
+                              )
+
+                            ],
+                          ),
+                        ),
+                        Container(
+                          padding: EdgeInsets.symmetric(vertical: 10),
+                          decoration: boxBaseDecorationC(Colors.blueGrey, 0,0,0,0),
+                          child: Row(
+                            children: [
+                              wRowDetWhite(2,'GAME'),
+                              wRowDetWhite(2,'NUM'),
+                              wRowDetWhite(2,'CNT'),
+                              wRowDetWhite(2,'COM'),
+                              wRowDetWhite(2,'AMT'),
+                              wRowDetWhite(2,'TOTAL'),
+                            ],
+                          ),
+                        ),
+                        gapHC(5),
+                        Expanded(child: SingleChildScrollView(
+                          child: Column(
+                            children: wDetList(det),
+                          ),
+                        ))
+                      ],
+                    ),
+                  )
+              );
+            },
+            child: Container(
+              margin: EdgeInsets.symmetric(vertical: 5),
+              decoration: boxDecoration(Colors.white, 10),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    padding:const EdgeInsets.all(5),
+                    decoration: boxBaseDecorationC(Colors.blueGrey, 10,10,0,0),
+                    child: Row(
+                      children: [
+                        tc('Bill ID #${e["DOCNO"].toString()}', Colors.white, 14),
+                      ],
+                    ),
+                  ),
+                  gapHC(5),
+                  Padding(
+                    padding: const EdgeInsets.all(5),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Column(children: [
+                            wRow("Count",(e["QTY"]??"").toString()),
+                            g.wstrUserRole == "ADMIN"?
+                            wRow("Stockist",(e["STOCKIST_CODE"]??"").toString()):gapHC(0),
+                            g.wstrUserRole == "ADMIN" || g.wstrUserRole == "STOCKIST"?
+                            wRow("Dealer",(e["DEALER_CODE"]??"").toString()):gapHC(0),
+                            g.wstrUserRole == "ADMIN" || g.wstrUserRole == "STOCKIST" || g.wstrUserRole == "DEALER"?
+                            wRow("Agent",(e["AGENT_CODE"]??"").toString()):gapHC(0),
+
+                          ],),
+                        ),
+                        Expanded(child: Column(
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                tcn('Total', Colors.black, 13),
+                                tcn(g.mfnDbl(e["TOTAL"].toString()).toStringAsFixed(2), Colors.black, 14)
+                              ],
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                tcn('Comm', Colors.black, 13),
+                                tcn(g.mfnDbl(e["COMM"].toString()).toStringAsFixed(2), Colors.black, 14)
+                              ],
+                            ),
+                            Divider(
+                              color: Colors.black,
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                tc('Grand Total', Colors.black, 13),
+                                tc(grandTotal.toStringAsFixed(2), Colors.black, 15)
+                              ],
+                            ),
+                          ],
+                        ))
+                      ],
+                    ),
+                  ) ,
+                  gapHC(10),
+                  Container(
+                    padding: const EdgeInsets.all(5),
+                    decoration: boxBaseDecorationC(Colors.grey.withOpacity(0.05), 0,0,10,10),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        tcn('Customer  ${(e["CUSTOMER_NAME"]??"").toString().toUpperCase()}', Colors.black, 12),
+                        Row(
+                          children: [
+                            const Icon(Icons.access_time_outlined,color: Colors.black,size: 12,),
+                            gapWC(5),
+                            tcn(actionDate.toString(), Colors.black, 12)
+                          ],
+                        )
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          )
+      );
+    }
+
+    return rtnList;
+  }
+  List<Widget> wSalesDataFull(){
+    List<Widget> rtnList  = [];
+
+    for(var e in reportDate){
+      var grandTotal = 0.0;
+      grandTotal  =  g.mfnDbl(e["TOTAL"].toString())+g.mfnDbl(e["COMM"].toString());
+
+      var det = [];
+
+      det = (e["DET"]??[]);
+      var actionDate = "";
+      try{
+        actionDate = setDate(7, DateTime.parse(e["DOCDATE"].toString()));
+      }catch(e){
+        actionDate = "";
+      }
+
+      rtnList.add(
+          Container(
+            margin: EdgeInsets.symmetric(vertical: 1),
+            decoration: boxDecoration(Colors.white, 0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  padding:const EdgeInsets.all(5),
+                  decoration: boxBaseDecorationC(Colors.blueGrey, 0,0,0,0),
+                  child: Row(
+                    children: [
+                      tc('Bill ID #${e["DOCNO"].toString()}', Colors.white, 14),
+                    ],
+                  ),
+                ),
+                gapHC(5),
+                Padding(
+                  padding: const EdgeInsets.all(5),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Column(children: [
+                          wRow("Count",(e["QTY"]??"").toString()),
+                          g.wstrUserRole == "ADMIN"?
+                          wRow("Stockist",(e["STOCKIST_CODE"]??"").toString()):gapHC(0),
+                          g.wstrUserRole == "ADMIN" || g.wstrUserRole == "STOCKIST"?
+                          wRow("Dealer",(e["DEALER_CODE"]??"").toString()):gapHC(0),
+                          g.wstrUserRole == "ADMIN" || g.wstrUserRole == "STOCKIST" || g.wstrUserRole == "DEALER"?
+                          wRow("Agent",(e["AGENT_CODE"]??"").toString()):gapHC(0),
+
+                        ],),
+                      ),
+                      Expanded(child: Column(
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              tcn('Total', Colors.black, 13),
+                              tcn(g.mfnDbl(e["TOTAL"].toString()).toStringAsFixed(2), Colors.black, 14)
+                            ],
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              tcn('Comm', Colors.black, 13),
+                              tcn(g.mfnDbl(e["COMM"].toString()).toStringAsFixed(2), Colors.black, 14)
+                            ],
+                          ),
+                          Divider(
+                            color: Colors.black,
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              tc('Grand Total', Colors.black, 13),
+                              tc(grandTotal.toStringAsFixed(2), Colors.black, 15)
+                            ],
+                          ),
+                        ],
+                      ))
+                    ],
+                  ),
+                ) ,
+                gapHC(10),
+                Container(
+                  padding: const EdgeInsets.all(5),
+                  decoration: boxBaseDecorationC(Colors.grey.withOpacity(0.05), 0,0,10,10),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      tcn('Customer  ${(e["CUSTOMER_NAME"]??"").toString().toUpperCase()}', Colors.black, 12),
+                      Row(
+                        children: [
+                          const Icon(Icons.access_time_outlined,color: Colors.black,size: 12,),
+                          gapWC(5),
+                          tcn(actionDate.toString(), Colors.black, 12)
+                        ],
+                      )
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          )
+      );
+      rtnList.add(
+        Container(
+          decoration: boxDecoration(Colors.white, 0),
+          padding: const EdgeInsets.symmetric(horizontal: 6),
+          child: Column(
+            children:  wDetList(det),
+          ),
+        )
+      );
+    }
+
+    return rtnList;
+  }
+  List<Widget> wDetList(det){
+    List<Widget> rtnList = [];
+    var srno = 0;
+    for(var e in det){
+      var grandTotal = 0.0;
+      grandTotal  =  g.mfnDbl(e["TOTAL"].toString())+g.mfnDbl(e["COMM"].toString());
+      rtnList.add(
+        Container(
+          decoration: boxBaseDecoration(srno%2==0? g.wstrGameColor.withOpacity(0.2):Colors.white, 0),
+          padding: const EdgeInsets.symmetric(vertical: 3),
+          child: Row(
+            children: [
+              wRowDet(2,(e["GAME_TYPE"]??"").toString()),
+              wRowDet(2,(e["NUMBER"]??"").toString()),
+              wRowDet(2,(e["QTY"]??"").toString()),
+              wRowDet(2,g.mfnDbl(e["COMM"].toString()).toStringAsFixed(2)),
+              wRowDet(2,g.mfnDbl(e["TOTAL"].toString()).toStringAsFixed(2)),
+              wRowDet(2,grandTotal.toString()),
+            ],
+          ),
+        ),
+      );
+      srno =srno+1;
+    }
+    return rtnList;
+  }
 
 
   //===========================================PAGE FN
 
   fnGetPageData(){
     Future.delayed(const Duration(seconds: 1),(){
-      apiWinningReport();
+      apiSalesReport();
     });
   }
 
   //===========================================API CALL
 
-  apiWinningReport(){
+  apiSalesReport(){
 
     var filterData = [];
     filterData = widget.pFilterData;
 
+    var admCode = "";
     var stockist = (filterData[0]["STOCKIST"]);
     var dealer = (filterData[0]["DEALER"]);
     var agent = (filterData[0]["AGENT"]);
@@ -258,17 +571,27 @@ class _SalesReportState extends State<SalesReport> {
     var number = (filterData[0]["NUMBER"]);
     var fromDate = (filterData[0]["DATE_FROM"]);
     var toDate = (filterData[0]["DATE_TO"]);
+    var mode = (filterData[0]["MODE"]);
+    var child = (filterData[0]["CHILD"]);
 
-    futureForm =  ApiCall().apiWinningReport(g.wstrCompany, fromDate,toDate, g.wstrSelectedGame, stockist, dealer, agent, type, number);
-    futureForm.then((value) => apiWinningReportRes(value));
+    if(mounted){
+      setState(() {
+        fPageMode = mode;
+      });
+    }
+
+    futureForm =  ApiCall().apiSalesReport(g.wstrCompany, fromDate,toDate, g.wstrSelectedGame, admCode,stockist, dealer, agent, type, number,"",child);
+    futureForm.then((value) => apiSalesReportRes(value));
   }
 
-  apiWinningReportRes(value){
+  apiSalesReportRes(value){
     if(mounted){
       setState(() {
         reportDate = [];
         if(g.fnValCheck(value)){
           reportDate = value??[];
+        }else{
+          errorMsg(context, "No Result Found!!");
         }
       });
     }

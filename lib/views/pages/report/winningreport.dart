@@ -1,6 +1,7 @@
 
 
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:ltr/controller/global/globalValues.dart';
 import 'package:ltr/services/apiController.dart';
 import 'package:ltr/views/components/common/common.dart';
@@ -25,6 +26,7 @@ class _WinningReportState extends State<WinningReport> {
   var fTotal = 0.0;
   var fComm = 0.0;
 
+  var typeList  =  [];
   var reportDate = [];
 
 
@@ -118,18 +120,7 @@ class _WinningReportState extends State<WinningReport> {
             ),
             Expanded(child: SingleChildScrollView(
               child: Column(
-                children: [
-                  Container(
-                    padding: EdgeInsets.all(5),
-                    decoration: boxDecoration(Colors.blueGrey, 0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        tc('SUPER', Colors.white, 15)
-                      ],
-                    ),
-                  )
-                ],
+                children: wTypeList()
               ),
             ))
           ],
@@ -139,12 +130,181 @@ class _WinningReportState extends State<WinningReport> {
   }
 
   //===========================================WIDGET
+
+    List<Widget> wTypeList(){
+        List<Widget>  rtnList  = [];
+        for(var e in typeList){
+          rtnList.add(
+            fnCheckResult(e)?
+            Container(
+              padding: const EdgeInsets.all(5),
+              decoration: boxDecoration(Colors.blueGrey, 0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  tc(e, Colors.white, 15)
+                ],
+              ),
+            ):gapHC(0),
+          );
+          rtnList.add( fnCheckResult(e)?
+          Column(
+            children: wResultList(e),
+          ):gapHC(0));
+        }
+        return rtnList;
+    }
+    List<Widget> wResultList(mode){
+        List<Widget>  rtnList  = [];
+
+        if(reportDate.isNotEmpty){
+          if( reportDate.where((element) => element["GAME_TYPE"] == mode).isNotEmpty){
+            for(var e in reportDate.where((element) => element["GAME_TYPE"] == mode)){
+              var grandTotal = 0.0;
+              grandTotal  =  g.mfnDbl(e["TOTAL"].toString())+g.mfnDbl(e["COMM"].toString());
+              rtnList.add(Container(
+                decoration: boxDecoration(Colors.white, 10),
+                margin: EdgeInsets.symmetric(vertical: 5,horizontal: 5),
+                padding: EdgeInsets.all(5),
+                child: Column(
+                  children: [
+                      Container(
+                        padding: EdgeInsets.all(8),
+                        decoration: boxBaseDecoration(g.wstrGameColor.withOpacity(0.1), 5),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Row(
+                              children: [
+                                tcn("Prize  ", Colors.black , 15),
+                                tc((e["PLACE"]??"").toString(), Colors.black , 20)
+                              ],
+                            ),
+                            Row(
+                              children: [
+                                tcn("NUMBER :", Colors.black , 13),
+                                tc((e["NUMBER"]??"").toString(), Colors.black , 20)
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    gapHC(5),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 5),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: Column(
+                              children: [
+                                wRow("COUNT",(e["COUNT"]??"").toString()),
+                                wRow("BILL ID",(e["BILL_ID"]??"").toString()),
+                                g.wstrUserRole == "ADMIN"?
+                                wRow("Stockist",(e["STOCKIST_CODE"]??"").toString()):gapHC(0),
+                                g.wstrUserRole == "ADMIN" || g.wstrUserRole == "STOCKIST"?
+                                wRow("Dealer",(e["DEALER_CODE"]??"").toString()):gapHC(0),
+                                g.wstrUserRole == "ADMIN" || g.wstrUserRole == "STOCKIST" || g.wstrUserRole == "DEALER"?
+                                wRow("Agent",(e["AGENT_CODE"]??"").toString()):gapHC(0),
+                                wRow("CUSTOMER",(e["CUST_NAME"]??"").toString()),
+                              ],
+                            )
+                          ),
+                          Expanded(child: Column(
+                            children: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  tcn('Total', Colors.black, 11),
+                                  tcn(g.mfnDbl(e["TOTAL"].toString()).toStringAsFixed(2), Colors.black, 13)
+                                ],
+                              ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  tcn('Comm', Colors.black, 11),
+                                  tcn(g.mfnDbl(e["COMM"].toString()).toStringAsFixed(2), Colors.black, 13)
+                                ],
+                              ),
+                              const Divider(
+                                color: Colors.black,
+                              ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  tc('Grand Total', Colors.black, 11),
+                                  tc(grandTotal.toStringAsFixed(2), Colors.black, 13)
+                                ],
+                              ),
+                            ],
+                          ))
+                        ],
+                      ),
+                    )
+                  ],
+                ),
+              ));
+            }
+          }
+        }
+
+
+
+        return rtnList;
+      }
+
+      Widget wRow(head,sub){
+        return Row(
+          children: [
+            Flexible(
+              flex: 3,
+              child: Row(
+                children: [
+                  tcn(head, Colors.black, 10),
+                ],
+              ),),
+            Flexible(
+              flex: 5,
+              child: Row(
+                children: [
+                  tc(sub, Colors.black, 10),
+                ],
+              ),)
+          ],
+        );
+      }
+
   //===========================================PAGE FN
 
     fnGetPageData(){
+
+      if(mounted){
+        setState(() {
+          typeList = [
+           "SUPER",
+            "BOX",
+            "AB",
+            "BC",
+            "AC",
+            "A",
+            "B",
+            "C"
+          ];
+        });
+      }
+
       Future.delayed(const Duration(seconds: 1),(){
        apiWinningReport();
       });
+    }
+
+    fnCheckResult(mode){
+      var rtn = false;
+      if(reportDate.isNotEmpty){
+        if( reportDate.where((element) => element["GAME_TYPE"] == mode).isNotEmpty){
+          rtn =  true;
+        }
+      }
+      return rtn;
     }
 
   //===========================================API CALL
@@ -161,8 +321,9 @@ class _WinningReportState extends State<WinningReport> {
       var number = (filterData[0]["NUMBER"]);
       var fromDate = (filterData[0]["DATE_FROM"]);
       var toDate = (filterData[0]["DATE_TO"]);
+      var mode = (filterData[0]["MODE"]);
 
-      futureForm =  ApiCall().apiWinningReport(g.wstrCompany, fromDate,toDate, g.wstrSelectedGame, stockist, dealer, agent, type, number);
+      futureForm =  ApiCall().apiWinningReport(g.wstrCompany, fromDate,toDate, g.wstrSelectedGame, stockist, dealer, agent, type, number,mode);
       futureForm.then((value) => apiWinningReportRes(value));
     }
 
@@ -172,6 +333,8 @@ class _WinningReportState extends State<WinningReport> {
           reportDate = [];
           if(g.fnValCheck(value)){
             reportDate = value??[];
+          }else{
+            errorMsg(context, "No Result Found!!");
           }
         });
       }

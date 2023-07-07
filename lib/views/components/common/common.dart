@@ -882,7 +882,6 @@ bottomPopUpL(context,child){
             return Container(
                 height: MediaQuery.of(context).size.height * 0.85,
                 decoration: boxDecorationC(Colors.white, 40,40,0,0),
-                padding: const EdgeInsets.symmetric(vertical: 20,horizontal: 10),
                 child: child,
             );
         },
