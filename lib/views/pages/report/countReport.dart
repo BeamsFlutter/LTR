@@ -43,6 +43,7 @@ class _CountReportState extends State<CountReport> {
   var fSelectedGame = "";
 
   var reportDate = [];
+  var typeList = [];
 
   //Controller
   var txtNum = TextEditingController();
@@ -281,10 +282,13 @@ class _CountReportState extends State<CountReport> {
                       ],
                     ),
                   ),
+                  // Column(
+                  //   children: wCountData(),
+                  // ),
                   Column(
-                    children: wCountData(),
+                    children: wTypeList(),
                   ),
-                  Divider(),
+
 
 
 
@@ -308,7 +312,15 @@ class _CountReportState extends State<CountReport> {
           ],
         ));
   }
-
+  Widget wRowDetRed(flx,txt){
+    return  Flexible(
+        flex: flx,
+        child: Row(
+          children: [
+            tc(txt.toString(), Colors.red, 12)
+          ],
+        ));
+  }
 
   List<Widget> wCountData(){
     List<Widget> rtnList  = [];
@@ -316,9 +328,6 @@ class _CountReportState extends State<CountReport> {
     for(var e in reportDate){
       var grandTotal = 0.0;
       grandTotal  =  g.mfnDbl(e["TOTAL"].toString())+g.mfnDbl(e["COMM"].toString());
-
-
-
       rtnList.add(
           Container(
             decoration: boxBaseDecoration(Colors.white.withOpacity(0.3), 3),
@@ -333,6 +342,43 @@ class _CountReportState extends State<CountReport> {
           )
       );
     }
+
+    return rtnList;
+  }
+  List<Widget> wTypeList(){
+    List<Widget> rtnList  = [];
+
+    for(var e in typeList){
+      var values = fnGetVal(e)??[];
+      rtnList.add(
+        Container(
+          decoration: boxBaseDecoration(Colors.white.withOpacity(0.3), 3),
+          padding: const EdgeInsets.symmetric(horizontal: 6,vertical: 8),
+          child: Row(
+              children: [
+                wRowDet(2,e),
+                wRowDet(2,(values[0]["COUNT"]).toString()),
+                wRowDet(2,(values[0]["RATE"]).toString()),
+                wRowDet(2,(values[0]["CASH"]).toString())
+              ]),
+        ),
+      );
+    }
+    var values = fnGetVal("TOTAL")??[];
+    rtnList.add(Divider());
+    rtnList.add(
+      Container(
+        decoration: boxBaseDecoration(Colors.grey.withOpacity(0.1), 3),
+        padding: const EdgeInsets.symmetric(horizontal: 6,vertical: 8),
+        child: Row(
+            children: [
+              wRowDetRed(2,"Total"),
+              wRowDetRed(2,(values[0]["COUNT"]).toString()),
+              wRowDetRed(2,(values[0]["RATE"]).toString()),
+              wRowDetRed(2,(values[0]["CASH"]).toString())
+            ]),
+      ),
+    );
 
     return rtnList;
   }
@@ -353,6 +399,74 @@ class _CountReportState extends State<CountReport> {
         fAgentCode = g.wstrUserCd;
       });
     }
+
+    setState(() {
+      typeList = [
+        "SUPER",
+        "BOX",
+        "AB/BC/AC",
+        "A/B/C",
+      ];
+    });
+
+
+  }
+
+  fnGetVal(mode){
+
+    if(mode == "TOTAL"){
+      var count = 0.0 ;
+      var rate = 0.0 ;
+      var cash = 0.0 ;
+      for(var e in reportDate){
+        count = count+g.mfnDbl(e["QTY"].toString());
+        rate = 0.0;
+        cash = cash+g.mfnDbl(e["TOT_AMT"].toString());
+      }
+
+      return [
+        {
+          "COUNT":count==0?"-":count.toStringAsFixed(0),
+          "RATE":rate==0?"-":rate.toStringAsFixed(2),
+          "CASH":cash==0?"-":cash.toStringAsFixed(2),
+        }
+      ];
+    }else{
+      var key1 = "";
+      var key2 = "";
+      var key3 = "";
+
+      if(mode == "AB/BC/AC"){
+        key1 = "AB";
+        key2 = "BC";
+        key3 = "AC";
+      }else if(mode == "A/B/C"){
+        key1 = "A";
+        key2 = "B";
+        key3 = "C";
+      }else{
+        key1 = mode;
+      }
+      var count = 0.0 ;
+      var rate = 0.0 ;
+      var cash = 0.0 ;
+      for(var e in reportDate.where((element) => element["GAME_TYPE"] == key1 || element["GAME_TYPE"] == key2 || element["GAME_TYPE"] == key3 )){
+        count = count+g.mfnDbl(e["QTY"].toString());
+        rate = 0.0;
+        cash = cash+g.mfnDbl(e["TOT_AMT"].toString());
+      }
+
+      return [
+        {
+          "COUNT":count==0?"-":count.toStringAsFixed(0),
+          "RATE":rate==0?"-":rate.toStringAsFixed(2),
+          "CASH":cash==0?"-":cash.toStringAsFixed(2),
+        }
+      ];
+    }
+
+
+
   }
 
   fnSearchCallBack(rolecode,usercd){

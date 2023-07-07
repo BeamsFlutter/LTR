@@ -34,6 +34,8 @@ class _ReportsState extends State<ReportDetails> {
 
   var blFullView = false;
   var blRate = false;
+  var blDay = false;
+  var blGame = false;
 
   var gCountNum = 0;
   var fSelectedGame = "";
@@ -219,6 +221,7 @@ class _ReportsState extends State<ReportDetails> {
                     ],
                   ),
                   gapHC(10),
+                  widget.reportCode != "4"?
                   Row(
                     children: [
                       tcn('Full View', Colors.black, 15),
@@ -240,7 +243,7 @@ class _ReportsState extends State<ReportDetails> {
                           )
                       ),
                     ],
-                  ),
+                  ):gapHC(0),
                   gapHC(3),
                   blFullView?
                   Padding(
@@ -358,6 +361,56 @@ class _ReportsState extends State<ReportDetails> {
                       ),
                     ],
                   ):
+                  gapHC(5),
+                  widget.reportCode == "4"?
+                  Column(
+                    children: [
+                      Row(
+                        children: [
+                          tcn('Day Detail', Colors.black, 15),
+                          Transform.scale(
+                              scale: 1.3,
+                              child: Switch(
+                                onChanged: (val){
+                                  if(mounted){
+                                    setState(() {
+                                      blDay = !blDay;
+                                    });
+                                  }
+                                },
+                                value: blDay,
+                                activeColor: g.wstrGameColor,
+                                activeTrackColor: g.wstrGameColor.withOpacity(0.5),
+                                inactiveThumbColor: Colors.grey.withOpacity(0.9),
+                                inactiveTrackColor:Colors.grey.withOpacity(0.5),
+                              )
+                          ),
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          tcn('Game Detail', Colors.black, 15),
+                          Transform.scale(
+                              scale: 1.3,
+                              child: Switch(
+                                onChanged: (val){
+                                  if(mounted){
+                                    setState(() {
+                                      blGame = !blGame;
+                                    });
+                                  }
+                                },
+                                value: blGame,
+                                activeColor: g.wstrGameColor,
+                                activeTrackColor: g.wstrGameColor.withOpacity(0.5),
+                                inactiveThumbColor: Colors.grey.withOpacity(0.9),
+                                inactiveTrackColor:Colors.grey.withOpacity(0.5),
+                              )
+                          ),
+                        ],
+                      )
+                    ],
+                  ):gapHC(0),
                   gapHC(5),
                   Bounce(
                     onPressed: (){

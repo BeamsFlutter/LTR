@@ -980,5 +980,30 @@ class ApiCall  with BaseController{
   }
 
 
+  Future<dynamic> apiDailyReport(company,date,toDate,game,user,childRate,mode) async {
+    var request = jsonEncode(<dynamic, dynamic>{
+      "COMPANY":company,
+      "DATE_FROM": date,
+      "DATE_TO": toDate,
+      "GAME_CODE": game,//null
+      "USER_FILTER":user,
+      "CHILD_PRICE":childRate,//0 OR 1
+      "MODE":mode//MODES :USER,GAME,DATE
+    });
+    dprint('api/dailyReport');
+    dprint(request);
+    var response = await ApiManager().postLoading('api/dailyReport',request,"S").catchError((error){
+      if (error is BadRequestException) {
+        dprint(error.toString());
+      } else {
+        handleError(error);
+      }
+    });
+    dprint(response);
+    if (response == null) return;
+    return response;
+  }
+
+
 
 }
