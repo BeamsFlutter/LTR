@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bounce/flutter_bounce.dart';
 import 'package:ltr/controller/global/globalValues.dart';
 import 'package:ltr/views/components/common/common.dart';
+import 'package:ltr/views/pages/report/dailyreport.dart';
 import 'package:ltr/views/pages/report/salesReport.dart';
 import 'package:ltr/views/pages/report/winningreport.dart';
 import 'package:ltr/views/pages/user/usersearch.dart';
@@ -611,6 +612,7 @@ class _ReportsState extends State<ReportDetails> {
       "DATE_TO":setDate(2, fToDate),
       "MODE":blFullView? "FULL":"SUM",
       "CHILD":blRate? 1:0,
+      "DAILY_MODE":blDay && blGame? "GAMEDATE":blDay?"DATE":blGame?"GAME":"USER",
     });
 
 
@@ -619,6 +621,10 @@ class _ReportsState extends State<ReportDetails> {
     }else
     if(widget.reportCode == "1"){
       Navigator.push(context, MaterialPageRoute(builder: (context) =>  SalesReport(pFilterData: filterData,)));
+    }
+    else
+    if(widget.reportCode == "4"){
+      Navigator.push(context, MaterialPageRoute(builder: (context) =>  DailyReport(pFilterData: filterData,)));
     }
   }
 
