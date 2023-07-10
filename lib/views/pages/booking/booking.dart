@@ -97,6 +97,7 @@ class _BookingState extends State<Booking> {
   @override
   Widget build(BuildContext context) {
     return WillPopScope(child: Scaffold(
+
       body: Container(
         margin: MediaQuery.of(context).padding,
         child: Column(
@@ -274,11 +275,11 @@ class _BookingState extends State<Booking> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       wNumberCard(1),
-                      gapWC(5),
+                      gapWC(10),
                       wNumberCard(2),
-                      gapWC(5),
+                      gapWC(10),
                       wNumberCard(3),
-                      gapWC(20),
+                      gapWC(10),
                       Expanded(child: Container(
                         height: 35,
                         padding: const EdgeInsets.symmetric(horizontal: 15),
@@ -295,7 +296,11 @@ class _BookingState extends State<Booking> {
 
                           },
                         ),
-                      ))
+                      )),
+                      gapWC(10),
+                      wOption("S"),
+                      gapWC(10),
+                      wOption("R"),
 
                     ],
                   ),
@@ -375,7 +380,7 @@ class _BookingState extends State<Booking> {
                         ),
                       ),
                       gapWC(5),
-                      blFromTo?
+                      blFromTo && (gOption != "Box" && gOption != "S")?
                       Flexible(
                         child: Container(
                           height: 35,
@@ -394,7 +399,7 @@ class _BookingState extends State<Booking> {
                             ),
                             onChanged: (val){
                               if(val.toString().length == gCountNum){
-                                if(gOption == "Any"){
+                                if(gOption == "Any" || (gOption == "R")){
                                   fnDiff.requestFocus();
 
                                 }else{
@@ -406,7 +411,7 @@ class _BookingState extends State<Booking> {
                         ),
                       ):gapWC(0),
                       blFromTo?gapWC(5):gapWC(0),
-                      blFromTo && gOption =="Any"?
+                      blFromTo && (gOption =="Any" || (gOption == "R"))?
                       Flexible(
                         child: Container(
                           height: 35,
@@ -427,7 +432,7 @@ class _BookingState extends State<Booking> {
                           ),
                         ),
                       ):gapWC(0),
-                      blFromTo && gOption =="Any"?gapWC(5):gapWC(0),
+                      blFromTo && (gOption =="Any" || (gOption == "R"))?gapWC(5):gapWC(0),
                       Flexible(
                         child: Container(
                           height: 35,
@@ -573,12 +578,12 @@ class _BookingState extends State<Booking> {
                       Table(
                         border: const TableBorder(horizontalInside: BorderSide(width: 0.3, color: grey)),
                         columnWidths: const <int, TableColumnWidth>{
-                          0: FlexColumnWidth(3),
+
+                          0: FlexColumnWidth(8),
                           1: FlexColumnWidth(8),
-                          2: FlexColumnWidth(8),
+                          2: FlexColumnWidth(6),
                           3: FlexColumnWidth(6),
-                          4: FlexColumnWidth(6),
-                          5: FlexColumnWidth(4),
+                          4: FlexColumnWidth(4),
                         },
                         children: wCountList(),
                       )
@@ -760,8 +765,8 @@ class _BookingState extends State<Booking> {
       },
       duration: const Duration(milliseconds: 110),
       child: Container(
-        height: 25,
-        width: 25,
+        height: 30,
+        width: 30,
         alignment: Alignment.center,
         decoration: gCountNum == num?boxBaseDecoration(g.wstrGameBColor, 5):boxOutlineCustom1(Colors.white, 5, g.wstrGameBColor, 1.0),
         child: tc(num.toString(), gCountNum == num?g.wstrGameOTColor:g.wstrGameTColor, 15),
@@ -792,6 +797,13 @@ class _BookingState extends State<Booking> {
     );
   }
   Widget wOption(rs){
+    var short = "";
+    if(rs == "S"){
+      short = "Box";
+    }
+    if(rs == "R"){
+      short = "Any";
+    }
     return  Bounce(
       onPressed: (){
         if(mounted){
@@ -800,7 +812,7 @@ class _BookingState extends State<Booking> {
             gOption = gOption==  rs?"": rs;
             blFromTo = gOption.isNotEmpty? true :false;
 
-            if(gOption == "Any"){
+            if((gOption == "Any") || (gOption == "R")){
                txtDiff.text = "1";
             }
 
@@ -809,7 +821,7 @@ class _BookingState extends State<Booking> {
       },
       duration: const Duration(milliseconds: 110),
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 2,horizontal: 6),
+        padding: const EdgeInsets.symmetric(vertical: 1,horizontal: 8),
         alignment: Alignment.center,
         decoration: gOption == rs  ?boxBaseDecoration(g.wstrGameBColor, 5):boxOutlineCustom1(Colors.white, 5, g.wstrGameBColor, 1.0),
         child: tcn(rs.toString(), gOption == rs?g.wstrGameOTColor:g.wstrGameTColor, 15),
@@ -825,7 +837,7 @@ class _BookingState extends State<Booking> {
         },
         duration: const Duration(milliseconds: 110),
         child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 8),
+          padding: const EdgeInsets.symmetric(vertical: 5),
           decoration: boxBaseDecoration(color, 5),
           child: Column(
             children: [
@@ -888,12 +900,7 @@ class _BookingState extends State<Booking> {
 
           decoration: boxBaseDecorationC(grey,10,10,0,0),
           children: [
-            TableCell(
-                child: Container(
-                  padding: const EdgeInsets.all(5),
-                  child: tcn('Sr.', Colors.white, 15),
-                )
-            ),
+
             TableCell(
                 child: Container(
                   padding: const EdgeInsets.all(5),
@@ -937,21 +944,21 @@ class _BookingState extends State<Booking> {
     var srno = 1;
     var totalAmount = 0.0;
     var totalCount = 0.0;
-    for(var e in countList){
+    for(var e in countList.reversed.toList()){
       var qty = g.mfnDbl(e["COUNT"].toString());
       var amount = g.mfnDbl(e["AMOUNT"].toString());
       var total = qty*amount;
       var color = Colors.white;
-      color = (e["STATUS"]??"")=="Y"?Colors.white:e["PLAN"] == "SUPER"?Colors.black: e["PLAN"] == "BOX"? Colors.pink: e["PLAN"].toString().length == 2?Colors.green:e["PLAN"].toString().length ==1?Colors.orange:Colors.white;
+      color = (e["STATUS"]??"")=="Y"?Colors.white:e["PLAN"] == "SUPER"?Colors.black: e["PLAN"] == "BOX" ? Colors.pink: e["PLAN"].toString().length == 2?Colors.green:e["PLAN"].toString().length ==1?Colors.orange:Colors.white;
       rtnList.add(TableRow(
           decoration: boxBaseDecoration((e["STATUS"]??"")=="Y"?Colors.redAccent.withOpacity(0.8): Colors.white, 0),
           children: [
-            TableCell(
-                child:    Container(
-                  padding: const EdgeInsets.all(5),
-                  child: tc(srno.toString(), Colors.black, 15),
-                )
-            ),
+            // TableCell(
+            //     child:    Container(
+            //       padding: const EdgeInsets.all(5),
+            //       child: tc(srno.toString(), Colors.black, 15),
+            //     )
+            // ),
             TableCell(
                 child: GestureDetector(
                   onTap: (){
@@ -1323,7 +1330,7 @@ class _BookingState extends State<Booking> {
 
       if(blFromTo){
 
-        if(g.mfnDbl(txtNum.text) >= g.mfnDbl(txtNumTo.text) && gOption != "Box"){
+        if(g.mfnDbl(txtNum.text) >= g.mfnDbl(txtNumTo.text) && (gOption != "Box" && gOption != "S")){
           errorMsg(context, "Entered number not valid");
           return;
         }
@@ -1446,7 +1453,7 @@ class _BookingState extends State<Booking> {
           }
 
         }
-        else if(gOption == "Any"){
+        else if(gOption == "Any" || (gOption == "R")){
           if(txtNum.text.toString().length != gCountNum  || txtNumTo.text.toString().length != gCountNum){
             return;
           }
@@ -1490,7 +1497,7 @@ class _BookingState extends State<Booking> {
           }
 
         }
-        else if(gOption == "Box"){
+        else if(gOption == "Box" || gOption == "S"){
           if(txtNum.text.toString().length != 3){
             return;
           }
@@ -1586,7 +1593,7 @@ class _BookingState extends State<Booking> {
 
     }
     else if(gCountNum == 2 && blFromTo){
-      if(g.mfnDbl(txtNum.text) >= g.mfnDbl(txtNumTo.text) && gOption != "Box"){
+      if(g.mfnDbl(txtNum.text) >= g.mfnDbl(txtNumTo.text) && (gOption != "Box" && gOption != "S")){
         errorMsg(context, "Entered number not valid");
         return;
       }
@@ -1733,7 +1740,7 @@ class _BookingState extends State<Booking> {
         }
 
       }
-      else if(gOption == "Any"){
+      else if(gOption == "Any" || (gOption == "R")){
         if(txtNum.text.toString().length != gCountNum  || txtNumTo.text.toString().length != gCountNum){
           return;
         }

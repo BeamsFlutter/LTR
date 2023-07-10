@@ -178,8 +178,8 @@ class _DailyReportState extends State<DailyReport> {
     for(var e in reportDate){
       var grandTotal = 0.0;
       var prize = 0.0;
-      grandTotal  =  g.mfnDbl(e["SALE"].toString())-(g.mfnDbl(e["WIN"].toString())+g.mfnDbl(e["COMM"].toString()));
-      prize  =  g.mfnDbl(e["WIN"].toString())+g.mfnDbl(e["COMM"].toString());
+      grandTotal  =  g.mfnDbl(e["SALE"].toString())-(g.mfnDbl(e["WIN"].toString())+g.mfnDbl(e["COM"].toString()));
+      prize  =  g.mfnDbl(e["WIN"].toString())+g.mfnDbl(e["COM"].toString());
       rtnList.add(Container(
         decoration: boxOutlineCustom1(Colors.white, 0, Colors.black, 0.2),
         padding: const EdgeInsets.symmetric(vertical: 0),
@@ -197,7 +197,7 @@ class _DailyReportState extends State<DailyReport> {
               height: 30,
               decoration: boxBaseDecoration(Colors.black.withOpacity(0.2), 0),
             ),
-            wColumnCard(2,(prize).toString(),"${(e["WIN"]??"0.0")}+${(e["COMM"]??"0.0")}"),
+            wColumnCard(2,(prize).toString(),"${(e["WIN"]??"0.0")}+${(e["COM"]??"0.0")}"),
             Container(
               width: 1,
               height: 30,

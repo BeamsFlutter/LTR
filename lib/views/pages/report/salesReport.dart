@@ -204,7 +204,7 @@ class _SalesReportState extends State<SalesReport> {
 
     for(var e in reportDate){
       var grandTotal = 0.0;
-      grandTotal  =  g.mfnDbl(e["TOTAL"].toString())+g.mfnDbl(e["COMM"].toString());
+      grandTotal  =  g.mfnDbl(e["TOTAL"].toString())+g.mfnDbl(e["COM"].toString());
 
       var det = [];
 
@@ -280,7 +280,7 @@ class _SalesReportState extends State<SalesReport> {
                                     children: [
                                       tcn('Commission', Colors.white, 12),
                                       gapWC(10),
-                                      tc((e["COMM"]??"").toString(), Colors.white, 14)
+                                      tc((e["COM"]??"").toString(), Colors.white, 14)
                                     ],
                                   ),)
                                 ],
@@ -359,7 +359,7 @@ class _SalesReportState extends State<SalesReport> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 tcn('Comm', Colors.black, 13),
-                                tcn(g.mfnDbl(e["COMM"].toString()).toStringAsFixed(2), Colors.black, 14)
+                                tcn(g.mfnDbl(e["COM"].toString()).toStringAsFixed(2), Colors.black, 14)
                               ],
                             ),
                             Divider(
@@ -409,7 +409,7 @@ class _SalesReportState extends State<SalesReport> {
 
     for(var e in reportDate){
       var grandTotal = 0.0;
-      grandTotal  =  g.mfnDbl(e["TOTAL"].toString())+g.mfnDbl(e["COMM"].toString());
+      grandTotal  =  g.mfnDbl(e["TOTAL"].toString())+g.mfnDbl(e["COM"].toString());
 
       var det = [];
 
@@ -467,7 +467,7 @@ class _SalesReportState extends State<SalesReport> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               tcn('Comm', Colors.black, 13),
-                              tcn(g.mfnDbl(e["COMM"].toString()).toStringAsFixed(2), Colors.black, 14)
+                              tcn(g.mfnDbl(e["COM"].toString()).toStringAsFixed(2), Colors.black, 14)
                             ],
                           ),
                           Divider(
@@ -525,7 +525,7 @@ class _SalesReportState extends State<SalesReport> {
     var srno = 0;
     for(var e in det){
       var grandTotal = 0.0;
-      grandTotal  =  g.mfnDbl(e["TOTAL"].toString())+g.mfnDbl(e["COMM"].toString());
+      grandTotal  =  g.mfnDbl(e["TOTAL"].toString())+g.mfnDbl(e["COM"].toString());
       rtnList.add(
         Container(
           decoration: boxBaseDecoration(srno%2==0? g.wstrGameColor.withOpacity(0.2):Colors.white, 0),
@@ -535,7 +535,7 @@ class _SalesReportState extends State<SalesReport> {
               wRowDet(2,(e["GAME_TYPE"]??"").toString()),
               wRowDet(2,(e["NUMBER"]??"").toString()),
               wRowDet(2,(e["QTY"]??"").toString()),
-              wRowDet(2,g.mfnDbl(e["COMM"].toString()).toStringAsFixed(2)),
+              wRowDet(2,g.mfnDbl(e["COM"].toString()).toStringAsFixed(2)),
               wRowDet(2,g.mfnDbl(e["TOTAL"].toString()).toStringAsFixed(2)),
               wRowDet(2,grandTotal.toString()),
             ],

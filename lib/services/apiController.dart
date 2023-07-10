@@ -181,7 +181,7 @@ class ApiCall  with BaseController{
   }
 
   //============================================User
-  Future<dynamic> apiCreateUser(company,user,role,parent,pwd,weeklyCr,dailyCr,mode,games) async {
+  Future<dynamic> apiCreateUser(company,user,role,parent,pwd,weeklyCr,dailyCr,mode,sharePer,canView,dAgent,games) async {
 
     var request = jsonEncode(<dynamic, dynamic>{
       "COMPANY":company,
@@ -191,6 +191,9 @@ class ApiCall  with BaseController{
       "PWD":pwd,
       "WEEKLY_CR_LIMIT":weeklyCr,
       "DAILY_CR_LIMIT":dailyCr,
+      "CANVIEW_COM":canView,//Y OR N
+      "DEF_AGENT":dAgent,
+      "SHARE_PER":sharePer,//
       "MODE":mode,//ADD,EDIT(WEEKLY_CR_LIMIT,DAILY_CR_LIMIT),PASSWORD
       "GAMES":games
     });

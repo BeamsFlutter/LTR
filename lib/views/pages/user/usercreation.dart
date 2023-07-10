@@ -410,6 +410,12 @@ class _UserCreationState extends State<UserCreation> {
           frSelectedGameList.clear();
           txtWeeklyCredit.text = g.mfnDbl((headData[0]['WEEKLY_CR_LIMIT'].toString())).toString();
           txtDailyCredit.text = g.mfnDbl((headData[0]['DAILY_CR_LIMIT'].toString())).toString();
+          txtSharePerc.text = g.mfnDbl((headData[0]['SHARE_PER'].toString())).toString();
+
+          if(wstrRole == "Agent"){
+            blCanViewComm = (headData[0]['CANVIEW_COM'].toString()) == "Y"?true:false;
+            blDefaultAgent = (headData[0]['DEF_AGENT'].toString()) == "Y"?true:false;
+          }
 
           for(var e in gameData) {
             if (!frSelectedGameList.contains((e["GAME_CODE"] ?? ""))) {
@@ -458,6 +464,8 @@ class _UserCreationState extends State<UserCreation> {
         "REPORT_DAYS":-1
       });
     }
+    var canView = "";
+    var defAgent = "";
     var parentCode = "";
     if(wstrRole == "Stockist"){
       parentCode = g.wstrUserCd;
@@ -465,9 +473,13 @@ class _UserCreationState extends State<UserCreation> {
       parentCode = widget.pStockistCode;
     }else if(wstrRole == "Agent"){
       parentCode = widget.pDealerCode;
+      canView =  blCanViewComm?"Y":"N";
+      defAgent =  blDefaultAgent?"Y":"N";
     }
 
-    futureForm = apiCall.apiCreateUser(g.wstrCompany, txtId.text, wstrRole.toString().toUpperCase(),parentCode, txtPassword.text, txtWeeklyCredit.text, txtDailyCredit.text, wstrPageMode,games);
+    var sharePerc = g.mfnDbl(txtSharePerc.text.toString());
+
+    futureForm = apiCall.apiCreateUser(g.wstrCompany, txtId.text, wstrRole.toString().toUpperCase(),parentCode, txtPassword.text, txtWeeklyCredit.text, txtDailyCredit.text, wstrPageMode,sharePerc,canView,defAgent,games);
     futureForm.then((value) => apiCreateUserRes(value));
   }
   apiCreateUserRes(value){

@@ -474,7 +474,12 @@ class _ReportsState extends State<ReportDetails> {
           //fnGenerateNumber(text);
           if(mounted){
             setState(() {
-              fSelectedGame =text;
+              if(text ==  fSelectedGame){
+                fSelectedGame ="";
+              }else{
+                fSelectedGame =text;
+              }
+
             });
           }
         },
@@ -606,8 +611,8 @@ class _ReportsState extends State<ReportDetails> {
       "STOCKIST":stockist,
       "DEALER":dealer,
       "AGENT":agent,
-      "TYPE":type,
-      "NUMBER":number,
+      "TYPE":blFullView?type:null,
+      "NUMBER":blFullView?number:null,
       "DATE_FROM":setDate(2, fFromDate),
       "DATE_TO":setDate(2, fToDate),
       "MODE":blFullView? "FULL":"SUM",
