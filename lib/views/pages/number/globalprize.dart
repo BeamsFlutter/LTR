@@ -799,7 +799,7 @@ class _GlobalPrizeState extends State<GlobalPrize> {
   }
 
   apiGetDetails(){
-    futureForm  = apiCall.apiGetGlobalDetails(g.wstrCompany, "WINNING");
+    futureForm  = apiCall.apiGetGlobalDetails(g.wstrCompany, "WINNING",null);
     futureForm.then((value) => apiGetDetailsRes(value));
   }
   apiGetDetailsRes(value){

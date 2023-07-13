@@ -284,12 +284,12 @@ class ApiCall  with BaseController{
 
 
 
-  Future<dynamic> apiGetUserDetails(company,user,mode) async {
+  Future<dynamic> apiGetUserDetails(company,user,mode,game) async {
 
     var request = jsonEncode(<dynamic, dynamic>{
       "COMPANY":company,
       "USERCD":user,
-      "GAME_CODE":null,
+      "GAME_CODE":game,
       "MODE":mode,//PRICE,WINNING,COUNTLIMIT,NUMBER_COUNTLIMIT
       "TYPE":null
     });
@@ -484,11 +484,11 @@ class ApiCall  with BaseController{
 
   }
 
-  Future<dynamic> apiGetGlobalDetails(company,mode) async {
+  Future<dynamic> apiGetGlobalDetails(company,mode,game) async {
 
     var request = jsonEncode(<dynamic, dynamic>{
       "COMPANY":company,
-      "GAME_CODE":null,
+      "GAME_CODE":game,
       "MODE":mode,//PRICE,WINNING,COUNTLIMIT,NUMBER_COUNTLIMIT
       "TYPE":null
     });

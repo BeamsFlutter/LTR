@@ -31,11 +31,24 @@ class _FavNumberState extends State<FavNumber> {
   var fNumberLimit = [];
 
 
+
+
+
   var txtNum = TextEditingController();
+  var txtNumTo = TextEditingController();
+  var txtDiff = TextEditingController();
   var txtCount = TextEditingController();
+  var txtBoxCount = TextEditingController();
+  var txtName = TextEditingController();
+  var txtChangeQty = TextEditingController();
 
   var fnNum = FocusNode();
+  var fnNumTo = FocusNode();
+  var fnDiff = FocusNode();
   var fnCount = FocusNode();
+  var fnBoxCount = FocusNode();
+  var fnName = FocusNode();
+
 
 
   @override
@@ -148,6 +161,100 @@ class _FavNumberState extends State<FavNumber> {
                             children: [
                               Flexible(
                                 child: Container(
+                                  height: 35,
+                                  padding: const EdgeInsets.symmetric(horizontal: 15),
+                                  decoration: boxBaseDecoration(greyLight, 5),
+                                  child: TextFormField(
+                                    controller: txtNum,
+                                    focusNode: fnNum,
+                                    maxLength: gCountNum,
+                                    inputFormatters: mfnInputFormatters(),
+                                    keyboardType: TextInputType.number,
+                                    decoration: const InputDecoration(
+                                      hintText: 'Num',
+                                      counterText: "",
+                                      border: InputBorder.none,
+                                    ),
+                                    onChanged: (val){
+                                      if(val.toString().length == gCountNum){
+                                        fnNumTo.requestFocus();
+                                      }
+                                    },
+                                  ),
+                                ),
+                              ),
+                              gapWC(5),
+                              Flexible(
+                                child: Container(
+                                  height: 35,
+                                  padding: const EdgeInsets.symmetric(horizontal: 15),
+                                  decoration: boxBaseDecoration(greyLight, 5),
+                                  child: TextFormField(
+                                    controller: txtNumTo,
+                                    focusNode: fnNumTo,
+                                    maxLength: gCountNum,
+                                    inputFormatters: mfnInputFormatters(),
+                                    keyboardType: TextInputType.number,
+                                    decoration: const InputDecoration(
+                                      hintText: 'To',
+                                      counterText: "",
+                                      border: InputBorder.none,
+                                    ),
+                                    onChanged: (val){
+                                      if(val.toString().length == gCountNum){
+                                        fnDiff.requestFocus();
+                                      }
+                                    },
+                                  ),
+                                ),
+                              ),
+                              Flexible(
+                                child: Container(
+                                  height: 35,
+                                  padding: const EdgeInsets.symmetric(horizontal: 15),
+                                  decoration: boxBaseDecoration(greyLight, 5),
+                                  child: TextFormField(
+                                    controller: txtDiff,
+                                    focusNode: fnDiff,
+                                    inputFormatters: mfnInputFormatters(),
+                                    keyboardType: TextInputType.number,
+                                    decoration: const InputDecoration(
+                                      hintText: 'Diff',
+                                      border: InputBorder.none,
+                                    ),
+                                    onFieldSubmitted: (val){
+                                      fnBoxCount.requestFocus();
+                                    },
+                                  ),
+                                ),
+                              ),
+                              Flexible(
+                                child: Container(
+                                  height: 35,
+                                  padding: const EdgeInsets.symmetric(horizontal: 15),
+                                  decoration: boxBaseDecoration(greyLight, 5),
+                                  child: TextFormField(
+                                    controller: txtCount,
+                                    focusNode: fnCount,
+                                    inputFormatters: mfnInputFormatters(),
+                                    keyboardType: TextInputType.number,
+                                    decoration: const InputDecoration(
+                                      hintText: 'Count',
+                                      border: InputBorder.none,
+                                    ),
+                                    onFieldSubmitted: (val){
+                                      fnBoxCount.requestFocus();
+                                    },
+                                  ),
+                                ),
+                              ),
+                              gapWC(5),
+                            ],
+                          ),
+                          Row(
+                            children: [
+                              Flexible(
+                                child: Container(
                                   height: 40,
                                   padding: const EdgeInsets.symmetric(horizontal: 15),
                                   decoration: boxBaseDecoration(greyLight, 5),
@@ -170,6 +277,7 @@ class _FavNumberState extends State<FavNumber> {
                                   ),
                                 ),
                               ),
+
                               gapWC(10),
                               GestureDetector(
                                 onTap: (){
@@ -309,6 +417,7 @@ class _FavNumberState extends State<FavNumber> {
                       setState(() {
                         fNumberLimit.remove(e);
                       });
+                      apiRemoveNumberCount((e["TYPE"]??"").toString(), (e["NUMBER"]??"").toString());
                     }
                   },
                   child: const Icon(Icons.close,color: Colors.grey,size: 25,))
@@ -367,7 +476,7 @@ class _FavNumberState extends State<FavNumber> {
   //=================================API CALL
 
   apiAddNumberCount(type){
-    futureForm = apiCall.apiSaveGlobalNumberCount( "ALL", type, txtNum.text , -1);
+    futureForm = apiCall.apiSaveGlobalNumberCount( g.wstrSelectedGame, type, txtNum.text , -1);
     futureForm.then((value) => apiAddNumberCountRes(value));
   }
   apiAddNumberCountRes(value){
@@ -393,7 +502,7 @@ class _FavNumberState extends State<FavNumber> {
 
 
   apiRemoveNumberCount(type,num){
-    futureForm = apiCall.apiRemoveGlobalNumberCountLimit( "ALL", type, num);
+    futureForm = apiCall.apiRemoveGlobalNumberCountLimit( g.wstrSelectedGame, type, num);
     futureForm.then((value) => apiRemoveNumberCountRes(value));
   }
   apiRemoveNumberCountRes(value){
@@ -418,7 +527,7 @@ class _FavNumberState extends State<FavNumber> {
 
 
   apiGetDetails(){
-    futureForm  = apiCall.apiGetGlobalDetails(g.wstrCompany, "NUMBER_COUNTLIMIT");
+    futureForm  = apiCall.apiGetGlobalDetails(g.wstrCompany, "NUMBER_COUNTLIMIT",g.wstrSelectedGame);
     futureForm.then((value) => apiGetDetailsRes(value));
   }
   apiGetDetailsRes(value){

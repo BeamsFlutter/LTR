@@ -12,6 +12,7 @@ import 'package:ltr/views/components/inputfield/commonTextField.dart';
 import 'package:ltr/views/pages/user/usersearch.dart';
 import 'package:ltr/views/styles/colors.dart';
 import 'package:marquee/marquee.dart';
+import 'dart:isolate';
 
 class Booking extends StatefulWidget {
   final String? mode;
@@ -97,7 +98,7 @@ class _BookingState extends State<Booking> {
   @override
   Widget build(BuildContext context) {
     return WillPopScope(child: Scaffold(
-
+      resizeToAvoidBottomInset: false,
       body: Container(
         margin: MediaQuery.of(context).padding,
         child: Column(
@@ -123,24 +124,61 @@ class _BookingState extends State<Booking> {
                           tcn('$lstrSelectedGame Game', Colors.white, 20)
                         ],
                       ),
+                      // widget.mode != "EDIT"?
+                      // PopupMenuButton<Menu>(
+                      //   position: PopupMenuPosition.under,
+                      //   tooltip: "",
+                      //   onSelected: (Menu item) {
+                      //
+                      //   },
+                      //   shape:  RoundedRectangleBorder(
+                      //       borderRadius: BorderRadius.circular(10)),
+                      //   itemBuilder: (BuildContext context) => <PopupMenuEntry<Menu>>[
+                      //     PopupMenuItem<Menu>(
+                      //       value: Menu.itemOne,
+                      //       padding: const EdgeInsets.symmetric(vertical: 0,horizontal: 0),
+                      //       child: wGamePopup(),
+                      //     ),
+                      //   ],
+                      //   child:   const Icon(Icons.dashboard_outlined,color: Colors.white,size: 20,),
+                      // ):gapHC(0)
                       widget.mode != "EDIT"?
-                      PopupMenuButton<Menu>(
-                        position: PopupMenuPosition.under,
-                        tooltip: "",
-                        onSelected: (Menu item) {
-
+                      Bounce(
+                        onPressed: (){
+                          fnSave();
                         },
-                        shape:  RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10)),
-                        itemBuilder: (BuildContext context) => <PopupMenuEntry<Menu>>[
-                          PopupMenuItem<Menu>(
-                            value: Menu.itemOne,
-                            padding: const EdgeInsets.symmetric(vertical: 0,horizontal: 0),
-                            child: wGamePopup(),
+                        duration: const Duration(milliseconds: 110),
+                        child: Container(
+                          decoration: boxDecoration(Colors.green, 30),
+                          padding: const EdgeInsets.symmetric(vertical: 5,horizontal: 20),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.task_alt,color: Colors.white,size: 15,),
+                              gapWC(5),
+                              tcn('Save', Colors.white, 15)
+                            ],
                           ),
-                        ],
-                        child:   const Icon(Icons.dashboard_outlined,color: Colors.white,size: 20,),
-                      ):gapHC(0)
+                        ),
+                      ):
+                      Bounce(
+                        onPressed: (){
+                          fnSave();
+                        },
+                        duration: const Duration(milliseconds: 110),
+                        child: Container(
+                          decoration: boxDecoration(g.wstrGameBColor, 30),
+                          padding: const EdgeInsets.symmetric(vertical: 10),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.task_alt,color: g.wstrGameOTColor,size: 15,),
+                              gapWC(5),
+                              tcn('Update', g.wstrGameOTColor, 15)
+                            ],
+                          ),
+                        ),
+                      ),
 
                     ],
                   ),
@@ -298,7 +336,8 @@ class _BookingState extends State<Booking> {
                         ),
                       )),
                       gapWC(10),
-                      wOption("S"),
+                      gCountNum == 3?
+                      wOption("S"):gapHC(0),
                       gapWC(10),
                       wOption("R"),
 
@@ -380,7 +419,7 @@ class _BookingState extends State<Booking> {
                         ),
                       ),
                       gapWC(5),
-                      blFromTo && (gOption != "Box" && gOption != "S")?
+                      blFromTo && (gOption != "Box" && gOption != "S" && gOption !="Book")?
                       Flexible(
                         child: Container(
                           height: 35,
@@ -519,8 +558,7 @@ class _BookingState extends State<Booking> {
                       wOption("111s"),
                       wOption("Box"),
                     ],
-                  ):gapHC(0),
-                  gCountNum == 2?
+                  ):gCountNum == 2?
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -529,7 +567,13 @@ class _BookingState extends State<Booking> {
                       wOption("10s"),
                       wOption("11s"),
                     ],
-                  ):gapHC(0),
+                  ):Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      wOption("Any"),
+                      wOption("2s"),
+                    ],
+                  ),
 
 
                 ],
@@ -1319,9 +1363,10 @@ class _BookingState extends State<Booking> {
     }
 
     if(g.mfnDbl(txtCount.text) <=0 ){
-      if(!(gCountNum == 3 && blFromTo && gOption == "Book")){
-        return;
-      }
+      // if(!(gCountNum == 3 && blFromTo && gOption == "Book")){
+      //   return;
+      // }
+      return;
     }
 
     var price  = plan == "SUPER" ?supPrice:plan == "BOX" ?boxPrice:gCountNum ==2 ?twoPrice:gCountNum ==1 ?onePrice:0.0;
@@ -1330,7 +1375,7 @@ class _BookingState extends State<Booking> {
 
       if(blFromTo){
 
-        if(g.mfnDbl(txtNum.text) >= g.mfnDbl(txtNumTo.text) && (gOption != "Box" && gOption != "S")){
+        if(g.mfnDbl(txtNum.text) >= g.mfnDbl(txtNumTo.text) && (gOption != "Box" && gOption != "S" &&  gOption!="Book")){
           errorMsg(context, "Entered number not valid");
           return;
         }
@@ -1411,42 +1456,50 @@ class _BookingState extends State<Booking> {
           }
         }
         else if(gOption == "Book" ){
-          if(txtNum.text.toString().length != gCountNum  || txtNumTo.text.toString().length != gCountNum){
+          if(txtNum.text.toString().length != gCountNum){
             return;
           }
           var fromNum = txtNum.text;
-          var toNum = txtNumTo.text;
-          for(var i = g.mfnDbl(fromNum);i <= g.mfnDbl(toNum);i++ ){
+          var toNum = g.mfnDbl(fromNum)+4;
+          if(toNum >= 999){
+            toNum = 999;
+          }
+          for(var i = g.mfnDbl(fromNum);i <= toNum;i++ ){
 
             var iNum = i.toStringAsFixed(0);
             iNum = iNum.length ==1?('00$iNum').toString():iNum.length ==2?('0$iNum').toString():iNum;
+            if(iNum.length == 3){
+              if(plan == "BOTH"){
+                if(fnCheckNumberInList(iNum.toString(),"SUPER")){
+                  countList.add({
+                    "PLAN":"SUPER",
+                    "NUMBER":iNum.toString(),
+                    "COUNT":txtCount.text,
+                    "AMOUNT":supPrice,
+                  });
+                }
+                if(fnCheckNumberInList(iNum.toString(),"BOX")){
+                  countList.add({
+                    "PLAN":"BOX",
+                    "NUMBER":iNum.toString(),
+                    "COUNT":txtCount.text,
+                    "AMOUNT":boxPrice,
+                  });
+                }
+            }
 
-            if(plan == "BOTH"){
-              if(fnCheckNumberInList(iNum.toString(),"SUPER")){
-                countList.add({
-                  "PLAN":"SUPER",
-                  "NUMBER":iNum.toString(),
-                  "COUNT":5,
-                  "AMOUNT":supPrice,
-                });
-              }
-              if(fnCheckNumberInList(iNum.toString(),"BOX")){
-                countList.add({
-                  "PLAN":"BOX",
-                  "NUMBER":iNum.toString(),
-                  "COUNT":5,
-                  "AMOUNT":boxPrice,
-                });
-              }
+
 
             }else{
-              if(fnCheckNumberInList(iNum.toString(),plan)){
-                countList.add({
-                  "PLAN":plan,
-                  "NUMBER":iNum.toString(),
-                  "COUNT":5,
-                  "AMOUNT":price,
-                });
+              if(iNum.length == 3){
+                if(fnCheckNumberInList(iNum.toString(),plan)){
+                  countList.add({
+                    "PLAN":plan,
+                    "NUMBER":iNum.toString(),
+                    "COUNT":txtCount.text,
+                    "AMOUNT":price,
+                  });
+                }
               }
 
             }
@@ -1593,7 +1646,7 @@ class _BookingState extends State<Booking> {
 
     }
     else if(gCountNum == 2 && blFromTo){
-      if(g.mfnDbl(txtNum.text) >= g.mfnDbl(txtNumTo.text) && (gOption != "Box" && gOption != "S")){
+      if(g.mfnDbl(txtNum.text) >= g.mfnDbl(txtNumTo.text) && (gOption != "Box" && gOption != "S" && gOption !="Book")){
         errorMsg(context, "Entered number not valid");
         return;
       }
@@ -1690,52 +1743,57 @@ class _BookingState extends State<Booking> {
         }
       }
       else if(gOption == "Book" ){
-        if(txtNum.text.toString().length != gCountNum  || txtNumTo.text.toString().length != gCountNum){
+        if(txtNum.text.toString().length != gCountNum  ){
           return;
         }
         var fromNum = txtNum.text;
-        var toNum = txtNumTo.text;
-        for(var i = g.mfnDbl(fromNum);i <= g.mfnDbl(toNum);i++ ){
+        var toNum = g.mfnDbl(fromNum)+4;
+        if(toNum >= 99){
+          toNum = 99;
+        }
+        for(var i = g.mfnDbl(fromNum);i <= toNum;i++ ){
 
           var iNum = i.toStringAsFixed(0);
           iNum = iNum.length ==1?('0$iNum').toString():iNum;
 
-          if(plan == "ALL"){
-            if(fnCheckNumberInList(iNum.toString(),"AB")){
-              countList.add({
-                "PLAN":"AB",
-                "NUMBER":iNum.toString(),
-                "COUNT":5,
-                "AMOUNT":twoPrice,
-              });
-            }
-            if(fnCheckNumberInList(iNum.toString(),"BC")){
-              countList.add({
-                "PLAN":"BC",
-                "NUMBER":iNum.toString(),
-                "COUNT":5,
-                "AMOUNT":twoPrice,
-              });
-            }
-            if(fnCheckNumberInList(iNum.toString(),"AC")){
-              countList.add({
-                "PLAN":"AC",
-                "NUMBER":iNum.toString(),
-                "COUNT":5,
-                "AMOUNT":twoPrice,
-              });
-            }
+          if(iNum.length ==2){
+            if(plan == "ALL"){
+              if(fnCheckNumberInList(iNum.toString(),"AB")){
+                countList.add({
+                  "PLAN":"AB",
+                  "NUMBER":iNum.toString(),
+                  "COUNT":txtCount.text,
+                  "AMOUNT":twoPrice,
+                });
+              }
+              if(fnCheckNumberInList(iNum.toString(),"BC")){
+                countList.add({
+                  "PLAN":"BC",
+                  "NUMBER":iNum.toString(),
+                  "COUNT":txtCount.text,
+                  "AMOUNT":twoPrice,
+                });
+              }
+              if(fnCheckNumberInList(iNum.toString(),"AC")){
+                countList.add({
+                  "PLAN":"AC",
+                  "NUMBER":iNum.toString(),
+                  "COUNT":txtCount.text,
+                  "AMOUNT":twoPrice,
+                });
+              }
 
-          }else{
-            if(fnCheckNumberInList(iNum.toString(),plan)){
-              countList.add({
-                "PLAN":plan,
-                "NUMBER":iNum.toString(),
-                "COUNT":5,
-                "AMOUNT":price,
-              });
-            }
+            }else{
+              if(fnCheckNumberInList(iNum.toString(),plan)){
+                countList.add({
+                  "PLAN":plan,
+                  "NUMBER":iNum.toString(),
+                  "COUNT":txtCount.text,
+                  "AMOUNT":price,
+                });
+              }
 
+            }
           }
         }
 
@@ -1804,44 +1862,145 @@ class _BookingState extends State<Booking> {
         return;
       }
 
-      if(plan =="ALL"){
-        var planName = txtNum.text.length == 2?"AB":"A";
-        if(fnCheckNumberInList(txtNum.text,planName)){
-          countList.add({
-            "PLAN":planName,
-            "NUMBER":txtNum.text,
-            "COUNT":txtCount.text,
-            "AMOUNT":price,
-          });
-        }
-         planName = txtNum.text.length == 2?"BC":"B";
-        if(fnCheckNumberInList(txtNum.text,planName)){
-          countList.add({
-            "PLAN":planName,
-            "NUMBER":txtNum.text,
-            "COUNT":txtCount.text,
-            "AMOUNT":price,
-          });
-        }
-         planName = txtNum.text.length == 2?"AC":"C";
-        if(fnCheckNumberInList(txtNum.text,planName)){
-          countList.add({
-            "PLAN":planName,
-            "NUMBER":txtNum.text,
-            "COUNT":txtCount.text,
-            "AMOUNT":price,
-          });
-        }
-      }else{
-        if(fnCheckNumberInList(txtNum.text,plan)){
-          countList.add({
-            "PLAN":plan,
-            "NUMBER":txtNum.text,
-            "COUNT":txtCount.text,
-            "AMOUNT":price,
-          });
+      if(gOption == "2s" ){
+        for(var i = 0;i <= 9;i=i+2 ){
+          if(plan == "ALL"){
+            if(fnCheckNumberInList(i,"A")){
+              countList.add({
+                "PLAN":"A",
+                "NUMBER":i,
+                "COUNT":txtCount.text,
+                "AMOUNT":onePrice,
+              });
+            }
+            if(fnCheckNumberInList(i,"B")){
+              countList.add({
+                "PLAN":"B",
+                "NUMBER":i,
+                "COUNT":txtCount.text,
+                "AMOUNT":onePrice,
+              });
+            }
+            if(fnCheckNumberInList(i,"C")){
+              countList.add({
+                "PLAN":"C",
+                "NUMBER":i,
+                "COUNT":txtCount.text,
+                "AMOUNT":onePrice,
+              });
+            }
+
+          }
+          else{
+            if(fnCheckNumberInList(i,plan)){
+              countList.add({
+                "PLAN":plan,
+                "NUMBER":i,
+                "COUNT":txtCount.text,
+                "AMOUNT":price,
+              });
+            }
+
+          }
         }
       }
+      else if(gOption == "Any" || (gOption == "R")){
+        if(txtNum.text.toString().length != gCountNum  || txtNumTo.text.toString().length != gCountNum){
+          return;
+        }
+        var fromNum = txtNum.text;
+        var toNum = txtNumTo.text;
+        var diffVal = g.mfnDbl(txtDiff.text) == 0?1.0:g.mfnDbl(txtDiff.text);
+        for(var i = g.mfnDbl(fromNum);i <= g.mfnDbl(toNum);i = i+ diffVal ){
+
+          var iNum = i.toStringAsFixed(0);
+
+          if(plan == "ALL"){
+            if(fnCheckNumberInList(iNum.toString(),"A")){
+              countList.add({
+                "PLAN":"A",
+                "NUMBER":iNum,
+                "COUNT":txtCount.text,
+                "AMOUNT":onePrice,
+              });
+            }
+
+            if(fnCheckNumberInList(iNum.toString(),"B")){
+              countList.add({
+                "PLAN":"B",
+                "NUMBER":iNum,
+                "COUNT":txtCount.text,
+                "AMOUNT":onePrice,
+              });
+            }
+
+            if(fnCheckNumberInList(iNum.toString(),"C")){
+              countList.add({
+                "PLAN":"C",
+                "NUMBER":iNum,
+                "COUNT":txtCount.text,
+                "AMOUNT":onePrice,
+              });
+            }
+
+          }else{
+            if(fnCheckNumberInList(iNum.toString(),plan)){
+              countList.add({
+                "PLAN":plan,
+                "NUMBER":iNum,
+                "COUNT":txtCount.text,
+                "AMOUNT":price,
+              });
+            }
+
+          }
+        }
+
+      }
+      else{
+        if(plan =="ALL"){
+          var planName = txtNum.text.length == 2?"AB":"A";
+          if(fnCheckNumberInList(txtNum.text,planName)){
+            countList.add({
+              "PLAN":planName,
+              "NUMBER":txtNum.text,
+              "COUNT":txtCount.text,
+              "AMOUNT":price,
+            });
+          }
+          planName = txtNum.text.length == 2?"BC":"B";
+          if(fnCheckNumberInList(txtNum.text,planName)){
+            countList.add({
+              "PLAN":planName,
+              "NUMBER":txtNum.text,
+              "COUNT":txtCount.text,
+              "AMOUNT":price,
+            });
+          }
+          planName = txtNum.text.length == 2?"AC":"C";
+          if(fnCheckNumberInList(txtNum.text,planName)){
+            countList.add({
+              "PLAN":planName,
+              "NUMBER":txtNum.text,
+              "COUNT":txtCount.text,
+              "AMOUNT":price,
+            });
+          }
+        }else{
+          if(fnCheckNumberInList(txtNum.text,plan)){
+            countList.add({
+              "PLAN":plan,
+              "NUMBER":txtNum.text,
+              "COUNT":txtCount.text,
+              "AMOUNT":price,
+            });
+          }
+        }
+      }
+
+
+
+
 
     }
 
@@ -2011,8 +2170,36 @@ class _BookingState extends State<Booking> {
     if(mounted){
       setState(() {
 
+        countList = [];
+        frGameList = [];
+        blFromTo = false;
+        fTotalAmount = 0.0;
+        fTotalCount = 0.0;
+        fStockistCode = "";
+        fDealerCode = "";
+        fAgentCode = "";
+        fBookingNo = "";
+        fBookingDoctype = "";
+        fEndTime  =  "";
+
+        gCountNum = 3;
+        gOption  = "";
+        gSelectR = false;
+        gSelectS = false;
+
+        supPrice  = 8.0;
+        boxPrice  = 7.0;
+        twoPrice  = 9.0;
+        onePrice  = 10.0;
+
+        editDocno = "";
+        editCustomer = "";
+        editAgent = "";
+        editNetAmount = "";
+        editGameDocno = "";
       });
     }
+    fnGetPageData();
   }
 
   //=======================================API CALL
@@ -2112,8 +2299,15 @@ class _BookingState extends State<Booking> {
           var sts = (value[0]["STATUS"])??"";
           var msg = (value[0]["MSG"])??"";
           if(sts == "1"){
-            Get.back();
-            successMsg(context, "BOOKING SAVED");
+            var docno = (value[0]["DOCNO"])??"";
+            if(wstrPageMode == "ADD"){
+              fnClear();
+            }else{
+              Get.back();
+            }
+            PageDialog().showSaveSuccess(context,(){
+              Navigator.pop(context);
+            },docno);
           }else{
             errorMsg(context, msg);
           }
@@ -2192,7 +2386,7 @@ class _BookingState extends State<Booking> {
   }
 
   apiGetDetails(){
-    futureForm  = apiCall.apiGetGlobalDetails(g.wstrCompany,"PRICE");
+    futureForm  = apiCall.apiGetGlobalDetails(g.wstrCompany,"PRICE","");
     futureForm.then((value) => apiGetDetailsRes(value));
   }
   apiGetDetailsRes(value){
@@ -2233,4 +2427,12 @@ class _BookingState extends State<Booking> {
 
 
 
+}
+
+complexTask2(SendPort sendPort) {
+  var total = 0.0;
+  for (var i = 0; i < 1000000000; i++) {
+    total += i;
+  }
+  sendPort.send(total);
 }

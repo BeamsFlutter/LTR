@@ -803,7 +803,7 @@ class _CurrentUserPrizeState extends State<CurrentUserPrize> {
   }
 
   apiGetDetails(){
-    futureForm  = apiCall.apiGetUserDetails(g.wstrCompany, frSelectedUser, "WINNING");
+    futureForm  = apiCall.apiGetUserDetails(g.wstrCompany, frSelectedUser, "WINNING",null);
     futureForm.then((value) => apiGetDetailsRes(value));
   }
   apiGetDetailsRes(value){

@@ -463,7 +463,7 @@ class _NumberCountState extends State<UserNumberCount> {
 
 
   apiGetDetails(){
-    futureForm  = apiCall.apiGetUserDetails(g.wstrCompany, widget.pUserCode, "NUMBER_COUNTLIMIT");
+    futureForm  = apiCall.apiGetUserDetails(g.wstrCompany, widget.pUserCode, "NUMBER_COUNTLIMIT",null);
     futureForm.then((value) => apiGetDetailsRes(value));
   }
   apiGetDetailsRes(value){

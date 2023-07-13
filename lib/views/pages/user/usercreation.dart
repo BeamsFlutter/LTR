@@ -46,6 +46,8 @@ class _UserCreationState extends State<UserCreation> {
 
   var blDefaultAgent  = false;
   var blCanViewComm  = false;
+  var blEdit  = false;
+
 
   @override
   void initState() {
@@ -96,6 +98,36 @@ class _UserCreationState extends State<UserCreation> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      GestureDetector(
+                        onTap: (){
+                          if(mounted){
+                            setState(() {
+                              blEdit = !blEdit;
+                            });
+                          }
+                        },
+                        child: Container(
+                          decoration: boxBaseDecoration(greyLight, 0),
+                          padding: const EdgeInsets.all(5),
+                          child: Row(
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.all(4),
+                                decoration: boxBaseDecoration(Colors.white, 30),
+                                child: Container(
+                                  height: 18,
+                                  width: 18,
+                                  decoration: blEdit?boxDecoration( bgColorDark, 30):boxBaseDecoration( Colors.white, 30),
+                                  child: const Icon(Icons.done,color: Colors.white,size: 13,),
+                                ),
+                              ),
+                              gapWC(10),
+                              tcn('Password Edit',blEdit? Colors.black: Colors.grey, 15)
+                            ],
+                          ),
+                        ),
+                      ),
+                      gapHC(10),
                       Container(
                         padding: const EdgeInsets.all(5),
                         decoration: boxBaseDecoration(greyLight,0),
@@ -389,11 +421,11 @@ class _UserCreationState extends State<UserCreation> {
         errorMsg(context, "Check Id");
         return;
       }
-      if(txtPassword.text.isEmpty){
+      if(txtPassword.text.isEmpty && (blEdit || wstrPageMode == "ADD")){
         errorMsg(context, "Check Password");
         return;
       }
-      if(txtPassword.text !=  txtConfirmPwd.text){
+      if(txtPassword.text !=  txtConfirmPwd.text && (blEdit || wstrPageMode == "ADD")){
         errorMsg(context, "Confirm Password");
         return;
       }
@@ -456,6 +488,8 @@ class _UserCreationState extends State<UserCreation> {
 
   apiCreateUser(){
 
+
+
     var games = [];
     for(var e in frSelectedGameList){
       games.add({
@@ -479,7 +513,7 @@ class _UserCreationState extends State<UserCreation> {
 
     var sharePerc = g.mfnDbl(txtSharePerc.text.toString());
 
-    futureForm = apiCall.apiCreateUser(g.wstrCompany, txtId.text, wstrRole.toString().toUpperCase(),parentCode, txtPassword.text, txtWeeklyCredit.text, txtDailyCredit.text, wstrPageMode,sharePerc,canView,defAgent,games);
+    futureForm = apiCall.apiCreateUser(g.wstrCompany, txtId.text, wstrRole.toString().toUpperCase(),parentCode, txtPassword.text, txtWeeklyCredit.text, txtDailyCredit.text,blEdit?"PASSWORD": wstrPageMode,sharePerc,canView,defAgent,games);
     futureForm.then((value) => apiCreateUserRes(value));
   }
   apiCreateUserRes(value){
@@ -505,7 +539,7 @@ class _UserCreationState extends State<UserCreation> {
   }
 
   apiGetDetails(){
-    futureForm  = apiCall.apiGetUserDetails(g.wstrCompany, widget.pPageUserCd.toString(), "USERDET");
+    futureForm  = apiCall.apiGetUserDetails(g.wstrCompany, widget.pPageUserCd.toString(), "USERDET",null);
     futureForm.then((value) => apiGetDetailsRes(value));
   }
   apiGetDetailsRes(value){

@@ -503,6 +503,10 @@ msgBox(context,msg,mode,icon){
     PageDialog().showMessage(context, msg,"",mode,icon);
 }
 
+successMsgNotClose(context,msg){
+    PageDialog().showMessage(context, msg,"","S","");
+}
+
 
 //=============================================================IMAGE CARD
 

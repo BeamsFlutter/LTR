@@ -994,6 +994,73 @@ class PageDialog{
     );
   }
 
+
+
+  Future<void> showSaveSuccess(context,fnEnd,docno) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        Size size = MediaQuery.of(context).size;
+        return AlertDialog(
+            backgroundColor: Colors.transparent,
+            content: Container(
+                width: 300,
+                height: 200,
+                decoration: boxDecoration(Colors.white, 10),
+                child: Column(
+                  children: [
+                    Container(
+                      decoration: boxBaseDecorationC(Colors.green, 10,10,0,0),
+                      padding: const EdgeInsets.all(10),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          tc('Success',Colors.white,18),
+                        ],
+                      ),
+                    ),
+                    gapHC(5),
+                    Expanded(child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+
+                        tcn("BOOKING NO:",Colors.black,18),
+                        tc(docno,Colors.black,25),
+                        gapHC(20),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+
+                            GestureDetector(
+                              onTap: (){
+                                fnEnd();
+                              },
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(vertical: 10,horizontal: 20),
+                                decoration: boxBaseDecoration(Colors.blueGrey, 30),
+                                child: Center(
+                                  child: tc('DONE', Colors.white, 15),
+                                ),
+                              ),
+                            ),
+
+                          ],
+                        )
+                      ],
+                    ))
+                  ],
+                )
+
+            )
+        );
+      },
+    );
+  }
+
+
+
   fnShow() {
     Get.dialog(
       barrierDismissible: false, // user must tap button!

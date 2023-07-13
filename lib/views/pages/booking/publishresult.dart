@@ -82,6 +82,13 @@ class _PublishResultState extends State<PublishResult> {
   var txtP29 = TextEditingController();
   var txtP30 = TextEditingController();
 
+  var txtP31 = TextEditingController();
+  var txtP32 = TextEditingController();
+  var txtP33 = TextEditingController();
+  var txtP34 = TextEditingController();
+  var txtP35 = TextEditingController();
+
+
   var txtCaptcha = TextEditingController();
 
 
@@ -457,6 +464,63 @@ class _PublishResultState extends State<PublishResult> {
                       ],
                     ),
                     gapHC(5),
+                    Row(
+                      children: [
+                        Expanded(child: CustomTextField(
+                          keybordType: TextInputType.number,
+                          controller: txtP30,
+                          editable: blEdit,
+                          hintText: "25",
+                          textFormFieldType: TextFormFieldType.gift,
+                        ),),
+                        gapWC(5),
+                        Expanded(child: CustomTextField(
+                          keybordType: TextInputType.number,
+                          controller: txtP31,
+                          editable: blEdit,
+                          hintText: "26",
+                          textFormFieldType: TextFormFieldType.gift,
+                        ),),
+                        gapWC(5),
+                        Expanded(child: CustomTextField(
+                          keybordType: TextInputType.number,
+                          controller: txtP32,
+                          editable: blEdit,
+                          hintText: "27",
+                          textFormFieldType: TextFormFieldType.gift,
+                        ),),
+                      ],
+                    ),
+                    gapHC(5),
+
+                    Row(
+                      children: [
+                        Expanded(child: CustomTextField(
+                          keybordType: TextInputType.number,
+                          controller: txtP33,
+                          editable: blEdit,
+                          hintText: "28",
+                          textFormFieldType: TextFormFieldType.gift,
+                        ),),
+                        gapWC(5),
+                        Expanded(child: CustomTextField(
+                          keybordType: TextInputType.number,
+                          controller: txtP34,
+                          editable: blEdit,
+                          hintText: "29",
+                          textFormFieldType: TextFormFieldType.gift,
+                        ),),
+                        gapWC(5),
+                        Expanded(child: CustomTextField(
+                          keybordType: TextInputType.number,
+                          controller: txtP35,
+                          editable: blEdit,
+                          hintText: "30",
+                          textFormFieldType: TextFormFieldType.gift,
+                        ),),
+                      ],
+                    ),
+                    gapHC(5),
                   ],
                 ),
               ),
@@ -665,6 +729,7 @@ class _PublishResultState extends State<PublishResult> {
           txtP26,
           txtP27,
           txtP28,
+          txtP29,
           txtP29
         ];
       });

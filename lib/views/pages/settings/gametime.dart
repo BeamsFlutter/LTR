@@ -132,7 +132,7 @@ class _GameTimeSettingsState extends State<GameTimeSettings> {
                            children: [
                              const Icon(Icons.access_time,color: grey,size: 18,),
                              gapWC(5),
-                             tcn('From Time', grey, 15),
+                             tcn('Open Time', grey, 15),
                            ],
                          ),
                          lstrTimeFrom.isNotEmpty?
@@ -160,7 +160,7 @@ class _GameTimeSettingsState extends State<GameTimeSettings> {
                            children: [
                              const Icon(Icons.access_time,color: grey,size: 18,),
                              gapWC(5),
-                             tcn('To Time', grey, 15),
+                             tcn('Close Time', grey, 15),
                            ],
                          ),
                          lstrTimeTo.isNotEmpty?

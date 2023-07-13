@@ -259,7 +259,7 @@ class _GlobalSalesRateState extends State<GlobalSalesRate> {
   }
 
   apiGetDetails(){
-    futureForm  = apiCall.apiGetGlobalDetails(g.wstrCompany,"PRICE");
+    futureForm  = apiCall.apiGetGlobalDetails(g.wstrCompany,"PRICE",null);
     futureForm.then((value) => apiGetDetailsRes(value));
   }
   apiGetDetailsRes(value){

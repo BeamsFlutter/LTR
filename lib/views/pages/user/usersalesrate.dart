@@ -263,7 +263,7 @@ class _UserSalesRateState extends State<UserSalesRate> {
   }
 
   apiGetDetails(){
-    futureForm  = apiCall.apiGetUserDetails(g.wstrCompany, frSelectedUser, "PRICE");
+    futureForm  = apiCall.apiGetUserDetails(g.wstrCompany, frSelectedUser, "PRICE",null);
     futureForm.then((value) => apiGetDetailsRes(value));
   }
   apiGetDetailsRes(value){

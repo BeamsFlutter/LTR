@@ -27,6 +27,7 @@ class _GlobalGameCountState extends State<GlobalGameCount> {
   //Page Variable
   var frSelectedUser = "";
   bool blEdit  = false;
+  bool blAllGame  = false;
   var gameCountLimit = [];
 
 
@@ -109,6 +110,38 @@ class _GlobalGameCountState extends State<GlobalGameCount> {
                 ),
               ),
             ),
+            blEdit?gapHC(10):gapHC(0),
+            blEdit?
+            GestureDetector(
+              onTap: (){
+                if(mounted){
+                  setState(() {
+                    blAllGame = !blAllGame;
+                  });
+                }
+              },
+              child: Container(
+                decoration: boxBaseDecoration(greyLight, 0),
+                padding: const EdgeInsets.all(5),
+                margin: const EdgeInsets.symmetric(horizontal: 10),
+                child: Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(4),
+                      decoration: boxBaseDecoration(Colors.white, 30),
+                      child: Container(
+                        height: 18,
+                        width: 18,
+                        decoration: blAllGame?boxDecoration( bgColorDark, 30):boxBaseDecoration( Colors.white, 30),
+                        child: const Icon(Icons.done,color: Colors.white,size: 13,),
+                      ),
+                    ),
+                    gapWC(10),
+                    tcn('All Game',blAllGame? Colors.black: Colors.grey, 15)
+                  ],
+                ),
+              ),
+            ):gapHC(0),
             gapHC(10),
             Expanded(child: Padding(
               padding: const EdgeInsets.all(10),
@@ -227,45 +260,48 @@ class _GlobalGameCountState extends State<GlobalGameCount> {
   }
   fnUpdate(){
     if(mounted){
+
+      var game = blAllGame?"All":g.wstrSelectedGame;
+
       setState(() {
         gameCountLimit = [];
         gameCountLimit.add({
-          "GAME_CODE": "ALL",
+          "GAME_CODE": game,
           "TYPE": "SUPER",
           "COUNT": g.mfnInt(txtSup.text)
         });
         gameCountLimit.add({
-          "GAME_CODE": "ALL",
+          "GAME_CODE": game,
           "TYPE": "AB",
           "COUNT": g.mfnInt(txtAB.text)
         });
         gameCountLimit.add({
-          "GAME_CODE": "ALL",
+          "GAME_CODE": game,
           "TYPE": "BC",
           "COUNT": g.mfnInt(txtBC.text)
         });
         gameCountLimit.add({
-          "GAME_CODE": "ALL",
+          "GAME_CODE": game,
           "TYPE": "AC",
           "COUNT": g.mfnInt(txtAC.text)
         });
         gameCountLimit.add({
-          "GAME_CODE": "ALL",
+          "GAME_CODE": game,
           "TYPE": "A",
           "COUNT": g.mfnInt(txtA.text)
         });
         gameCountLimit.add({
-          "GAME_CODE": "ALL",
+          "GAME_CODE": game,
           "TYPE": "B",
           "COUNT": g.mfnInt(txtB.text)
         });
         gameCountLimit.add({
-          "GAME_CODE": "ALL",
+          "GAME_CODE": game,
           "TYPE": "C",
           "COUNT": g.mfnInt(txtC.text)
         });
         gameCountLimit.add({
-          "GAME_CODE": "ALL",
+          "GAME_CODE": game,
           "TYPE": "BOX",
           "COUNT": g.mfnInt(txtBox.text)
         });
@@ -327,7 +363,7 @@ class _GlobalGameCountState extends State<GlobalGameCount> {
   }
 
   apiGetDetails(){
-    futureForm  = apiCall.apiGetGlobalDetails(g.wstrCompany, "COUNTLIMIT");
+    futureForm  = apiCall.apiGetGlobalDetails(g.wstrCompany, "COUNTLIMIT",g.wstrSelectedGame);
     futureForm.then((value) => apiGetDetailsRes(value));
   }
   apiGetDetailsRes(value){
