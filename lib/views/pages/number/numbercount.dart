@@ -30,13 +30,26 @@ class _NumberCountState extends State<NumberCount> {
   var fSelectedGame = "";
   var fNumberLimit = [];
   var gameList = [];
+  bool blAllGame  = false;
+
+
+
 
 
   var txtNum = TextEditingController();
+  var txtNumTo = TextEditingController();
+  var txtDiff = TextEditingController();
   var txtCount = TextEditingController();
+  var txtBoxCount = TextEditingController();
+  var txtName = TextEditingController();
+  var txtChangeQty = TextEditingController();
 
   var fnNum = FocusNode();
+  var fnNumTo = FocusNode();
+  var fnDiff = FocusNode();
   var fnCount = FocusNode();
+  var fnBoxCount = FocusNode();
+  var fnName = FocusNode();
 
   @override
   void initState() {
@@ -147,7 +160,7 @@ class _NumberCountState extends State<NumberCount> {
                             children: [
                               Flexible(
                                 child: Container(
-                                  height: 40,
+                                  height: 35,
                                   padding: const EdgeInsets.symmetric(horizontal: 15),
                                   decoration: boxBaseDecoration(greyLight, 5),
                                   child: TextFormField(
@@ -157,22 +170,68 @@ class _NumberCountState extends State<NumberCount> {
                                     inputFormatters: mfnInputFormatters(),
                                     keyboardType: TextInputType.number,
                                     decoration: const InputDecoration(
-                                      hintText: 'Number',
+                                      hintText: 'Num',
                                       counterText: "",
                                       border: InputBorder.none,
                                     ),
                                     onChanged: (val){
-                                      if(txtNum.text.length == gCountNum){
-                                        fnCount.requestFocus();
+                                      if(val.toString().length == gCountNum){
+                                        fnNumTo.requestFocus();
                                       }
                                     },
                                   ),
                                 ),
                               ),
-                              gapWC(10),
+                              gapWC(5),
                               Flexible(
                                 child: Container(
-                                  height: 40,
+                                  height: 35,
+                                  padding: const EdgeInsets.symmetric(horizontal: 15),
+                                  decoration: boxBaseDecoration(greyLight, 5),
+                                  child: TextFormField(
+                                    controller: txtNumTo,
+                                    focusNode: fnNumTo,
+                                    maxLength: gCountNum,
+                                    inputFormatters: mfnInputFormatters(),
+                                    keyboardType: TextInputType.number,
+                                    decoration: const InputDecoration(
+                                      hintText: 'To',
+                                      counterText: "",
+                                      border: InputBorder.none,
+                                    ),
+                                    onChanged: (val){
+                                      if(val.toString().length == gCountNum){
+                                        fnDiff.requestFocus();
+                                      }
+                                    },
+                                  ),
+                                ),
+                              ),
+                              gapWC(5),
+                              Flexible(
+                                child: Container(
+                                  height: 35,
+                                  padding: const EdgeInsets.symmetric(horizontal: 15),
+                                  decoration: boxBaseDecoration(greyLight, 5),
+                                  child: TextFormField(
+                                    controller: txtDiff,
+                                    focusNode: fnDiff,
+                                    inputFormatters: mfnInputFormatters(),
+                                    keyboardType: TextInputType.number,
+                                    decoration: const InputDecoration(
+                                      hintText: 'Diff',
+                                      border: InputBorder.none,
+                                    ),
+                                    onFieldSubmitted: (val){
+                                      fnBoxCount.requestFocus();
+                                    },
+                                  ),
+                                ),
+                              ),
+                              gapWC(5),
+                              Flexible(
+                                child: Container(
+                                  height: 35,
                                   padding: const EdgeInsets.symmetric(horizontal: 15),
                                   decoration: boxBaseDecoration(greyLight, 5),
                                   child: TextFormField(
@@ -185,22 +244,60 @@ class _NumberCountState extends State<NumberCount> {
                                       border: InputBorder.none,
                                     ),
                                     onFieldSubmitted: (val){
-
+                                      fnBoxCount.requestFocus();
                                     },
                                   ),
                                 ),
                               ),
-                              gapWC(10),
-                              GestureDetector(
+                              gapWC(5),
+                            ],
+                          ),
+                          gapHC(5),
+                          Row(
+                            children: [
+                              Expanded(child: GestureDetector(
                                 onTap: (){
-                                  fnAddNumber();
+                                  if(mounted){
+                                    setState(() {
+                                      blAllGame = !blAllGame;
+                                    });
+                                  }
                                 },
                                 child: Container(
-                                  height: 40,
-                                  padding: const EdgeInsets.symmetric(vertical: 5,horizontal: 20),
-                                  decoration: boxBaseDecoration(g.wstrGameBColor, 30),
-                                  child: Center(
-                                    child: tcn('Add', g.wstrGameOTColor, 15),
+                                  decoration: boxBaseDecoration(greyLight, 30),
+                                  padding: const EdgeInsets.all(5),
+                                  margin: const EdgeInsets.symmetric(horizontal: 10),
+                                  child: Row(
+                                    children: [
+                                      Container(
+                                        padding: const EdgeInsets.all(4),
+                                        decoration: boxBaseDecoration(Colors.white, 30),
+                                        child: Container(
+                                          height: 18,
+                                          width: 18,
+                                          decoration: blAllGame?boxDecoration( bgColorDark, 30):boxBaseDecoration( Colors.white, 30),
+                                          child: const Icon(Icons.done,color: Colors.white,size: 13,),
+                                        ),
+                                      ),
+                                      gapWC(10),
+                                      tcn('All Game',blAllGame? Colors.black: Colors.grey, 15)
+                                    ],
+                                  ),
+                                ),
+                              )),
+
+                              Expanded(
+                                child: GestureDetector(
+                                  onTap: (){
+                                    fnAddNumber();
+                                  },
+                                  child: Container(
+                                    height: 40,
+                                    padding: const EdgeInsets.symmetric(vertical: 5,horizontal: 20),
+                                    decoration: boxBaseDecoration(g.wstrGameBColor, 30),
+                                    child: Center(
+                                      child: tcn('Add', Colors.white, 15),
+                                    ),
                                   ),
                                 ),
                               )
@@ -345,6 +442,7 @@ class _NumberCountState extends State<NumberCount> {
   //=====================================PAGE FN
 
   fnGetPageData(){
+    apiGetGameList();
     apiGetDetails();
   }
   fnAddNumber(){
@@ -365,6 +463,69 @@ class _NumberCountState extends State<NumberCount> {
       return;
     }
 
+
+    var fromNum = txtNum.text;
+    var toNum = txtNumTo.text;
+
+    var favList = [];
+
+    if(toNum.isNotEmpty){
+      if(g.mfnDbl(txtNum.text) >= g.mfnDbl(txtNumTo.text)){
+        errorMsg(context, "Entered number not valid");
+        return;
+      }
+      var diffVal = g.mfnDbl(txtDiff.text) == 0?1.0:g.mfnDbl(txtDiff.text);
+      for(var i = g.mfnDbl(fromNum);i <= g.mfnDbl(toNum);i = i+ diffVal ){
+        var iNum = i.toStringAsFixed(0);
+        if(gCountNum ==3){
+          iNum = iNum.length ==1?('00$iNum').toString():iNum.length ==2?('0$iNum').toString():iNum;
+        }else if(gCountNum ==2){
+          iNum = iNum.length ==1?('0$iNum').toString():iNum;
+        }
+
+        if(blAllGame){
+          for(var e in gameList){
+            favList.add({
+              "GAME":(e["CODE"]??"").toString(),
+              "TYPE":fSelectedGame,
+              "NUMBER":iNum,
+              "COUNT":txtCount.text,
+            });
+          }
+        }else{
+          favList.add({
+            "GAME":g.wstrSelectedGame,
+            "TYPE":fSelectedGame,
+            "NUMBER":iNum,
+            "COUNT":txtCount.text,
+          });
+        }
+
+      }
+    }else{
+      if(blAllGame){
+        for(var e in gameList){
+          favList.add({
+            "GAME":(e["GAME_CODE"]??"").toString(),
+            "TYPE":fSelectedGame,
+            "NUMBER":txtNum.text,
+            "COUNT":txtCount.text,
+          });
+        }
+      }else{
+        favList.add({
+          "GAME":g.wstrSelectedGame,
+          "TYPE":fSelectedGame,
+          "NUMBER":txtNum.text,
+          "COUNT":txtCount.text,
+        });
+      }
+
+    }
+
+
+    print(favList);
+
     if(mounted){
       apiAddNumberCount(fSelectedGame);
       setState(() {
@@ -376,6 +537,8 @@ class _NumberCountState extends State<NumberCount> {
         // });
 
         txtCount.clear();
+        txtDiff.clear();
+        txtNumTo.clear();
         txtNum.clear();
       });
     }
@@ -394,7 +557,7 @@ class _NumberCountState extends State<NumberCount> {
 
   apiGetGameList(){
     //api for get user wise game list
-    futureForm = apiCall.apiGetUserGames(g.wstrCompany, g.wstrUserCd, "");
+    futureForm = apiCall.apiGetUserGames(g.wstrCompany, null, "");
     futureForm.then((value) => apiGetGameListRes(value));
 
   }
@@ -463,13 +626,15 @@ class _NumberCountState extends State<NumberCount> {
 
 
   apiGetDetails(){
-    futureForm  = apiCall.apiGetGlobalDetails(g.wstrCompany, "NUMBER_COUNTLIMIT",null);
+    futureForm  = apiCall.apiGetGlobalDetails(g.wstrCompany, "NUMBER_COUNTLIMIT",g.wstrSelectedGame);
     futureForm.then((value) => apiGetDetailsRes(value));
   }
   apiGetDetailsRes(value){
     if(mounted){
       if(g.fnValCheck(value)){
         fnFill(value);
+      }else{
+        errorMsg(context, "No Data");
       }
     }
   }

@@ -875,9 +875,14 @@ class _BookingState extends State<Booking> {
   Widget wButton(text,color){
     return Flexible(
       child: Bounce(
-        onPressed: (){
+        onPressed: () async{
           //fnButtonPres(text);
           fnGenerateNumber(text);
+          final receivePort = ReceivePort();
+          await Isolate.spawn(complexTask2, receivePort.sendPort);
+          receivePort.listen((total) {
+            debugPrint('Result 2: $total');
+          });
         },
         duration: const Duration(milliseconds: 110),
         child: Container(
@@ -2425,14 +2430,14 @@ class _BookingState extends State<Booking> {
     Navigator.pop(context);
   }
 
-
-
-}
-
-complexTask2(SendPort sendPort) {
-  var total = 0.0;
-  for (var i = 0; i < 1000000000; i++) {
-    total += i;
+  complexTask2(SendPort sendPort) {
+    var total = 0.0;
+    for (var i = 0; i < 1000000000; i++) {
+      total += i;
+    }
+    sendPort.send(total);
   }
-  sendPort.send(total);
+
 }
+
+
