@@ -135,22 +135,365 @@ class _SalesReportState extends State<SalesReport> {
               ),
             ):gapHC(0),
             fPageMode == "SUM"?
-            Expanded(child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8),
-              child: SingleChildScrollView(
-                child: Column(
-                  children: wSalesData(),
+              Expanded(
+                child: ListView.builder(
+                    padding: const EdgeInsets.all(0),
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    itemCount: reportDate.length,
+                    itemBuilder: (context, index) {
+                      var e = reportDate[index];
+                      var grandTotal = 0.0;
+                      grandTotal  =  g.mfnDbl(e["TOTAL"].toString())+g.mfnDbl(e["COM"].toString());
+
+                      var det = [];
+
+                      det = (e["DET"]??[]);
+                      var actionDate = "";
+                      try{
+                        actionDate = setDate(7, DateTime.parse(e["DOCDATE"].toString()));
+                      }catch(e){
+                        actionDate = "";
+                      }
+
+                      return  GestureDetector(
+                        onTap: (){
+                          //PageDialog().showPhoneLookup(context, Container(), e["DOCNO"].toString());
+                          bottomPopUpL(context,
+                              Container(
+                                decoration: boxBaseDecoration(Colors.white, 20),
+
+                                child: Column(
+                                  children: [
+                                    Container(
+                                      padding:  EdgeInsets.all(10),
+                                      decoration: boxBaseDecorationC(g.wstrGameColor, 20,20,0,0),
+                                      child: Column(
+                                        children: [
+                                          Row(
+                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              tc((e["DOCNO"]??"").toString(), Colors.white , 17),
+                                              GestureDetector(
+                                                onTap: (){
+                                                  Navigator.pop(context);
+                                                },
+                                                child: const Icon(Icons.close,color: Colors.white,size: 20,),
+                                              )
+                                            ],
+                                          ),
+                                          gapHC(5),
+                                          Row(
+                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Expanded(
+                                                child: Row(
+                                                  children: [
+                                                    tcn('Count', Colors.white, 12),
+                                                    gapWC(10),
+                                                    tc((e["QTY"]??"").toString(), Colors.white, 14)
+                                                  ],
+                                                ),
+                                              ),
+                                              Expanded(child: Row(
+                                                children: [
+                                                  tcn('Grand Total', Colors.white, 12),
+                                                  gapWC(10),
+                                                  tc(grandTotal.toStringAsFixed(2), Colors.white, 14)
+                                                ],
+                                              ),)
+                                            ],
+                                          ),
+                                          Row(
+                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Expanded(
+                                                child: Row(
+                                                  children: [
+                                                    tcn('Total', Colors.white, 12),
+                                                    gapWC(10),
+                                                    tc((e["TOTAL"]??"").toString(), Colors.white, 14)
+                                                  ],
+                                                ),
+                                              ),
+                                              Expanded(child: Row(
+                                                children: [
+                                                  tcn('Commission', Colors.white, 12),
+                                                  gapWC(10),
+                                                  tc((e["COM"]??"").toString(), Colors.white, 14)
+                                                ],
+                                              ),)
+                                            ],
+                                          )
+
+                                        ],
+                                      ),
+                                    ),
+                                    Container(
+                                      padding: EdgeInsets.symmetric(vertical: 10),
+                                      decoration: boxBaseDecorationC(Colors.blueGrey, 0,0,0,0),
+                                      child: Row(
+                                        children: [
+                                          wRowDetWhite(2,'GAME'),
+                                          wRowDetWhite(2,'NUM'),
+                                          wRowDetWhite(2,'CNT'),
+                                          wRowDetWhite(2,'COM'),
+                                          wRowDetWhite(2,'AMT'),
+                                          wRowDetWhite(2,'TOTAL'),
+                                        ],
+                                      ),
+                                    ),
+                                    gapHC(5),
+                                    Expanded(
+                                        child: ListView.builder(
+                                            padding: const EdgeInsets.all(0),
+                                            physics: const AlwaysScrollableScrollPhysics(),
+                                            itemCount: det.length,
+                                            itemBuilder: (context, index) {
+                                              var e = det[index];
+                                              var grandTotal = 0.0;
+                                              grandTotal  =  g.mfnDbl(e["TOTAL"].toString())+g.mfnDbl(e["COM"].toString());
+                                              return Container(
+                                                decoration: boxBaseDecoration(index%2==0? g.wstrGameColor.withOpacity(0.2):Colors.white, 0),
+                                                padding: const EdgeInsets.symmetric(vertical: 3),
+                                                child: Row(
+                                                  children: [
+                                                    wRowDet(2,(e["GAME_TYPE"]??"").toString()),
+                                                    wRowDet(2,(e["NUMBER"]??"").toString()),
+                                                    wRowDet(2,(e["QTY"]??"").toString()),
+                                                    wRowDet(2,g.mfnDbl(e["COM"].toString()).toStringAsFixed(2)),
+                                                    wRowDet(2,g.mfnDbl(e["TOTAL"].toString()).toStringAsFixed(2)),
+                                                    wRowDet(2,grandTotal.toString()),
+                                                  ],
+                                                ),
+                                              );
+                                            }
+
+                                        )),
+                                    // Expanded(child: SingleChildScrollView(
+                                    //   child: Column(
+                                    //     children: wDetList(det),
+                                    //   ),
+                                    // ))
+                                  ],
+                                ),
+                              )
+                          );
+                        },
+                        child: Container(
+                          margin: EdgeInsets.symmetric(vertical: 5),
+                          decoration: boxDecoration(Colors.white, 10),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Container(
+                                padding:const EdgeInsets.all(5),
+                                decoration: boxBaseDecorationC(Colors.blueGrey, 10,10,0,0),
+                                child: Row(
+                                  children: [
+                                    tc('Bill ID #${e["DOCNO"].toString()}', Colors.white, 14),
+                                  ],
+                                ),
+                              ),
+                              gapHC(5),
+                              Padding(
+                                padding: const EdgeInsets.all(5),
+                                child: Row(
+                                  children: [
+                                    Expanded(
+                                      child: Column(children: [
+                                        wRow("Count",(e["QTY"]??"").toString()),
+                                        g.wstrUserRole == "ADMIN"?
+                                        wRow("Stockist",(e["STOCKIST_CODE"]??"").toString()):gapHC(0),
+                                        g.wstrUserRole == "ADMIN" || g.wstrUserRole == "STOCKIST"?
+                                        wRow("Dealer",(e["DEALER_CODE"]??"").toString()):gapHC(0),
+                                        g.wstrUserRole == "ADMIN" || g.wstrUserRole == "STOCKIST" || g.wstrUserRole == "DEALER"?
+                                        wRow("Agent",(e["AGENT_CODE"]??"").toString()):gapHC(0),
+
+                                      ],),
+                                    ),
+                                    Expanded(child: Column(
+                                      children: [
+                                        Row(
+                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            tcn('Total', Colors.black, 13),
+                                            tcn(g.mfnDbl(e["TOTAL"].toString()).toStringAsFixed(2), Colors.black, 14)
+                                          ],
+                                        ),
+                                        Row(
+                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            tcn('Comm', Colors.black, 13),
+                                            tcn(g.mfnDbl(e["COM"].toString()).toStringAsFixed(2), Colors.black, 14)
+                                          ],
+                                        ),
+                                        Divider(
+                                          color: Colors.black,
+                                        ),
+                                        Row(
+                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            tc('Grand Total', Colors.black, 13),
+                                            tc(grandTotal.toStringAsFixed(2), Colors.black, 15)
+                                          ],
+                                        ),
+                                      ],
+                                    ))
+                                  ],
+                                ),
+                              ) ,
+                              gapHC(10),
+                              Container(
+                                padding: const EdgeInsets.all(5),
+                                decoration: boxBaseDecorationC(Colors.grey.withOpacity(0.05), 0,0,10,10),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    tcn('Customer  ${(e["CUSTOMER_NAME"]??"").toString().toUpperCase()}', Colors.black, 12),
+                                    Row(
+                                      children: [
+                                        const Icon(Icons.access_time_outlined,color: Colors.black,size: 12,),
+                                        gapWC(5),
+                                        tcn(actionDate.toString(), Colors.black, 12)
+                                      ],
+                                    )
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    }
                 ),
-              ),
-            )):
-            Expanded(child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 0),
-              child: SingleChildScrollView(
-                child: Column(
-                  children: wSalesDataFull(),
-                ),
-              ),
-            ))
+
+              ):
+              // Expanded(child: Padding(
+              //   padding: const EdgeInsets.symmetric(horizontal: 8),
+              //   child: SingleChildScrollView(
+              //     child: Column(
+              //       children: wSalesData(),
+              //     ),
+              //   ),
+              // )):
+              Expanded(
+                  child: ListView.builder(
+                      padding: const EdgeInsets.all(0),
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      itemCount: reportDate.length,
+                      itemBuilder: (context, index) {
+                        var e = reportDate[index];
+                        var grandTotal = 0.0;
+                        grandTotal  =  g.mfnDbl(e["TOTAL"].toString())+g.mfnDbl(e["COM"].toString());
+
+                        var det = [];
+
+                        det = (e["DET"]??[]);
+                        var actionDate = "";
+                        try{
+                          actionDate = setDate(7, DateTime.parse(e["DOCDATE"].toString()));
+                        }catch(e){
+                          actionDate = "";
+                        }
+                        return Column(
+                          children: [
+                            Container(
+                              margin: EdgeInsets.symmetric(vertical: 1),
+                              decoration: boxDecoration(Colors.white, 0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Container(
+                                    padding:const EdgeInsets.all(5),
+                                    decoration: boxBaseDecorationC(Colors.blueGrey, 0,0,0,0),
+                                    child: Row(
+                                      children: [
+                                        tc('Bill ID #${e["DOCNO"].toString()}', Colors.white, 14),
+                                      ],
+                                    ),
+                                  ),
+                                  gapHC(5),
+                                  Padding(
+                                    padding: const EdgeInsets.all(5),
+                                    child: Row(
+                                      children: [
+                                        Expanded(
+                                          child: Column(children: [
+                                            wRow("Count",(e["QTY"]??"").toString()),
+                                            g.wstrUserRole == "ADMIN"?
+                                            wRow("Stockist",(e["STOCKIST_CODE"]??"").toString()):gapHC(0),
+                                            g.wstrUserRole == "ADMIN" || g.wstrUserRole == "STOCKIST"?
+                                            wRow("Dealer",(e["DEALER_CODE"]??"").toString()):gapHC(0),
+                                            g.wstrUserRole == "ADMIN" || g.wstrUserRole == "STOCKIST" || g.wstrUserRole == "DEALER"?
+                                            wRow("Agent",(e["AGENT_CODE"]??"").toString()):gapHC(0),
+
+                                          ],),
+                                        ),
+                                        Expanded(child: Column(
+                                          children: [
+                                            Row(
+                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                              children: [
+                                                tcn('Total', Colors.black, 13),
+                                                tcn(g.mfnDbl(e["TOTAL"].toString()).toStringAsFixed(2), Colors.black, 14)
+                                              ],
+                                            ),
+                                            Row(
+                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                              children: [
+                                                tcn('Comm', Colors.black, 13),
+                                                tcn(g.mfnDbl(e["COM"].toString()).toStringAsFixed(2), Colors.black, 14)
+                                              ],
+                                            ),
+                                            Divider(
+                                              color: Colors.black,
+                                            ),
+                                            Row(
+                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                              children: [
+                                                tc('Grand Total', Colors.black, 13),
+                                                tc(grandTotal.toStringAsFixed(2), Colors.black, 15)
+                                              ],
+                                            ),
+                                          ],
+                                        ))
+                                      ],
+                                    ),
+                                  ) ,
+                                  gapHC(10),
+                                  Container(
+                                    padding: const EdgeInsets.all(5),
+                                    decoration: boxBaseDecorationC(Colors.grey.withOpacity(0.05), 0,0,10,10),
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        tcn('Customer  ${(e["CUSTOMER_NAME"]??"").toString().toUpperCase()}', Colors.black, 12),
+                                        Row(
+                                          children: [
+                                            const Icon(Icons.access_time_outlined,color: Colors.black,size: 12,),
+                                            gapWC(5),
+                                            tcn(actionDate.toString(), Colors.black, 12)
+                                          ],
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Container(
+                              decoration: boxDecoration(Colors.white, 0),
+                              padding: const EdgeInsets.symmetric(horizontal: 6),
+                              child: Column(
+                                children:  wDetList(det),
+                              ),
+                            )
+                          ],
+                        );
+
+                      }
+                  ),
+                )
           ],
         ),
       ),
@@ -304,11 +647,37 @@ class _SalesReportState extends State<SalesReport> {
                           ),
                         ),
                         gapHC(5),
-                        Expanded(child: SingleChildScrollView(
-                          child: Column(
-                            children: wDetList(det),
-                          ),
-                        ))
+                        Expanded(
+                            child: ListView.builder(
+                              padding: const EdgeInsets.all(0),
+                              physics: const AlwaysScrollableScrollPhysics(),
+                              itemCount: det.length,
+                              itemBuilder: (context, index) {
+                                var e = det[index];
+                                var grandTotal = 0.0;
+                                grandTotal  =  g.mfnDbl(e["TOTAL"].toString())+g.mfnDbl(e["COM"].toString());
+                                return Container(
+                                  decoration: boxBaseDecoration(index%2==0? g.wstrGameColor.withOpacity(0.2):Colors.white, 0),
+                                  padding: const EdgeInsets.symmetric(vertical: 3),
+                                  child: Row(
+                                    children: [
+                                      wRowDet(2,(e["GAME_TYPE"]??"").toString()),
+                                      wRowDet(2,(e["NUMBER"]??"").toString()),
+                                      wRowDet(2,(e["QTY"]??"").toString()),
+                                      wRowDet(2,g.mfnDbl(e["COM"].toString()).toStringAsFixed(2)),
+                                      wRowDet(2,g.mfnDbl(e["TOTAL"].toString()).toStringAsFixed(2)),
+                                      wRowDet(2,grandTotal.toString()),
+                                    ],
+                                  ),
+                                );
+                              }
+
+                         )),
+                        // Expanded(child: SingleChildScrollView(
+                        //   child: Column(
+                        //     children: wDetList(det),
+                        //   ),
+                        // ))
                       ],
                     ),
                   )

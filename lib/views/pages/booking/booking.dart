@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bounce/flutter_bounce.dart';
 import 'package:get/get.dart';
 import 'package:ltr/controller/global/globalValues.dart';
+import 'package:ltr/main.dart';
 import 'package:ltr/services/apiController.dart';
 import 'package:ltr/views/components/alertDialog/alertDialog.dart';
 import 'package:ltr/views/components/common/common.dart';
@@ -86,6 +87,8 @@ class _BookingState extends State<Booking> {
   var fnBoxCount = FocusNode();
   var fnName = FocusNode();
 
+
+  var lstrSelectedPlan = "";
 
   @override
   void initState() {
@@ -610,32 +613,183 @@ class _BookingState extends State<Booking> {
               ),
             ),
             gapHC(5),
-
-
             Expanded(
               child: Container(
                 margin: const EdgeInsets.symmetric(horizontal: 10),
                 decoration: boxDecoration(Colors.white, 10),
-                child: SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      Table(
-                        border: const TableBorder(horizontalInside: BorderSide(width: 0.3, color: grey)),
-                        columnWidths: const <int, TableColumnWidth>{
+                child: Column(
+                  children: [
+                    Container(
+                      decoration: boxBaseDecorationC(grey,10,10,0,0),
+                      padding: const EdgeInsets.all(5),
+                      child: Row(
+                        children: [
+                          wHeadRow("Plan",8),
+                          wHeadRow("Number",8),
+                          wHeadRow("Count",6),
+                          wHeadRow("Total",6),
+                          wHeadRow("",4),
+                        ],
+                      ),
+                    ),
+                    Expanded(
+                      child: ListView.builder(  
+                          padding: const EdgeInsets.all(0),
+                          physics: const AlwaysScrollableScrollPhysics(),
+                          itemCount: countList.length,
+                          itemBuilder: (context, index) {
+                            var e = countList.reversed.toList()[index];
+                            var qty = g.mfnDbl(e["COUNT"].toString());
+                            var amount = g.mfnDbl(e["AMOUNT"].toString());
+                            var total = qty*amount;
+                            var color = Colors.white;
+                            color = (e["STATUS"]??"")=="Y"?Colors.white:e["PLAN"] == "SUPER"?Colors.black: e["PLAN"] == "BOX" ? Colors.pink: e["PLAN"].toString().length == 2?Colors.green:e["PLAN"].toString().length ==1?Colors.orange:Colors.white;
+                            return Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 5,vertical: 2),
+                              decoration: boxBaseDecoration((e["STATUS"]??"")=="Y"?Colors.redAccent.withOpacity(0.8): Colors.white, 0),
+                              child: Column(
+                                children: [
+                                  Row(
+                                    children: [
+                                      wDetRowColor(e["PLAN"].toString(),8,color),
+                                      wDetRowColor(e["NUMBER"].toString(),8,color),
+                                      Flexible(
+                                        flex: 6,
+                                        child: GestureDetector(
+                                          onTap: (){
+                                            if(widget.pDocno.toString().isNotEmpty){
+                                              txtChangeQty.clear();
+                                              txtChangeQty.text = e["COUNT"].toString();
+                                              PageDialog().showCaptcha(context,
+                                                  Container(
+                                                    child: Column(
+                                                      children: [
+                                                        Row(),
+                                                        CustomTextField(
+                                                          keybordType: TextInputType.number,
+                                                          controller: txtChangeQty,
+                                                          hintText: "Count",
+                                                          textFormFieldType: TextFormFieldType.gift,
+                                                        ),
+                                                        gapHC(15),
+                                                        Row(
+                                                          mainAxisAlignment: MainAxisAlignment.end,
+                                                          children: [
+                                                            GestureDetector(
+                                                              onTap: (){
+                                                                Navigator.pop(context);
+                                                              },
+                                                              child: Container(
+                                                                padding: const EdgeInsets.symmetric(vertical: 7,horizontal: 10),
+                                                                decoration: boxBaseDecoration(greyLight, 30),
+                                                                child: tcn('Cancel', Colors.black, 15),
+                                                              ),
+                                                            ),
+                                                            gapWC(5),
+                                                            GestureDetector(
+                                                              onTap: (){
+                                                                if(mounted){
+                                                                  Navigator.pop(context);
+                                                                  setState(() {
+                                                                    if(txtChangeQty.text.isNotEmpty){
+                                                                      e["COUNT"] = txtChangeQty.text;
+                                                                    }
+                                                                  });
+                                                                  fnCalc();
+                                                                }
+                                                              },
+                                                              child: Container(
+                                                                padding: const EdgeInsets.symmetric(vertical: 7,horizontal: 35),
+                                                                decoration: boxBaseDecoration(Colors.blueGrey, 30),
+                                                                child: tcn('OK', Colors.white, 15),
+                                                              ),
+                                                            )
 
-                          0: FlexColumnWidth(8),
-                          1: FlexColumnWidth(8),
-                          2: FlexColumnWidth(6),
-                          3: FlexColumnWidth(6),
-                          4: FlexColumnWidth(4),
-                        },
-                        children: wCountList(),
-                      )
-                    ],
-                  ),
+                                                          ],
+                                                        )
+
+                                                      ],
+                                                    ),
+                                                  ), "Update");
+                                            }
+                                          },
+                                          child: Row(
+                                            children: [
+                                              tc(e["COUNT"].toString(),color, 15)
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                      wDetRowColor(total.toString(),6,color),
+                                      Flexible(
+                                        flex:4,
+                                        child: GestureDetector(
+                                          onTap: (){
+                                            if(mounted){
+                                              setState(() {
+                                                e["STATUS"] = (e["STATUS"]??"") == ""?"Y":"";
+                                              });
+                                              fnCalc();
+                                            }
+                                          },
+                                          child: Container(
+                                            color: Colors.transparent,
+                                            child: Center(
+                                              child: Container(
+                                                margin: const EdgeInsets.only(top: 2),
+                                                padding: const  EdgeInsets.all(1),
+                                                decoration: boxOutlineCustom1((e["STATUS"]??"")=="Y"?Colors.transparent:Colors.black, 5,(e["STATUS"]??"")=="Y"?Colors.white:Colors.black, 1.0),
+                                                child: Icon(Icons.done,color: (e["STATUS"]??"")=="Y"?Colors.transparent:Colors.white,size: 14,),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                  gapHC(3),
+                                  const Divider(
+                                    color: Colors.grey,
+                                    height: 0.1,
+                                  ),
+                                ],
+                              ),
+                            );
+
+                          }
+                      ),
+                    )
+                  ],
                 ),
               ),
             ),
+
+            // Expanded(
+            //   child: Container(
+            //      margin: const EdgeInsets.symmetric(horizontal: 10),
+            //     decoration: boxDecoration(Colors.white, 10),
+            //     child:  ScrollConfiguration(
+            //       behavior: MyCustomScrollBehavior(),
+            //       child: SingleChildScrollView(
+            //         child: Column(
+            //           children: [
+            //             Table(
+            //               border: const TableBorder(horizontalInside: BorderSide(width: 0.3, color: grey)),
+            //               columnWidths: const <int, TableColumnWidth>{
+            //                 0: FlexColumnWidth(8),
+            //                 1: FlexColumnWidth(8),
+            //                 2: FlexColumnWidth(6),
+            //                 3: FlexColumnWidth(6),
+            //                 4: FlexColumnWidth(4),
+            //               },
+            //               children: wCountList(),
+            //             )
+            //           ],
+            //         ),
+            //       ),
+            //     ),
+            //   ),
+            // ),
             gapHC(5),
             Container(
               padding: const EdgeInsets.all(5),
@@ -792,6 +946,43 @@ class _BookingState extends State<Booking> {
   //=======================================WIDGET
 
 
+  Widget wHeadRow(text,flex){
+    return     Flexible(
+        flex: flex,
+        child: Row(
+          children: [
+            tcn(text.toString(), Colors.white, 15)
+          ],
+        ));
+  }
+  Widget wDetRowColor(text,flex,color){
+    return     Flexible(
+        flex: flex,
+        child: Row(
+          children: [
+            tc(text.toString(),color, 15)
+          ],
+        ));
+  }
+  Widget wDetRow(text,flex,sts){
+    return     Flexible(
+        flex: flex,
+        child: Row(
+          children: [
+            tcn(text.toString(),sts =="Y"?Colors.white: Colors.black, 15)
+          ],
+        ));
+  }
+  Widget wDetRowBold(text,flex,sts){
+    return     Flexible(
+        flex: flex,
+        child: Row(
+          children: [
+            tc(text.toString(),sts =="Y"?Colors.white: Colors.black, 15)
+          ],
+        ));
+  }
+
   Widget wNumberCard(num){
     return  Bounce(
       onPressed: (){
@@ -875,14 +1066,16 @@ class _BookingState extends State<Booking> {
   Widget wButton(text,color){
     return Flexible(
       child: Bounce(
-        onPressed: () async{
+        onPressed: (){
           //fnButtonPres(text);
+
+          // if(mounted){
+          //   setState(() {
+          //     lstrSelectedPlan =text;
+          //   });
+          // }
           fnGenerateNumber(text);
-          final receivePort = ReceivePort();
-          await Isolate.spawn(complexTask2, receivePort.sendPort);
-          receivePort.listen((total) {
-            debugPrint('Result 2: $total');
-          });
+
         },
         duration: const Duration(milliseconds: 110),
         child: Container(
@@ -1030,9 +1223,8 @@ class _BookingState extends State<Booking> {
                   onTap: (){
                     txtChangeQty.clear();
                     txtChangeQty.text = e["COUNT"].toString();
-                   PageDialog().showCaptcha(context,
-
-                       Container(
+                    PageDialog().showCaptcha(context,
+                     Container(
                          child: Column(
                            children: [
                              Row(),
@@ -1357,7 +1549,6 @@ class _BookingState extends State<Booking> {
     }
   }
   fnGenerateNumber(plan){
-
     if(fAgentCode.isEmpty){
       errorMsg(context, "Choose Agent");
       return;
@@ -2432,9 +2623,7 @@ class _BookingState extends State<Booking> {
 
   complexTask2(SendPort sendPort) {
     var total = 0.0;
-    for (var i = 0; i < 1000000000; i++) {
-      total += i;
-    }
+
     sendPort.send(total);
   }
 
