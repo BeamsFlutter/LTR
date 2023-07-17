@@ -322,8 +322,9 @@ class _WinningReportState extends State<WinningReport> {
       var fromDate = (filterData[0]["DATE_FROM"]);
       var toDate = (filterData[0]["DATE_TO"]);
       var mode = (filterData[0]["MODE"]);
+     var child = (filterData[0]["CHILD"]);
 
-      futureForm =  ApiCall().apiWinningReport(g.wstrCompany, fromDate,toDate, g.wstrSelectedGame, stockist, dealer, agent, type, number,mode);
+      futureForm =  ApiCall().apiWinningReport(g.wstrCompany, fromDate,toDate, g.wstrSelectedGame, stockist, dealer, agent, type, number,mode,child);
       futureForm.then((value) => apiWinningReportRes(value));
     }
 

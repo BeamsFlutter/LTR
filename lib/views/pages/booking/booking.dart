@@ -643,8 +643,9 @@ class _BookingState extends State<Booking> {
                             var amount = g.mfnDbl(e["AMOUNT"].toString());
                             var total = qty*amount;
                             var color = Colors.white;
+                            var deleteYn = (e["DELETE_YN"]??"");
                             color = (e["STATUS"]??"")=="Y"?Colors.white:e["PLAN"] == "SUPER"?Colors.black: e["PLAN"] == "BOX" ? Colors.pink: e["PLAN"].toString().length == 2?Colors.green:e["PLAN"].toString().length ==1?Colors.orange:Colors.white;
-                            return Container(
+                            return deleteYn !="Y"? Container(
                               padding: const EdgeInsets.symmetric(horizontal: 5,vertical: 2),
                               decoration: boxBaseDecoration((e["STATUS"]??"")=="Y"?Colors.redAccent.withOpacity(0.8): Colors.white, 0),
                               child: Column(
@@ -693,6 +694,7 @@ class _BookingState extends State<Booking> {
                                                                   setState(() {
                                                                     if(txtChangeQty.text.isNotEmpty){
                                                                       e["COUNT"] = txtChangeQty.text;
+                                                                      e["EDIT_YN"] = "Y";
                                                                     }
                                                                   });
                                                                   fnCalc();
@@ -754,7 +756,7 @@ class _BookingState extends State<Booking> {
                                   ),
                                 ],
                               ),
-                            );
+                            ):gapHC(0);
 
                           }
                       ),
@@ -2259,17 +2261,32 @@ class _BookingState extends State<Booking> {
     for(var e in countList){
       var qty =  g.mfnDbl(e["COUNT"].toString());
       var rate =  g.mfnDbl(e["AMOUNT"].toString());
-      var sts =  e["STATUS"].toString();
+      var sts =  (e["STATUS"]??"").toString();
       var total  =  qty * rate;
-      if(sts != "Y"){
+
+      if(widget.mode == "EDIT"){
         det.add({
           "GAME_TYPE":e["PLAN"],
           "NUMBER":e["NUMBER"],
           "QTY":e["COUNT"],
           "RATE":e["AMOUNT"],
-          "TOT_AMT":total
+          "TOT_AMT":total,
+          "DELETE_YN":sts,
+          "EDIT_YN":(e["EDIT_YN"]??"")
         });
+
+      }else{
+        if(sts != "Y"){
+          det.add({
+            "GAME_TYPE":e["PLAN"],
+            "NUMBER":e["NUMBER"],
+            "QTY":e["COUNT"],
+            "RATE":e["AMOUNT"],
+            "TOT_AMT":total
+          });
+        }
       }
+
 
     }
 
@@ -2315,6 +2332,9 @@ class _BookingState extends State<Booking> {
              "NUMBER":e["NUMBER"],
              "COUNT":e["QTY"],
              "AMOUNT":e["RATE"],
+             "EDIT_YN":e["EDIT_YN"],
+             "DELETE_YN":e["DELETE_YN"],
+             "STATUS":e["DELETE_YN"],
            });
          }
        });
@@ -2565,7 +2585,7 @@ class _BookingState extends State<Booking> {
           if(sts == "1"){
             widget.fnCallBack!();
             Get.back();
-            successMsg(context, "BOOKING DELTED");
+            successMsg(context, "BOOKING DELETED");
           }else{
             errorMsg(context, msg);
           }

@@ -893,7 +893,7 @@ class ApiCall  with BaseController{
     return response;
   }
 
-  Future<dynamic> apiWinningReport(company,date,toDate,game,stockist,dealer,agent,type,number,mode) async {
+  Future<dynamic> apiWinningReport(company,date,toDate,game,stockist,dealer,agent,type,number,mode,childPrice) async {
     var request = jsonEncode(<dynamic, dynamic>{
       "COMPANY":company,
       "DATE_FROM": date,
@@ -905,7 +905,8 @@ class ApiCall  with BaseController{
       "TYPE":type,
       "NUMBER":number,
       "RANK":null,
-      "MODE":mode//RAK or DET
+      "MODE":mode,//RAK or DET
+      "CHILD_PRICE":childPrice
     });
     dprint('api/winningReport');
     dprint(request);
