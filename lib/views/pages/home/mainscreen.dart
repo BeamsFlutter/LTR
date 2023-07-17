@@ -675,7 +675,6 @@ class _MainPageState extends State<MainPage> {
       ),
     );
   }
-
   Widget wNumberCard(num){
     return  Bounce(
       onPressed: (){
@@ -696,7 +695,6 @@ class _MainPageState extends State<MainPage> {
       ),
     );
   }
-
   Widget wButton(text,color){
     return Flexible(
       child: Bounce(
@@ -729,7 +727,6 @@ class _MainPageState extends State<MainPage> {
       ),
     );
   }
-
   List<Widget> wNumberList(){
     List<Widget> rtnList =[];
     var srno =1;

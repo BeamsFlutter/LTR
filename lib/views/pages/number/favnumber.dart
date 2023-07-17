@@ -487,7 +487,7 @@ class _FavNumberState extends State<FavNumber> {
         if(blAllGame){
           for(var e in gameList){
             favList.add({
-              "GAME":(e["CODE"]??"").toString(),
+              "GAME_CODE":(e["CODE"]??"").toString(),
               "TYPE":fSelectedGame,
               "NUMBER":iNum,
               "COUNT":-1,
@@ -495,7 +495,7 @@ class _FavNumberState extends State<FavNumber> {
           }
         }else{
           favList.add({
-            "GAME":g.wstrSelectedGame,
+            "GAME_CODE":g.wstrSelectedGame,
             "TYPE":fSelectedGame,
             "NUMBER":iNum,
             "COUNT":-1,
@@ -507,7 +507,7 @@ class _FavNumberState extends State<FavNumber> {
       if(blAllGame){
         for(var e in gameList){
           favList.add({
-            "GAME":(e["GAME_CODE"]??"").toString(),
+            "GAME_CODE":(e["CODE"]??"").toString(),
             "TYPE":fSelectedGame,
             "NUMBER":txtNum.text,
             "COUNT":-1,
@@ -515,7 +515,7 @@ class _FavNumberState extends State<FavNumber> {
         }
       }else{
         favList.add({
-          "GAME":g.wstrSelectedGame,
+          "GAME_CODE":g.wstrSelectedGame,
           "TYPE":fSelectedGame,
           "NUMBER":txtNum.text,
           "COUNT":-1,
@@ -531,7 +531,7 @@ class _FavNumberState extends State<FavNumber> {
 
 
     if(mounted){
-      apiAddNumberCount(fSelectedGame);
+      apiAddNumberCount(fSelectedGame,favList);
       setState(() {
 
         txtDiff.clear();
@@ -572,8 +572,8 @@ class _FavNumberState extends State<FavNumber> {
     }
   }
 
-  apiAddNumberCount(type){
-    futureForm = apiCall.apiSaveGlobalNumberCount( g.wstrSelectedGame, type, txtNum.text , -1);
+  apiAddNumberCount(type,data){
+    futureForm = apiCall.apiSaveGlobalNumberCount(data);
     futureForm.then((value) => apiAddNumberCountRes(value));
   }
   apiAddNumberCountRes(value){

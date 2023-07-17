@@ -332,15 +332,12 @@ class ApiCall  with BaseController{
 
   }
 
-  Future<dynamic> apiSaveUserNumberCount(company,user,gameCode,type,number,count) async {
+  Future<dynamic> apiSaveUserNumberCount(company,user,data) async {
 
     var request = jsonEncode(<dynamic, dynamic>{
       "COMPANY":company,
       "USERCD":user,
-      "GAME_CODE":gameCode,
-      "TYPE":type,
-      "NUMBER":number,
-      "COUNT":count
+      "DATA":data
     });
     dprint('api/saveNumberCountLimit');
     dprint(request);
@@ -436,13 +433,14 @@ class ApiCall  with BaseController{
 
 
 
-  Future<dynamic> apiSaveGlobalNumberCount(gameCode,type,number,count) async {
+  Future<dynamic> apiSaveGlobalNumberCount(data) async {
 
     var request = jsonEncode(<dynamic, dynamic>{
-      "GAME_CODE":gameCode,
-      "TYPE":type,
-      "NUMBER":number,
-      "COUNT":count
+      // "GAME_CODE":gameCode,
+      // "TYPE":type,
+      // "NUMBER":number,
+      // "COUNT":count,
+      "DATA":data
     });
     dprint('api/saveGlobNumberCountLimit');
     dprint(request);

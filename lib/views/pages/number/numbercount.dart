@@ -486,7 +486,7 @@ class _NumberCountState extends State<NumberCount> {
         if(blAllGame){
           for(var e in gameList){
             favList.add({
-              "GAME":(e["CODE"]??"").toString(),
+              "GAME_CODE":(e["CODE"]??"").toString(),
               "TYPE":fSelectedGame,
               "NUMBER":iNum,
               "COUNT":txtCount.text,
@@ -494,7 +494,7 @@ class _NumberCountState extends State<NumberCount> {
           }
         }else{
           favList.add({
-            "GAME":g.wstrSelectedGame,
+            "GAME_CODE":g.wstrSelectedGame,
             "TYPE":fSelectedGame,
             "NUMBER":iNum,
             "COUNT":txtCount.text,
@@ -506,7 +506,7 @@ class _NumberCountState extends State<NumberCount> {
       if(blAllGame){
         for(var e in gameList){
           favList.add({
-            "GAME":(e["GAME_CODE"]??"").toString(),
+            "GAME_CODE":(e["CODE"]??"").toString(),
             "TYPE":fSelectedGame,
             "NUMBER":txtNum.text,
             "COUNT":txtCount.text,
@@ -514,7 +514,7 @@ class _NumberCountState extends State<NumberCount> {
         }
       }else{
         favList.add({
-          "GAME":g.wstrSelectedGame,
+          "GAME_CODE":g.wstrSelectedGame,
           "TYPE":fSelectedGame,
           "NUMBER":txtNum.text,
           "COUNT":txtCount.text,
@@ -527,7 +527,7 @@ class _NumberCountState extends State<NumberCount> {
     print(favList);
 
     if(mounted){
-      apiAddNumberCount(fSelectedGame);
+      apiAddNumberCount(fSelectedGame,favList);
       setState(() {
         // fNumberLimit.removeWhere((element) => element["TYPE"] == fSelectedGame && element["NUMBER"] == txt);
         // fNumberLimit.add({
@@ -574,8 +574,8 @@ class _NumberCountState extends State<NumberCount> {
   }
 
 
-  apiAddNumberCount(type){
-    futureForm = apiCall.apiSaveGlobalNumberCount( "ALL", type, txtNum.text , txtCount.text);
+  apiAddNumberCount(type,data){
+    futureForm = apiCall.apiSaveGlobalNumberCount( data);
     futureForm.then((value) => apiAddNumberCountRes(value));
   }
   apiAddNumberCountRes(value){
@@ -601,7 +601,7 @@ class _NumberCountState extends State<NumberCount> {
 
 
   apiRemoveNumberCount(type,num){
-    futureForm = apiCall.apiRemoveGlobalNumberCountLimit( "ALL", type, num);
+    futureForm = apiCall.apiRemoveGlobalNumberCountLimit( g.wstrSelectedGame, type, num);
     futureForm.then((value) => apiRemoveNumberCountRes(value));
   }
   apiRemoveNumberCountRes(value){

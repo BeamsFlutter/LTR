@@ -484,7 +484,7 @@ class _NumberCountState extends State<UserNumberCount> {
         if(blAllGame){
           for(var e in gameList){
             favList.add({
-              "GAME":(e["CODE"]??"").toString(),
+              "GAME_CODE":(e["CODE"]??"").toString(),
               "TYPE":fSelectedGame,
               "NUMBER":iNum,
               "COUNT":txtCount.text,
@@ -492,7 +492,7 @@ class _NumberCountState extends State<UserNumberCount> {
           }
         }else{
           favList.add({
-            "GAME":g.wstrSelectedGame,
+            "GAME_CODE":g.wstrSelectedGame,
             "TYPE":fSelectedGame,
             "NUMBER":iNum,
             "COUNT":txtCount.text,
@@ -504,7 +504,7 @@ class _NumberCountState extends State<UserNumberCount> {
       if(blAllGame){
         for(var e in gameList){
           favList.add({
-            "GAME":(e["GAME_CODE"]??"").toString(),
+            "GAME_CODE":(e["CODE"]??"").toString(),
             "TYPE":fSelectedGame,
             "NUMBER":txtNum.text,
             "COUNT":txtCount.text,
@@ -512,7 +512,7 @@ class _NumberCountState extends State<UserNumberCount> {
         }
       }else{
         favList.add({
-          "GAME":g.wstrSelectedGame,
+          "GAME_CODE":g.wstrSelectedGame,
           "TYPE":fSelectedGame,
           "NUMBER":txtNum.text,
           "COUNT":txtCount.text,
@@ -527,7 +527,7 @@ class _NumberCountState extends State<UserNumberCount> {
 
     
     if(mounted){
-      apiAddNumberCount(fSelectedGame);
+      apiAddNumberCount(fSelectedGame,favList);
       setState(() {
         // fNumberLimit.removeWhere((element) => element["TYPE"] == fSelectedGame && element["NUMBER"] == txt);
         // fNumberLimit.add({
@@ -573,8 +573,8 @@ class _NumberCountState extends State<UserNumberCount> {
   }
 
 
-  apiAddNumberCount(type){
-    futureForm = apiCall.apiSaveUserNumberCount(g.wstrCompany, widget.pUserCode, "ALL", type, txtNum.text , txtCount.text);
+  apiAddNumberCount(type,favList){
+    futureForm = apiCall.apiSaveUserNumberCount(g.wstrCompany,widget.pUserCode,favList);
     futureForm.then((value) => apiAddNumberCountRes(value));
   }
   apiAddNumberCountRes(value){
@@ -600,7 +600,7 @@ class _NumberCountState extends State<UserNumberCount> {
 
 
   apiRemoveNumberCount(type,num){
-    futureForm = apiCall.apiRemoveNumberCountLimit(g.wstrCompany, widget.pUserCode, "ALL", type, num);
+    futureForm = apiCall.apiRemoveNumberCountLimit(g.wstrCompany, widget.pUserCode, g.wstrSelectedGame, type, num);
     futureForm.then((value) => apiRemoveNumberCountRes(value));
   }
   apiRemoveNumberCountRes(value){
