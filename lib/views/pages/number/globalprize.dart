@@ -128,12 +128,12 @@ class _GlobalPrizeState extends State<GlobalPrize> {
                       child: Container(
                         height: 18,
                         width: 18,
-                        decoration: blEdit?boxDecoration( bgColorDark, 30):boxBaseDecoration( Colors.white, 30),
+                        decoration: blEdit?boxDecoration( bgColorDark, 30):boxOutlineCustom1(Colors.white, 30, Colors.black, 1.0),
                         child: const Icon(Icons.done,color: Colors.white,size: 13,),
                       ),
                     ),
                     gapWC(10),
-                    tcn('Editable',blEdit? Colors.black: Colors.grey, 15)
+                    tcn('Editable',blEdit? Colors.black: Colors.black, 15)
                   ],
                 ),
               ),
@@ -571,14 +571,25 @@ class _GlobalPrizeState extends State<GlobalPrize> {
           "SP": 0
         });
 
-        prizeList.add({
-          "GAME_CODE": "ALL",
-          "TYPE": "SUPER",
-          "PLACE": 6,
-          "WINNING": g.mfnDbl(txtSup6p.text),
-          "COMMISSION": g.mfnDbl(txtSup6c.text),
-          "SP": 0
-        });
+        // prizeList.add({
+        //   "GAME_CODE": "ALL",
+        //   "TYPE": "SUPER",
+        //   "PLACE": 6,
+        //   "WINNING": g.mfnDbl(txtSup6p.text),
+        //   "COMMISSION": g.mfnDbl(txtSup6c.text),
+        //   "SP": 0
+        // });
+
+        for(var i = 6 ; i <= 35; i++){
+          prizeList.add({
+            "GAME_CODE": "ALL",
+            "TYPE": "SUPER",
+            "PLACE": i,
+            "WINNING": g.mfnDbl(txtSup6p.text),
+            "COMMISSION": g.mfnDbl(txtSup6c.text),
+            "SP": 0
+          });
+        }
 
 
         //AB/BC/AC

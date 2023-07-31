@@ -181,7 +181,7 @@ class ApiCall  with BaseController{
   }
 
   //============================================User
-  Future<dynamic> apiCreateUser(company,user,role,parent,pwd,weeklyCr,dailyCr,mode,sharePer,canView,dAgent,games) async {
+  Future<dynamic> apiCreateUser(company,user,role,parent,pwd,weeklyCr,dailyCr,mode,sharePer,canView,dAgent,games,menu) async {
 
     var request = jsonEncode(<dynamic, dynamic>{
       "COMPANY":company,
@@ -195,7 +195,8 @@ class ApiCall  with BaseController{
       "DEF_AGENT":dAgent,
       "SHARE_PER":sharePer,//
       "MODE":mode,//ADD,EDIT(WEEKLY_CR_LIMIT,DAILY_CR_LIMIT),PASSWORD
-      "GAMES":games
+      "GAMES":games,
+      "MENU":menu,
     });
     dprint('api/saveuser');
     dprint(request);
@@ -868,7 +869,7 @@ class ApiCall  with BaseController{
     return response;
   }
 
-  Future<dynamic> apiCountReport(company,date,game,stockist,dealer,agent,type,number) async {
+  Future<dynamic> apiCountReport(company,date,game,stockist,dealer,agent,type,number,typeList) async {
     var request = jsonEncode(<dynamic, dynamic>{
       "COMPANY":company,
       "DATE": date,
@@ -877,7 +878,8 @@ class ApiCall  with BaseController{
       "DEALER_CODE":dealer,
       "AGENT_CODE":agent,
       "TYPE":type,
-      "NUMBER":number
+      "NUMBER":number,
+      "TYPE_LIST":typeList
     });
     dprint('api/countReport');
     dprint(request);
@@ -893,7 +895,7 @@ class ApiCall  with BaseController{
     return response;
   }
 
-  Future<dynamic> apiWinningReport(company,date,toDate,game,stockist,dealer,agent,type,number,mode,childPrice) async {
+  Future<dynamic> apiWinningReport(company,date,toDate,game,stockist,dealer,agent,type,number,mode,childPrice,typeList,rank) async {
     var request = jsonEncode(<dynamic, dynamic>{
       "COMPANY":company,
       "DATE_FROM": date,
@@ -904,13 +906,14 @@ class ApiCall  with BaseController{
       "AGENT_CODE":agent,
       "TYPE":type,
       "NUMBER":number,
-      "RANK":null,
+      "RANK":rank,
       "MODE":mode,//RAK or DET
-      "CHILD_PRICE":childPrice
+      "CHILD_PRICE":childPrice,
+      "TYPE_LIST":typeList
     });
     dprint('api/winningReport');
     dprint(request);
-    var response = await ApiManager().post('api/winningReport',request).catchError((error){
+    var response = await ApiManager().postLoading('api/winningReport',request,"S").catchError((error){
       if (error is BadRequestException) {
         dprint(error.toString());
       } else {
@@ -923,7 +926,7 @@ class ApiCall  with BaseController{
   }
 
 
-  Future<dynamic> apiSalesReport(company,date,toDate,game,admCode,stockist,dealer,agent,type,number,docno,childPrice) async {
+  Future<dynamic> apiSalesReport(company,date,toDate,game,admCode,stockist,dealer,agent,type,number,docno,childPrice,typeList) async {
     var request = jsonEncode(<dynamic, dynamic>{
       "COMPANY":company,
       "DATE_FROM": date,
@@ -937,7 +940,8 @@ class ApiCall  with BaseController{
       "NUMBER":number,
       "RANK":null,
       "BOOKING_DOCNO":docno,
-      "CHILD_PRICE":childPrice
+      "CHILD_PRICE":childPrice,
+      "TYPE_LIST":typeList
     });
     dprint('api/salesReport');
     dprint(request);
@@ -954,7 +958,7 @@ class ApiCall  with BaseController{
   }
 
 
-  Future<dynamic> apiCountSummaryReport(company,date,toDate,game,admCode,stockist,dealer,agent,type,number) async {
+  Future<dynamic> apiCountSummaryReport(company,date,toDate,game,admCode,stockist,dealer,agent,type,number,childPrize) async {
     var request = jsonEncode(<dynamic, dynamic>{
       "COMPANY":company,
       "DATE_FROM": date,
@@ -966,6 +970,7 @@ class ApiCall  with BaseController{
       "TYPE":type,
       "NUMBER":number,
       "RANK":null,
+      "CHILD_PRICE":childPrize
     });
     dprint('api/countSummaryReport');
     dprint(request);
@@ -1005,6 +1010,63 @@ class ApiCall  with BaseController{
     if (response == null) return;
     return response;
   }
+
+  Future<dynamic> apiBalanceReport(company,dateTo) async {
+    var request = jsonEncode(<dynamic, dynamic>{
+      "COMPANY": company ,
+      "DATE_TO":dateTo
+    });
+    dprint('api/balanceReport');
+    dprint(request);
+    var response = await ApiManager().postLoading('api/balanceReport',request,"S").catchError((error){
+      if (error is BadRequestException) {
+        dprint(error.toString());
+      } else {
+        handleError(error);
+      }
+    });
+    dprint(response);
+    if (response == null) return;
+    return response;
+  }
+
+  Future<dynamic> apiGetLog(docno,doctype) async {
+    var request = jsonEncode(<dynamic, dynamic>{
+      "DOCNO": docno,
+      "DOCTYPE": doctype
+    });
+    dprint('api/getLog');
+    dprint(request);
+    var response = await ApiManager().postLoading('api/getLog',request,"S").catchError((error){
+      if (error is BadRequestException) {
+        dprint(error.toString());
+      } else {
+        handleError(error);
+      }
+    });
+    dprint(response);
+    if (response == null) return;
+    return response;
+  }
+
+  Future<dynamic> apiPermissionMenu() async {
+    var request = jsonEncode(<dynamic, dynamic>{
+
+    });
+    dprint('api/getMenuMast');
+    dprint(request);
+    var response = await ApiManager().postLoading('api/getMenuMast',request,"S").catchError((error){
+      if (error is BadRequestException) {
+        dprint(error.toString());
+      } else {
+        handleError(error);
+      }
+    });
+    dprint(response);
+    if (response == null) return;
+    return response;
+  }
+
 
 
 

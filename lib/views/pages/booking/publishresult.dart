@@ -91,6 +91,48 @@ class _PublishResultState extends State<PublishResult> {
 
   var txtCaptcha = TextEditingController();
 
+  FocusNode  fn1= FocusNode();
+  FocusNode  fn2= FocusNode();
+  FocusNode  fn3= FocusNode();
+  FocusNode  fn4= FocusNode();
+  FocusNode  fn5= FocusNode();
+
+  FocusNode  fn6= FocusNode();
+  FocusNode  fn7= FocusNode();
+  FocusNode  fn8= FocusNode();
+  FocusNode  fn9= FocusNode();
+  FocusNode  fn10= FocusNode();
+
+  FocusNode  fn11= FocusNode();
+  FocusNode  fn12= FocusNode();
+  FocusNode  fn13= FocusNode();
+  FocusNode  fn14= FocusNode();
+  FocusNode  fn15= FocusNode();
+
+  FocusNode  fn16= FocusNode();
+  FocusNode  fn17= FocusNode();
+  FocusNode  fn18= FocusNode();
+  FocusNode  fn19= FocusNode();
+  FocusNode  fn20= FocusNode();
+
+  FocusNode  fn21= FocusNode();
+  FocusNode  fn22= FocusNode();
+  FocusNode  fn23= FocusNode();
+  FocusNode  fn24= FocusNode();
+  FocusNode  fn25= FocusNode();
+
+  FocusNode  fn26= FocusNode();
+  FocusNode  fn27= FocusNode();
+  FocusNode  fn28= FocusNode();
+  FocusNode  fn29= FocusNode();
+  FocusNode  fn30= FocusNode();
+
+  FocusNode  fn31= FocusNode();
+  FocusNode  fn32= FocusNode();
+  FocusNode  fn33= FocusNode();
+  FocusNode  fn34= FocusNode();
+  FocusNode  fn35= FocusNode();
+
 
   @override
   void initState() {
@@ -202,15 +244,30 @@ class _PublishResultState extends State<PublishResult> {
                       keybordType: TextInputType.number,
                       controller: txtP1,
                       editable: blEdit,
+                      focusNode: fn1,
+                      maxCount: 3,
                       hintText: "1st",
+                      fnOnChange: (value){
+                        if(txtP1.text.length ==3){
+                          fn2.requestFocus();
+                        }
+                      },
                       textFormFieldType: TextFormFieldType.gift,
+
                     ),
                     gapHC(5),
                     CustomTextField(
                       keybordType: TextInputType.number,
                       controller: txtP2,
                       editable: blEdit,
+                      focusNode: fn2,
+                      maxCount: 3,
                       hintText: "2nd",
+                      fnOnChange: (value){
+                        if(txtP2.text.length ==3){
+                          fn3.requestFocus();
+                        }
+                      },
                       textFormFieldType: TextFormFieldType.gift,
                     ),
                     gapHC(5),
@@ -218,7 +275,15 @@ class _PublishResultState extends State<PublishResult> {
                       keybordType: TextInputType.number,
                       controller: txtP3,
                       editable: blEdit,
+                      maxCount: 3,
                       hintText: "3rd",
+                      focusNode: fn3,
+                      fnOnChange: (value){
+                        if(txtP3.text.length ==3){
+                          fn4.requestFocus();
+                        }
+
+                      },
                       textFormFieldType: TextFormFieldType.gift,
                     ),
                     gapHC(5),
@@ -226,6 +291,13 @@ class _PublishResultState extends State<PublishResult> {
                       keybordType: TextInputType.number,
                       controller: txtP4,
                       editable: blEdit,
+                      maxCount: 3,
+                      focusNode: fn4,
+                      fnOnChange: (value){
+                        if(txtP4.text.length ==3){
+                          fn5.requestFocus();
+                        }
+                      },
                       hintText: "4th",
                       textFormFieldType: TextFormFieldType.gift,
                     ),
@@ -234,6 +306,13 @@ class _PublishResultState extends State<PublishResult> {
                       keybordType: TextInputType.number,
                       controller: txtP5,
                       editable: blEdit,
+                      maxCount: 3,
+                      focusNode: fn5,
+                      fnOnChange: (value){
+                        if(txtP5.text.length ==3){
+                          fn6.requestFocus();
+                        }
+                      },
                       hintText: "5th",
                       textFormFieldType: TextFormFieldType.gift,
                     ),
@@ -246,7 +325,15 @@ class _PublishResultState extends State<PublishResult> {
                           keybordType: TextInputType.number,
                           controller: txtP6,
                           editable: blEdit,
+                          maxCount: 3,
                           hintText: "1",
+                          focusNode: fn6,
+                          fnOnChange: (value){
+                            if(txtP6.text.length ==3){
+                              fn7.requestFocus();
+                            }
+
+                          },
                           textFormFieldType: TextFormFieldType.gift,
                         ),),
                         gapWC(5),
@@ -254,7 +341,15 @@ class _PublishResultState extends State<PublishResult> {
                           keybordType: TextInputType.number,
                           controller: txtP7,
                           editable: blEdit,
+                          maxCount: 3,
                           hintText: "2",
+                          focusNode: fn7,
+                          fnOnChange: (value){
+                            if(txtP7.text.length ==3){
+                              fn8.requestFocus();
+                            }
+
+                          },
                           textFormFieldType: TextFormFieldType.gift,
                         ),),
                         gapWC(5),
@@ -262,7 +357,15 @@ class _PublishResultState extends State<PublishResult> {
                           keybordType: TextInputType.number,
                           controller: txtP8,
                           editable: blEdit,
+                          maxCount: 3,
                           hintText: "3",
+                          focusNode: fn8,
+                          fnOnChange: (value){
+                            if(txtP8.text.length ==3){
+                              fn9.requestFocus();
+                            }
+
+                          },
                           textFormFieldType: TextFormFieldType.gift,
                         ),),
                       ],
@@ -274,7 +377,15 @@ class _PublishResultState extends State<PublishResult> {
                           keybordType: TextInputType.number,
                           controller: txtP9,
                           editable: blEdit,
+                          maxCount: 3,
                           hintText: "4",
+                          focusNode: fn9,
+                          fnOnChange: (value){
+                            if(txtP9.text.length ==3){
+                              fn10.requestFocus();
+                            }
+
+                          },
                           textFormFieldType: TextFormFieldType.gift,
                         ),),
                         gapWC(5),
@@ -282,7 +393,15 @@ class _PublishResultState extends State<PublishResult> {
                           keybordType: TextInputType.number,
                           controller: txtP10,
                           editable: blEdit,
+                          maxCount: 3,
                           hintText: "5",
+                          focusNode: fn10,
+                          fnOnChange: (value){
+
+                            if(txtP10.text.length ==3){
+                              fn11.requestFocus();
+                            }
+                          },
                           textFormFieldType: TextFormFieldType.gift,
                         ),),
                         gapWC(5),
@@ -290,7 +409,15 @@ class _PublishResultState extends State<PublishResult> {
                           keybordType: TextInputType.number,
                           controller: txtP11,
                           editable: blEdit,
+                          maxCount: 3,
                           hintText: "6",
+                          focusNode: fn11,
+                          fnOnChange: (value){
+                            if(txtP11.text.length ==3){
+                              fn12.requestFocus();
+                            }
+
+                          },
                           textFormFieldType: TextFormFieldType.gift,
                         ),),
                       ],
@@ -302,6 +429,14 @@ class _PublishResultState extends State<PublishResult> {
                           keybordType: TextInputType.number,
                           controller: txtP12,
                           editable: blEdit,
+                          maxCount: 3,
+                          focusNode: fn12,
+                          fnOnChange: (value){
+
+                            if(txtP12.text.length ==3){
+                              fn13.requestFocus();
+                            }
+                          },
                           hintText: "7",
                           textFormFieldType: TextFormFieldType.gift,
                         ),),
@@ -310,6 +445,14 @@ class _PublishResultState extends State<PublishResult> {
                           keybordType: TextInputType.number,
                           controller: txtP13,
                           editable: blEdit,
+                          maxCount: 3,
+                          focusNode: fn13,
+                          fnOnChange: (value){
+
+                            if(txtP13.text.length ==3){
+                              fn14.requestFocus();
+                            }
+                          },
                           hintText: "8",
                           textFormFieldType: TextFormFieldType.gift,
                         ),),
@@ -318,6 +461,14 @@ class _PublishResultState extends State<PublishResult> {
                           keybordType: TextInputType.number,
                           controller: txtP14,
                           editable: blEdit,
+                          maxCount: 3,
+                          focusNode: fn14,
+                          fnOnChange: (value){
+                            if(txtP14.text.length ==3){
+                              fn15.requestFocus();
+                            }
+
+                          },
                           hintText: "9",
                           textFormFieldType: TextFormFieldType.gift,
                         ),),
@@ -330,6 +481,14 @@ class _PublishResultState extends State<PublishResult> {
                           keybordType: TextInputType.number,
                           controller: txtP15,
                           editable: blEdit,
+                          maxCount: 3,
+                          focusNode: fn15,
+                          fnOnChange: (value){
+
+                            if(txtP15.text.length ==3){
+                              fn16.requestFocus();
+                            }
+                          },
                           hintText: "10",
                           textFormFieldType: TextFormFieldType.gift,
                         ),),
@@ -338,6 +497,14 @@ class _PublishResultState extends State<PublishResult> {
                           keybordType: TextInputType.number,
                           controller: txtP16,
                           editable: blEdit,
+                          maxCount: 3,
+                          focusNode: fn16,
+                          fnOnChange: (value){
+                            if(txtP16.text.length ==3){
+                              fn17.requestFocus();
+                            }
+
+                          },
                           hintText: "11",
                           textFormFieldType: TextFormFieldType.gift,
                         ),),
@@ -346,6 +513,14 @@ class _PublishResultState extends State<PublishResult> {
                           keybordType: TextInputType.number,
                           controller: txtP17,
                           editable: blEdit,
+                          maxCount: 3,
+                          focusNode: fn17,
+                          fnOnChange: (value){
+                            if(txtP17.text.length ==3){
+                              fn18.requestFocus();
+                            }
+
+                          },
                           hintText: "12",
                           textFormFieldType: TextFormFieldType.gift,
                         ),),
@@ -358,6 +533,14 @@ class _PublishResultState extends State<PublishResult> {
                           keybordType: TextInputType.number,
                           controller: txtP18,
                           editable: blEdit,
+                          maxCount: 3,
+                          focusNode: fn18,
+                          fnOnChange: (value){
+                            if(txtP18.text.length ==3){
+                              fn19.requestFocus();
+                            }
+
+                          },
                           hintText: "13",
                           textFormFieldType: TextFormFieldType.gift,
                         ),),
@@ -366,6 +549,14 @@ class _PublishResultState extends State<PublishResult> {
                           keybordType: TextInputType.number,
                           controller: txtP19,
                           editable: blEdit,
+                          maxCount: 3,
+                          focusNode: fn19,
+                          fnOnChange: (value){
+                            if(txtP19.text.length ==3){
+                              fn20.requestFocus();
+                            }
+
+                          },
                           hintText: "14",
                           textFormFieldType: TextFormFieldType.gift,
                         ),),
@@ -374,6 +565,14 @@ class _PublishResultState extends State<PublishResult> {
                           keybordType: TextInputType.number,
                           controller: txtP20,
                           editable: blEdit,
+                          maxCount: 3,
+                          focusNode: fn20,
+                          fnOnChange: (value){
+                            if(txtP20.text.length ==3){
+                              fn21.requestFocus();
+                            }
+
+                          },
                           hintText: "15",
                           textFormFieldType: TextFormFieldType.gift,
                         ),),
@@ -386,6 +585,13 @@ class _PublishResultState extends State<PublishResult> {
                           keybordType: TextInputType.number,
                           controller: txtP21,
                           editable: blEdit,
+                          focusNode: fn21,
+                          fnOnChange: (value){
+                            if(txtP21.text.length ==3){
+                              fn22.requestFocus();
+                            }
+                          },
+                          maxCount: 3,
                           hintText: "16",
                           textFormFieldType: TextFormFieldType.gift,
                         ),),
@@ -394,6 +600,14 @@ class _PublishResultState extends State<PublishResult> {
                           keybordType: TextInputType.number,
                           controller: txtP22,
                           editable: blEdit,
+                          maxCount: 3,
+                          focusNode: fn22,
+                          fnOnChange: (value){
+
+                            if(txtP22.text.length ==3){
+                              fn23.requestFocus();
+                            }
+                          },
                           hintText: "17",
                           textFormFieldType: TextFormFieldType.gift,
                         ),),
@@ -402,6 +616,14 @@ class _PublishResultState extends State<PublishResult> {
                           keybordType: TextInputType.number,
                           controller: txtP23,
                           editable: blEdit,
+                          focusNode: fn23,
+                          fnOnChange: (value){
+                            if(txtP23.text.length ==3){
+                              fn24.requestFocus();
+                            }
+
+                          },
+maxCount: 3,
                           hintText: "18",
                           textFormFieldType: TextFormFieldType.gift,
                         ),),
@@ -414,6 +636,14 @@ class _PublishResultState extends State<PublishResult> {
                           keybordType: TextInputType.number,
                           controller: txtP24,
                           editable: blEdit,
+                          focusNode: fn24,
+                          fnOnChange: (value){
+                            if(txtP24.text.length ==3){
+                              fn25.requestFocus();
+                            }
+
+                          },
+maxCount: 3,
                           hintText: "19",
                           textFormFieldType: TextFormFieldType.gift,
                         ),),
@@ -422,6 +652,14 @@ class _PublishResultState extends State<PublishResult> {
                           keybordType: TextInputType.number,
                           controller: txtP25,
                           editable: blEdit,
+                          focusNode: fn25,
+                          fnOnChange: (value){
+                            if(txtP25.text.length ==3){
+                              fn26.requestFocus();
+                            }
+
+                          },
+maxCount: 3,
                           hintText: "20",
                           textFormFieldType: TextFormFieldType.gift,
                         ),),
@@ -430,6 +668,14 @@ class _PublishResultState extends State<PublishResult> {
                           keybordType: TextInputType.number,
                           controller: txtP26,
                           editable: blEdit,
+                          focusNode: fn26,
+                          fnOnChange: (value){
+
+                            if(txtP26.text.length ==3){
+                              fn27.requestFocus();
+                            }
+                          },
+maxCount: 3,
                           hintText: "21",
                           textFormFieldType: TextFormFieldType.gift,
                         ),),
@@ -442,6 +688,14 @@ class _PublishResultState extends State<PublishResult> {
                           keybordType: TextInputType.number,
                           controller: txtP27,
                           editable: blEdit,
+                          focusNode: fn27,
+                          fnOnChange: (value){
+                            if(txtP27.text.length ==3){
+                              fn28.requestFocus();
+                            }
+
+                          },
+maxCount: 3,
                           hintText: "22",
                           textFormFieldType: TextFormFieldType.gift,
                         ),),
@@ -450,6 +704,14 @@ class _PublishResultState extends State<PublishResult> {
                           keybordType: TextInputType.number,
                           controller: txtP28,
                           editable: blEdit,
+                          focusNode: fn28,
+                          fnOnChange: (value){
+                            if(txtP28.text.length ==3){
+                              fn29.requestFocus();
+                            }
+
+                          },
+maxCount: 3,
                           hintText: "23",
                           textFormFieldType: TextFormFieldType.gift,
                         ),),
@@ -458,6 +720,14 @@ class _PublishResultState extends State<PublishResult> {
                           keybordType: TextInputType.number,
                           controller: txtP29,
                           editable: blEdit,
+                          focusNode: fn29,
+                          fnOnChange: (value){
+                            if(txtP29.text.length ==3){
+                              fn30.requestFocus();
+                            }
+
+                          },
+maxCount: 3,
                           hintText: "24",
                           textFormFieldType: TextFormFieldType.gift,
                         ),),
@@ -470,6 +740,14 @@ class _PublishResultState extends State<PublishResult> {
                           keybordType: TextInputType.number,
                           controller: txtP30,
                           editable: blEdit,
+                          focusNode: fn30,
+                          fnOnChange: (value){
+                            if(txtP30.text.length ==3){
+                              fn31.requestFocus();
+                            }
+
+                          },
+maxCount: 3,
                           hintText: "25",
                           textFormFieldType: TextFormFieldType.gift,
                         ),),
@@ -478,6 +756,14 @@ class _PublishResultState extends State<PublishResult> {
                           keybordType: TextInputType.number,
                           controller: txtP31,
                           editable: blEdit,
+                          focusNode: fn31,
+                          fnOnChange: (value){
+                            if(txtP31.text.length ==3){
+                              fn32.requestFocus();
+                            }
+
+                          },
+maxCount: 3,
                           hintText: "26",
                           textFormFieldType: TextFormFieldType.gift,
                         ),),
@@ -486,6 +772,14 @@ class _PublishResultState extends State<PublishResult> {
                           keybordType: TextInputType.number,
                           controller: txtP32,
                           editable: blEdit,
+                          focusNode: fn32,
+                          fnOnChange: (value){
+                            if(txtP32.text.length ==3){
+                              fn33.requestFocus();
+                            }
+
+                          },
+maxCount: 3,
                           hintText: "27",
                           textFormFieldType: TextFormFieldType.gift,
                         ),),
@@ -499,6 +793,14 @@ class _PublishResultState extends State<PublishResult> {
                           keybordType: TextInputType.number,
                           controller: txtP33,
                           editable: blEdit,
+                          focusNode: fn33,
+                          fnOnChange: (value){
+                            if(txtP33.text.length ==3){
+                              fn34.requestFocus();
+                            }
+
+                          },
+maxCount: 3,
                           hintText: "28",
                           textFormFieldType: TextFormFieldType.gift,
                         ),),
@@ -507,6 +809,14 @@ class _PublishResultState extends State<PublishResult> {
                           keybordType: TextInputType.number,
                           controller: txtP34,
                           editable: blEdit,
+                          focusNode: fn34,
+                          fnOnChange: (value){
+                            if(txtP34.text.length ==3){
+                              fn35.requestFocus();
+                            }
+
+                          },
+                          maxCount: 3,
                           hintText: "29",
                           textFormFieldType: TextFormFieldType.gift,
                         ),),
@@ -514,7 +824,12 @@ class _PublishResultState extends State<PublishResult> {
                         Expanded(child: CustomTextField(
                           keybordType: TextInputType.number,
                           controller: txtP35,
+                          focusNode: fn35,
+                          fnOnChange: (value){
+
+                          },
                           editable: blEdit,
+                          maxCount: 3,
                           hintText: "30",
                           textFormFieldType: TextFormFieldType.gift,
                         ),),
@@ -730,7 +1045,12 @@ class _PublishResultState extends State<PublishResult> {
           txtP27,
           txtP28,
           txtP29,
-          txtP29
+          txtP30,
+          txtP31,
+          txtP32,
+          txtP33,
+          txtP34,
+          txtP35,
         ];
       });
     }
@@ -763,10 +1083,16 @@ class _PublishResultState extends State<PublishResult> {
     var det = [];
     var rank = 1;
     for(var e in txtControllerList){
-      det.add( {
-        "RANK": rank,
-        "NUMBER": e.text
-      });
+      if(det.where((element) => element["NUMBER"]== e.text).isEmpty){
+        det.add( {
+          "RANK": rank,
+          "NUMBER": e.text
+        });
+      }else{
+        errorMsg(context, "Same Result Number Found!! \n RANK $rank  Number :${e.text}");
+        return;
+      }
+
       rank = rank+1;
     }
     apiSaveResult(det);
@@ -818,10 +1144,15 @@ class _PublishResultState extends State<PublishResult> {
     var det = [];
     var rank = 1;
     for(var e in txtControllerList){
-      det.add( {
-        "RANK": rank,
-        "NUMBER": e.text
-      });
+      if(det.where((element) => element["NUMBER"]== e.text).isEmpty){
+        det.add( {
+          "RANK": rank,
+          "NUMBER": e.text
+        });
+      }else{
+        errorMsg(context, "Same Result Number Found!! \n RANK $rank  Number :${e.text}");
+        return;
+      }
       rank = rank+1;
     }
     apiPostResult(det,blPostSts?1:0);

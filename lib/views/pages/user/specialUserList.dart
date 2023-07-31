@@ -1,5 +1,6 @@
 
 
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bounce/flutter_bounce.dart';
@@ -8,23 +9,21 @@ import 'package:ltr/controller/navigation/navigation_controller.dart';
 import 'package:ltr/services/apiController.dart';
 import 'package:ltr/services/apiManager.dart';
 import 'package:ltr/views/components/common/common.dart';
+import 'package:ltr/views/pages/user/createpermissionuser.dart';
 import 'package:ltr/views/pages/user/usercreation.dart';
 import 'package:ltr/views/pages/user/userdetails.dart';
+import 'package:ltr/views/pages/user/usersearch.dart';
 import 'package:ltr/views/styles/colors.dart';
 
-class UserSearch extends StatefulWidget {
+class SpecialUserList extends StatefulWidget {
   final String pRoleCode;
-  final String pUserCode;
-  final String? pAllYn;
-  final Function pFnCallBack;
-  final String? pBlockMode;
-  const UserSearch({Key? key, required this.pRoleCode, required this.pUserCode, required this.pFnCallBack, this.pAllYn, this.pBlockMode}) : super(key: key);
+  const SpecialUserList({Key? key, required this.pRoleCode}) : super(key: key);
 
   @override
-  _UserSearchState createState() => _UserSearchState();
+  _SpecialUserListState createState() => _SpecialUserListState();
 }
 
-class _UserSearchState extends State<UserSearch> {
+class _SpecialUserListState extends State<SpecialUserList> {
 
 
   //Global
@@ -36,6 +35,8 @@ class _UserSearchState extends State<UserSearch> {
 
   //Page Variable
   var frUserList = [];
+  var fStockistCode = "";
+  var fDealerCode = "";
 
   //Controller
   var txtSearch  = TextEditingController();
@@ -66,13 +67,13 @@ class _UserSearchState extends State<UserSearch> {
                       Navigator.pop(context);
                     },
                     child: Container(
-                      //decoration: boxBaseDecoration(greyLight,10),
+                      decoration: boxDecoration(Colors.white,10),
                       padding: const EdgeInsets.all(5),
-                      child: const Icon(Icons.arrow_back_ios_rounded,color: Colors.white,size: 20,),
+                      child: const Icon(Icons.arrow_back,color: Colors.black,size: 20,),
                     ),
                   ),
                   gapWC(5),
-                  tcn(wstrRole.toString(), Colors.white, 20)
+                  tcn("Special User", Colors.white, 20)
                 ],
               ),
             ),
@@ -97,68 +98,32 @@ class _UserSearchState extends State<UserSearch> {
               ),
             ),
             gapHC(10),
-            widget.pAllYn == "Y"?
+            Expanded(child: SingleChildScrollView(
+              child: Column(
+                children: wUserList(),
+              ),
+            )),
             Bounce(
               onPressed: (){
-                Navigator.pop(context);
-                widget.pFnCallBack(wstrRole,"ALL");
+
+                Navigator.push(context, MaterialPageRoute(builder: (context) =>   UserCreationWithPermission(pUserRole: wstrRole.toString(), pPageMode: 'ADD', pPageUserCd: '', pfnCallBack: fnSaveCallBack,)));
+
               },
               duration: const Duration(milliseconds: 110),
               child: Container(
-                margin: const EdgeInsets.only(bottom: 0),
-                padding: const EdgeInsets.symmetric(horizontal: 15,vertical: 15),
-                decoration: boxBaseDecoration(  Colors.white, 0),
+                decoration: boxDecoration(g.wstrGameBColor, 30),
+                margin: const EdgeInsets.symmetric(vertical: 10,horizontal: 10),
+                padding: const EdgeInsets.symmetric(vertical: 12,horizontal: 10),
                 child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Expanded(child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        tcn("All ${wstrRole.toString()}", Colors.black , 15)
-                      ],
-                    ))
+                    Icon(Icons.person_add_alt,color: g.wstrGameOTColor,size: 16,),
+                    gapWC(5),
+                    tcn('Create Special User', g.wstrGameOTColor, 16)
                   ],
                 ),
               ),
-            ):gapHC(0),
-            Expanded(child: ListView.builder(
-                padding: const EdgeInsets.all(0),
-                physics: const AlwaysScrollableScrollPhysics(),
-                itemCount: frUserList.length,
-                itemBuilder: (context, index) {
-                  var e = frUserList[index];
-                  return Bounce(
-                    onPressed: (){
-                      Navigator.pop(context);
-                      widget.pFnCallBack(wstrRole,e["USERCD"]);
-                    },
-                    duration: const Duration(milliseconds: 110),
-                    child: Container(
-                      margin: const EdgeInsets.only(bottom: 0),
-                      padding: const EdgeInsets.symmetric(horizontal: 15,vertical: 15),
-                      decoration: boxBaseDecoration( (index%2 != 0)? Colors.white: Colors.blueGrey.withOpacity(0.1), 0),
-                      child: Row(
-                        children: [
-                          Container(
-                            decoration: boxBaseDecoration((index%2 == 0)? Colors.black.withOpacity(0.05): Colors.white, 30),
-                            padding: const EdgeInsets.all(5),
-                            child:  const Icon(Icons.person,color: Colors.black,size: 12,),
-                          ),
-                          gapWC(10),
-                          Expanded(child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              tcn((e["USERCD"]??"").toString().toUpperCase(), Colors.black , 15)
-                            ],
-                          ))
-                        ],
-                      ),
-                    ),
-                  );
-                }
-            )),
-            // Expanded(child: Column(
-            //   children: wUserList(),
-            // )),
+            )
 
           ],
         ),
@@ -171,39 +136,10 @@ class _UserSearchState extends State<UserSearch> {
   List<Widget> wUserList(){
     List<Widget> rtnList = [];
     var srno = 1;
-    if(widget.pAllYn == "Y"){
+    for(var e in frUserList){
       rtnList.add(Bounce(
         onPressed: (){
-          Navigator.pop(context);
-          widget.pFnCallBack(wstrRole,"ALL");
-        },
-        duration: const Duration(milliseconds: 110),
-        child: Container(
-          margin: const EdgeInsets.only(bottom: 0),
-          padding: const EdgeInsets.symmetric(horizontal: 15,vertical: 15),
-          decoration: boxBaseDecoration( (srno%2 == 0)? Colors.white: Colors.blueGrey.withOpacity(0.1), 0),
-          child: Row(
-            children: [
-              Expanded(child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  tcn("All ${wstrRole.toString()}", Colors.black , 15)
-                ],
-              ))
-            ],
-          ),
-        ),
-      ));
-      srno =2;
-    }
-
-
-    for(var e in frUserList){
-      rtnList.add(
-          Bounce(
-        onPressed: (){
-          Navigator.pop(context);
-          widget.pFnCallBack(wstrRole,e["USERCD"]);
+          Navigator.push(context, MaterialPageRoute(builder: (context) =>  UserCreationWithPermission(pUserRole: 'SPC', pPageMode: 'EDIT', pPageUserCd: (e["USERCD"]??"").toString(), pfnCallBack: fnSaveCallBack)));
         },
         duration: const Duration(milliseconds: 110),
         child: Container(
@@ -223,12 +159,14 @@ class _UserSearchState extends State<UserSearch> {
                 children: [
                   tcn((e["USERCD"]??"").toString().toUpperCase(), Colors.black , 15)
                 ],
-              ))
+              )),
+              (e["BLOCKED_YN"]??"") == "Y"?
+              const Icon(Icons.block,color: Colors.red,size: 18,):
+              gapWC(0)
             ],
           ),
         ),
-      )
-      );
+      ));
       srno = srno+1;
     }
     return rtnList;
@@ -244,16 +182,32 @@ class _UserSearchState extends State<UserSearch> {
       apiGetUserList();
     }
   }
+  fnSearchCallBack(rolecode,usercd){
+    if(mounted){
+      setState(() {
+        if(rolecode == "Stockist"){
+          if(fStockistCode != usercd){
+            fDealerCode = "";
+          }
+          fStockistCode = usercd;
+        }else if(rolecode == "Dealer"){
+          fDealerCode = usercd;
+        }
+      });
+
+      apiGetUserList();
+    }
+  }
+  fnSaveCallBack(){
+    apiGetUserList();
+  }
+
 
   //===========================================API CALL
 
   apiGetUserList(){
-    var user = widget.pUserCode;
-    // if(wstrRole == "Stockist"){
-    //   user = g.wstrUserCd;
-    // }
-    var srmode  = (widget.pBlockMode??"").toString().isEmpty?null:widget.pBlockMode;
-    futureForm = apiCall.apiGetChildUser(g.wstrCompany, user,wstrRole,txtSearch.text,srmode);
+    var user = g.wstrUserCd;
+    futureForm = apiCall.apiGetChildUser(g.wstrCompany, user,"SPC",txtSearch.text,"ALL");
     futureForm.then((value) => apiGetUserListRes(value));
   }
 
@@ -262,7 +216,6 @@ class _UserSearchState extends State<UserSearch> {
       setState(() {
         frUserList = [];
         if(g.fnValCheck(value)){
-
           frUserList = value;
         }
       });
@@ -271,3 +224,6 @@ class _UserSearchState extends State<UserSearch> {
 
 
 }
+
+
+

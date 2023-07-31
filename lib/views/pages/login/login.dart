@@ -89,7 +89,7 @@ class _LoginPageState extends State<LoginPage> {
               TextFormField(
                 controller: txtUserName,
                 style: const TextStyle(
-                  fontSize: 12,
+                  fontSize: 15,
                   color: Colors.black,
                   fontWeight: FontWeight.w600,
                 ),
@@ -132,7 +132,7 @@ class _LoginPageState extends State<LoginPage> {
               TextFormField(
                 controller: txtPassword,
                 style: const TextStyle(
-                  fontSize: 12,
+                  fontSize: 15,
                   color: Colors.black,
                   fontWeight: FontWeight.w600,
                 ),

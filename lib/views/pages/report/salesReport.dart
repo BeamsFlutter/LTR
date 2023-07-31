@@ -1,10 +1,12 @@
 
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:ltr/controller/global/globalValues.dart';
 import 'package:ltr/services/apiController.dart';
 import 'package:ltr/views/components/alertDialog/alertDialog.dart';
 import 'package:ltr/views/components/common/common.dart';
+import 'package:ltr/views/pages/home/mainscreen.dart';
 
 class SalesReport extends StatefulWidget {
   final List<dynamic> pFilterData;
@@ -29,6 +31,8 @@ class _SalesReportState extends State<SalesReport> {
   var fPageMode = "";
 
   var reportDate = [];
+  var reportHeader = [];
+  var reportLog  = [];
 
 
   @override
@@ -146,6 +150,8 @@ class _SalesReportState extends State<SalesReport> {
                       grandTotal  =  g.mfnDbl(e["TOTAL"].toString())+g.mfnDbl(e["COM"].toString());
 
                       var det = [];
+                      var headerEditYn = (e["HEADER_EDIT_YN"]??"").toString();
+                      var headerDeleteYn = (e["HEADER_DELETE_YN"]??"").toString();
 
                       det = (e["DET"]??[]);
                       var actionDate = "";
@@ -160,7 +166,7 @@ class _SalesReportState extends State<SalesReport> {
                           //PageDialog().showPhoneLookup(context, Container(), e["DOCNO"].toString());
                           bottomPopUpL(context,
                               Container(
-                                decoration: boxBaseDecoration(Colors.white, 20),
+                                decoration: boxBaseDecoration( Colors.white, 20),
 
                                 child: Column(
                                   children: [
@@ -180,6 +186,43 @@ class _SalesReportState extends State<SalesReport> {
                                                 child: const Icon(Icons.close,color: Colors.white,size: 20,),
                                               )
                                             ],
+                                          ),
+                                          gapHC(10),
+                                          const  Divider(
+                                            height: 0.6,
+                                            color: Colors.white,
+                                          ),
+                                          Row(
+                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              tcn('Customer  ${(e["CUSTOMER_NAME"]??"").toString().toUpperCase()}', Colors.white, 12),
+                                              Row(
+                                                children: [
+                                                  const Icon(Icons.access_time_outlined,color: Colors.white,size: 12,),
+                                                  gapWC(5),
+                                                  tcn(actionDate.toString(), Colors.white, 12)
+                                                ],
+                                              )
+                                            ],
+                                          ),
+
+                                          const  Divider(
+                                            height: 0.6,
+                                            color: Colors.white,
+                                          ),
+                                          Row(
+                                            children: [
+                                              g.wstrUserRole == "ADMIN"?
+                                              Expanded(child: wRowWhite("Stockist",(e["STOCKIST_CODE"]??"").toString())):gapHC(0),
+                                              g.wstrUserRole == "ADMIN" || g.wstrUserRole == "STOCKIST"?
+                                              Expanded(child: wRowWhite("Dealer",(e["DEALER_CODE"]??"").toString())):gapHC(0),
+                                              g.wstrUserRole == "ADMIN" || g.wstrUserRole == "STOCKIST" || g.wstrUserRole == "DEALER"?
+                                              Expanded(child: wRowWhite("Agent",(e["AGENT_CODE"]??"").toString())):gapHC(0),
+                                            ],
+                                          ),
+                                         const  Divider(
+                                            height: 0.6,
+                                            color: Colors.white,
                                           ),
                                           gapHC(5),
                                           Row(
@@ -252,8 +295,13 @@ class _SalesReportState extends State<SalesReport> {
                                               var e = det[index];
                                               var grandTotal = 0.0;
                                               grandTotal  =  g.mfnDbl(e["TOTAL"].toString())+g.mfnDbl(e["COM"].toString());
+
+
+                                              var editYn = (e["EDIT_YN"]??"").toString();
+                                              var deleteYn = (e["DELETE_YN"]??"").toString();
+
                                               return Container(
-                                                decoration: boxBaseDecoration(index%2==0? g.wstrGameColor.withOpacity(0.2):Colors.white, 0),
+                                                decoration: boxBaseDecoration( deleteYn == "Y"?Colors.red.withOpacity(0.3):editYn == "Y"?Colors.amber.withOpacity(0.3):  index%2==0? Colors.grey.withOpacity(0.1):Colors.white, 0),
                                                 padding: const EdgeInsets.symmetric(vertical: 3),
                                                 child: Row(
                                                   children: [
@@ -281,7 +329,7 @@ class _SalesReportState extends State<SalesReport> {
                         },
                         child: Container(
                           margin: EdgeInsets.symmetric(vertical: 5),
-                          decoration: boxDecoration(Colors.white, 10),
+                          decoration: boxBaseDecoration(headerDeleteYn == "Y"?Colors.red.withOpacity(0.1):headerEditYn == "Y"?Colors.amber.withOpacity(0.3): Colors.white, 10),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -289,8 +337,25 @@ class _SalesReportState extends State<SalesReport> {
                                 padding:const EdgeInsets.all(5),
                                 decoration: boxBaseDecorationC(Colors.blueGrey, 10,10,0,0),
                                 child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
                                     tc('Bill ID #${e["DOCNO"].toString()}', Colors.white, 14),
+
+                                    GestureDetector(
+                                      onTap: (){
+                                        apiGetLog(e["DOCNO"].toString(),e);
+                                      },
+                                      child: Container(
+                                        decoration: boxBaseDecoration(Colors.white,30),
+                                        padding:  const EdgeInsets.symmetric(horizontal: 15,vertical: 3),
+                                        child: Row(
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          children: [
+                                            tcn('LOG VIEW', Colors.black, 12),
+                                          ],
+                                        ),
+                                      ),
+                                    )
                                   ],
                                 ),
                               ),
@@ -426,7 +491,6 @@ class _SalesReportState extends State<SalesReport> {
                                             wRow("Dealer",(e["DEALER_CODE"]??"").toString()):gapHC(0),
                                             g.wstrUserRole == "ADMIN" || g.wstrUserRole == "STOCKIST" || g.wstrUserRole == "DEALER"?
                                             wRow("Agent",(e["AGENT_CODE"]??"").toString()):gapHC(0),
-
                                           ],),
                                         ),
                                         Expanded(child: Column(
@@ -522,6 +586,17 @@ class _SalesReportState extends State<SalesReport> {
       ],
     );
   }
+
+  Widget wRowWhite(head,sub){
+    return Row(
+      children: [
+        tcn(head +" : ", Colors.white, 12),
+        tcn(sub, Colors.white, 13),
+
+      ],
+    );
+  }
+  
   Widget wRowDet(flx,txt){
     return  Flexible(
         flex: flx,
@@ -942,6 +1017,8 @@ class _SalesReportState extends State<SalesReport> {
     var toDate = (filterData[0]["DATE_TO"]);
     var mode = (filterData[0]["MODE"]);
     var child = (filterData[0]["CHILD"]);
+    var game = (filterData[0]["GAME"]);
+    var typeList = (filterData[0]["TYPE_LIST"]);
 
     if(mounted){
       setState(() {
@@ -949,7 +1026,7 @@ class _SalesReportState extends State<SalesReport> {
       });
     }
 
-    futureForm =  ApiCall().apiSalesReport(g.wstrCompany, fromDate,toDate, g.wstrSelectedGame, admCode,stockist, dealer, agent, type, number,"",child);
+    futureForm =  ApiCall().apiSalesReport(g.wstrCompany, fromDate,toDate, game, admCode,stockist, dealer, agent, type, number,"",child,typeList);
     futureForm.then((value) => apiSalesReportRes(value));
   }
 
@@ -957,12 +1034,174 @@ class _SalesReportState extends State<SalesReport> {
     if(mounted){
       setState(() {
         reportDate = [];
+        reportHeader = [];
+
+        fCount =0;
+        fTotal =0.0;
+        fComm =0.0;
+        fGTotal= 0.0;
+
         if(g.fnValCheck(value)){
-          reportDate = value??[];
+          reportDate = value["DET"]??[];
+          reportHeader.add(value["HEADER"]??{});
+
+          if(g.fnValCheck(reportHeader)){
+            fCount = g.mfnInt(reportHeader[0]["QTY"].toString());
+            fTotal = g.mfnDbl(reportHeader[0]["TOTAL"].toString());
+            fComm = g.mfnDbl(reportHeader[0]["COM"].toString());
+            fGTotal  = fTotal+fComm;
+          }
+
         }else{
           errorMsg(context, "No Result Found!!");
         }
       });
     }
   }
+
+
+  apiGetLog(docno,data){
+    futureForm =  ApiCall().apiGetLog(docno, "BKD");
+    futureForm.then((value) => apiGetLogRes(value,data));
+  }
+
+  apiGetLogRes(value,e){
+    if(mounted){
+      setState(() {
+        reportLog = [];
+        if(g.fnValCheck(value)){
+          reportLog = value;
+        }
+      });
+
+      if(g.fnValCheck(value)){
+
+        var actionDate = "";
+        try{
+          actionDate = setDate(7, DateTime.parse(e["DOCDATE"].toString()));
+        }catch(e){
+          actionDate = "";
+        }
+
+        bottomPopUpL(context,
+            Container(
+              decoration: boxBaseDecoration(Colors.white, 20),
+              child: Column(
+                children: [
+                  Container(
+                    padding:  EdgeInsets.all(10),
+                    decoration: boxBaseDecorationC(g.wstrGameColor, 20,20,0,0),
+                    child: Column(
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            tc((e["DOCNO"]??"").toString(), Colors.white , 17),
+                            GestureDetector(
+                              onTap: (){
+                                Navigator.pop(context);
+                              },
+                              child: const Icon(Icons.close,color: Colors.white,size: 20,),
+                            )
+                          ],
+                        ),
+                        gapHC(5),
+                        gapHC(10),
+                        const  Divider(
+                          height: 0.6,
+                          color: Colors.white,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            tcn('Customer  ${(e["CUSTOMER_NAME"]??"").toString().toUpperCase()}', Colors.white, 12),
+                            Row(
+                              children: [
+                                const Icon(Icons.access_time_outlined,color: Colors.white,size: 12,),
+                                gapWC(5),
+                                tcn(actionDate.toString(), Colors.white, 12)
+                              ],
+                            )
+                          ],
+                        ),
+
+                        const  Divider(
+                          height: 0.6,
+                          color: Colors.white,
+                        ),
+                        Row(
+                          children: [
+                            g.wstrUserRole == "ADMIN"?
+                            Expanded(child: wRowWhite("Stockist",(e["STOCKIST_CODE"]??"").toString())):gapHC(0),
+                            g.wstrUserRole == "ADMIN" || g.wstrUserRole == "STOCKIST"?
+                            Expanded(child: wRowWhite("Dealer",(e["DEALER_CODE"]??"").toString())):gapHC(0),
+                            g.wstrUserRole == "ADMIN" || g.wstrUserRole == "STOCKIST" || g.wstrUserRole == "DEALER"?
+                            Expanded(child: wRowWhite("Agent",(e["AGENT_CODE"]??"").toString())):gapHC(0),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                  gapHC(5),
+                  Expanded(
+                      child: ListView.builder(
+                          padding: const EdgeInsets.all(0),
+                          physics: const AlwaysScrollableScrollPhysics(),
+                          itemCount: reportLog.length,
+                          itemBuilder: (context, index) {
+                            var k = reportLog[index];
+                            var grandTotal = 0.0;
+
+                            var logAction = "";
+                            try{
+                              logAction = setDate(7, DateTime.parse(k["ACTIONDATE"].toString()));
+                            }catch(e){
+                              logAction = "";
+                            }
+
+
+                            return Container(
+                              decoration: boxBaseDecoration( Colors.grey.withOpacity(0.2), 10),
+                              padding: const EdgeInsets.symmetric(vertical: 5,horizontal: 10),
+                              margin: EdgeInsets.all(5),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  tc((k["ACTION"]??"").toString(), Colors.black, 15),
+                                  Row(
+                                    children: [
+                                      Icon(Icons.access_time,color: Colors.black,size: 13,),
+                                      gapWC(5),
+                                      tcn(logAction.toString(), Colors.black, 13)
+                                    ],
+                                  ),
+                                  Row(
+                                    children: [
+                                      Icon(Icons.person,color: Colors.black,size: 13,),
+                                      gapWC(5),
+                                      tcn("${(k["USERCODE"]??"").toString().toUpperCase()} (${(k["USER_ROLE"]??"").toString().toUpperCase()})", Colors.black, 13)
+                                    ],
+                                  )
+                                ],
+                              ),
+                            );
+                          }
+
+                      )),
+                  // Expanded(child: SingleChildScrollView(
+                  //   child: Column(
+                  //     children: wDetList(det),
+                  //   ),
+                  // ))
+                ],
+              ),
+            )
+        );
+      }
+    }
+  }
+
 }
+
+
+

@@ -88,7 +88,7 @@ class _ResultsState extends State<Results> {
                 ],
               ),
             ),
-            gapHC(10),
+            gapHC(5),
             // Row(
             //   children: [
             //     gapWC(10),
@@ -120,7 +120,7 @@ class _ResultsState extends State<Results> {
             ),
             Expanded(
                 child: Container(
-                  padding: const EdgeInsets.all(10),
+                  padding: const EdgeInsets.all(5),
                   child: SingleChildScrollView(
                     child: Column(children: [
                       wResultCard(1,Colors.amber.withOpacity(0.5)),
@@ -128,88 +128,108 @@ class _ResultsState extends State<Results> {
                       wResultCard(3,Colors.green.withOpacity(0.5)),
                       wResultCard(4,Colors.orange.withOpacity(0.5)),
                       wResultCard(5,Colors.blue.withOpacity(0.5)),
-                      gapHC(10),
+                      gapHC(5),
                       tcn('COMPLIMENTS', Colors.black, 13),
-                      gapHC(10),
+                      gapHC(5),
                       Row(
                         children: [
                           w30Card(6),
-                          gapWC(5),
+                          gapWC(3),
                           w30Card(7),
-                          gapWC(5),
+                          gapWC(3),
                           w30Card(8),
 
                         ],
                       ),
-                      gapHC(5),
+                      gapHC(3),
                       Row(
                         children: [
                           w30Card(9),
-                          gapWC(5),
+                          gapWC(3),
                           w30Card(10),
-                          gapWC(5),
+                          gapWC(3),
                           w30Card(11),
                         ],
                       ),
-                      gapHC(5),
+                      gapHC(3),
                       Row(
                         children: [
                           w30Card(12),
-                          gapWC(5),
+                          gapWC(3),
                           w30Card(13),
-                          gapWC(5),
+                          gapWC(3),
                           w30Card(14),
                         ],
                       ),
-                      gapHC(5),
+                      gapHC(3),
                       Row(
                         children: [
                           w30Card(15),
-                          gapWC(5),
+                          gapWC(3),
                           w30Card(16),
-                          gapWC(5),
+                          gapWC(3),
                           w30Card(17),
                         ],
                       ),
-                      gapHC(5),
+                      gapHC(3),
                       Row(
                         children: [
                           w30Card(18),
-                          gapWC(5),
+                          gapWC(3),
                           w30Card(19),
-                          gapWC(5),
+                          gapWC(3),
                           w30Card(20),
                         ],
                       ),
-                      gapHC(5),
+                      gapHC(3),
                       Row(
                         children: [
 
                           w30Card(21),
-                          gapWC(5),
+                          gapWC(3),
                           w30Card(22),
-                          gapWC(5),
+                          gapWC(3),
                           w30Card(23),
                         ],
                       ),
-                      gapHC(5),
+                      gapHC(3),
                       Row(
                         children: [
                           w30Card(24),
-                          gapWC(5),
+                          gapWC(3),
                           w30Card(25),
-                          gapWC(5),
+                          gapWC(3),
                           w30Card(26),
                         ],
                       ),
-                      gapHC(5),
+                      gapHC(3),
                       Row(
                         children: [
                           w30Card(27),
-                          gapWC(5),
+                          gapWC(3),
                           w30Card(28),
-                          gapWC(5),
+                          gapWC(3),
                           w30Card(29),
+                        ],
+                      ),
+                      gapHC(3),
+                      Row(
+                        children: [
+                          w30Card(31),
+                          gapWC(3),
+                          w30Card(31),
+                          gapWC(3),
+                          w30Card(32),
+                        ],
+                      ),
+                      gapHC(3),
+                      Row(
+                        children: [
+                          w30Card(33),
+                          gapWC(3),
+                          w30Card(34),
+                          gapWC(3),
+                          w30Card(35),
                         ],
                       )
 
@@ -247,7 +267,7 @@ class _ResultsState extends State<Results> {
     var num = fnGetNumber(pos);
       return Container(
         decoration: boxBaseDecoration(color , 1),
-        padding: const EdgeInsets.all(10),
+        padding: const EdgeInsets.all(5),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -269,7 +289,7 @@ class _ResultsState extends State<Results> {
     var num = fnGetNumber(pos);
       return Expanded(child:
       Container(
-        padding: const EdgeInsets.all(5),
+        padding: const EdgeInsets.all(4),
         decoration: boxBaseDecoration(Colors.blueGrey.withOpacity(0.1 ), 0),
         child: Center(
           child: tc(num.toString(), Colors.black, 15),
@@ -337,16 +357,22 @@ class _ResultsState extends State<Results> {
 
     var result = "";
     var index  = 0;
+    var k = 0;
     for(var e in frResultData){
       var num = "";
-      var k = 0;
+
       if(e["RANK"].toString() == (index+1).toString()){
         num =  (e["NUMBER"]??"").toString();
-        if((index)<=6){
-          result = "$result\n${index+1}.$num";
+        if((index)<5){
+          result = "$result\n*${index+1}*.$num";
+        }else if((index) == 5){
+          result = "$result\n \n ";
+          result = "${result}*COMPLEMENTS* \n";
+          result = "$result $num,";
+          k= 1;
         }else{
           if(k == 3){
-            k = 0;
+            k = 1;
             result = "$result \n $num,";
           }else{
             result = "$result $num,";

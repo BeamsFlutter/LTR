@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:ltr/views/components/common/common.dart';
 import 'package:ltr/views/components/enum.dart';
 
 
 class CustomTextField extends StatefulWidget {
   const CustomTextField({Key? key,required this.controller,this.textFormFieldType,required this.hintText,
-    this.keybordType, this.editable, this.maxCount
+    this.keybordType, this.editable, this.maxCount,  this.fnOnChange, this.focusNode
   }) : super(key: key);
 
   final TextEditingController controller;
@@ -13,6 +14,8 @@ class CustomTextField extends StatefulWidget {
   final int? maxCount;
   final bool? editable;
   final TextInputType ? keybordType;
+  final Function? fnOnChange;
+  final FocusNode? focusNode;
 
   @override
   State<CustomTextField> createState() => _CustomTextFieldState();
@@ -101,11 +104,19 @@ class _CustomTextFieldState extends State<CustomTextField> {
     return TextFormField(
       maxLength: widget.maxCount == 0?1000:widget.maxCount,
       controller: widget.controller,
+      focusNode: widget.focusNode,
       obscureText:
       widget.textFormFieldType == TextFormFieldType.passwrd ||  widget.textFormFieldType == TextFormFieldType.confirmPasswrd
           ? _isObsecure
           : false,keyboardType: widget.keybordType,
       enabled: widget.editable??true,
+      onChanged: (value){
+        try{
+          widget.fnOnChange!(value);
+        }catch(e){
+          dprint(e);
+        }
+      },
       decoration:  InputDecoration(
           counterText: "",
           border: const OutlineInputBorder(),
@@ -117,8 +128,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
           focusedBorder:  const OutlineInputBorder(
 
             borderSide: BorderSide(color:Color(0xff546f9a)),
-    ),
-
+          ),
       ),
     );
   }

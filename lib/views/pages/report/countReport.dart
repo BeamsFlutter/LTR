@@ -452,7 +452,7 @@ class _CountReportState extends State<CountReport> {
       var cash = 0.0 ;
       for(var e in reportDate.where((element) => element["GAME_TYPE"] == key1 || element["GAME_TYPE"] == key2 || element["GAME_TYPE"] == key3 )){
         count = count+g.mfnDbl(e["QTY"].toString());
-        rate = 0.0;
+        rate = g.mfnDbl(e["RATE"].toString());
         cash = cash+g.mfnDbl(e["TOT_AMT"].toString());
       }
 
@@ -579,15 +579,15 @@ class _CountReportState extends State<CountReport> {
 
   apiGetCountSummaryReport(){
 
-
     var stockist = fStockistCode.isEmpty || fStockistCode == "ALL"?null:fStockistCode;
     var dealer = fDealerCode.isEmpty || fDealerCode == "ALL"?null:fDealerCode;
     var agent = fAgentCode.isEmpty || fAgentCode == "ALL"?null:fAgentCode;
     var type = fSelectedGame.isEmpty || fSelectedGame == "ALL"?null:fSelectedGame;
     var number = txtNum.text.isEmpty ?null:txtNum.text;
+    var child = blRate? 1:0;
 
 
-    futureForm =  ApiCall().apiCountSummaryReport(g.wstrCompany, setDate(2, fFromDate),setDate(2, fToDate), g.wstrSelectedGame, "",stockist, dealer, agent, type, number);
+    futureForm =  ApiCall().apiCountSummaryReport(g.wstrCompany, setDate(2, fFromDate),setDate(2, fToDate), g.wstrSelectedGame, "",stockist, dealer, agent, type, number,child);
     futureForm.then((value) => apiGetCountSummaryRes(value));
   }
   apiGetCountSummaryRes(value){

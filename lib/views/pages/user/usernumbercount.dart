@@ -279,7 +279,7 @@ class _NumberCountState extends State<UserNumberCount> {
                                         ),
                                       ),
                                       gapWC(10),
-                                      tcn('All Game',blAllGame? Colors.black: Colors.grey, 15)
+                                      tcn('All Game',blAllGame? Colors.black: Colors.black, 15)
                                     ],
                                   ),
                                 ),

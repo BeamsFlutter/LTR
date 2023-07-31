@@ -283,7 +283,7 @@ class _FavNumberState extends State<FavNumber> {
                                         ),
                                       ),
                                       gapWC(10),
-                                      tcn('All Game',blAllGame? Colors.black: Colors.grey, 15)
+                                      tcn('All Game',blAllGame? Colors.black: Colors.black, 15)
                                     ],
                                   ),
                                 ),

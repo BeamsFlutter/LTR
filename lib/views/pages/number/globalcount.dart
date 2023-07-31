@@ -100,12 +100,12 @@ class _GlobalGameCountState extends State<GlobalGameCount> {
                       child: Container(
                         height: 18,
                         width: 18,
-                        decoration: blEdit?boxDecoration( bgColorDark, 30):boxBaseDecoration( Colors.white, 30),
+                        decoration: blEdit?boxDecoration( bgColorDark, 30):boxOutlineCustom1(Colors.white, 30, Colors.black, 1.0),
                         child: const Icon(Icons.done,color: Colors.white,size: 13,),
                       ),
                     ),
                     gapWC(10),
-                    tcn('Editable',blEdit? Colors.black: Colors.grey, 15)
+                    tcn('Editable',blEdit? Colors.black: Colors.black, 15)
                   ],
                 ),
               ),
@@ -137,7 +137,7 @@ class _GlobalGameCountState extends State<GlobalGameCount> {
                       ),
                     ),
                     gapWC(10),
-                    tcn('All Game',blAllGame? Colors.black: Colors.grey, 15)
+                    tcn('All Game',blAllGame? Colors.black: Colors.black, 15)
                   ],
                 ),
               ),

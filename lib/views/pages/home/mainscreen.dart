@@ -18,10 +18,13 @@ import 'package:ltr/views/pages/number/gamelist.dart';
 import 'package:ltr/views/pages/number/globalcount.dart';
 import 'package:ltr/views/pages/number/numbercount.dart';
 import 'package:ltr/views/pages/report/report.dart';
+import 'package:ltr/views/pages/settings/appUpdate.dart';
 import 'package:ltr/views/pages/settings/settings.dart';
 import 'package:ltr/views/pages/theme/home_theme.dart';
+import 'package:ltr/views/pages/user/createpermissionuser.dart';
 import 'package:ltr/views/pages/user/currentuserprize.dart';
 import 'package:ltr/views/pages/user/currentusersalesrate.dart';
+import 'package:ltr/views/pages/user/specialUserList.dart';
 import 'package:ltr/views/pages/user/userlist.dart';
 import 'package:ltr/views/pages/user/usersearch.dart';
 import 'package:ltr/views/styles/colors.dart';
@@ -226,7 +229,9 @@ class _MainPageState extends State<MainPage> {
                       gapHC(5),
                       g.wstrUserRole == "ADMIN"?
                       wMenuCard('App Settings',11):gapHC(0),
-                      wMenuCard('App Update',4),
+                      g.wstrUserRole == "ADMIN"?
+                      wMenuCard('Special User',19):gapHC(0),
+                      wMenuCard('App Update',18),
 
 
                     ],
@@ -362,8 +367,6 @@ class _MainPageState extends State<MainPage> {
                                        wButton("B",Colors.orange),
                                        gapWC(5),
                                        wButton("C",Colors.orange),
-
-
                                      ],
                                    ),
                                  ),
@@ -583,11 +586,64 @@ class _MainPageState extends State<MainPage> {
                            ],
                          ),
                        ),
-                       Expanded(child: SingleChildScrollView(
-                         child: Column(
-                           children: wNumberList(),
+                       Expanded(
+                         child: ListView.builder(
+                             padding: const EdgeInsets.all(0),
+                             physics: const AlwaysScrollableScrollPhysics(),
+                             itemCount: fTotalCountReport.length,
+                             itemBuilder: (context, index) {
+                               var e = fTotalCountReport[index];
+                               return  Container(
+                                 decoration: boxBaseDecoration(index%2==0?greyLight.withOpacity(0.5):blueLight.withOpacity(0.5), 0),
+                                 margin: EdgeInsets.symmetric(vertical: 2),
+                                 padding: const EdgeInsets.symmetric(vertical: 5,horizontal: 10),
+                                 child: Row(
+                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                   children: [
+                                     Flexible(
+                                       flex: 3,
+                                       child: Row(
+                                         children: [
+                                           tcn((e["GAME_TYPE"]??"").toString(), Colors.black, 14),
+                                         ],
+                                       ),
+                                     ),
+                                     Flexible(
+                                       flex: 3,
+                                       child: Row(
+                                         children: [
+                                           tcn((e["NUMBER"]??"").toString(), Colors.black, 14),
+                                         ],
+                                       ),
+                                     ),
+                                     Flexible(
+                                       flex: 2,
+                                       child: Row(
+                                         children: [
+                                           tcn((e["COUNT"]??"").toString(), Colors.black, 14),
+                                         ],
+                                       ),
+                                     ),
+                                     Flexible(
+                                       flex: 2,
+                                       child: Row(
+                                         children: [
+                                           tcn((e["AMT"]??"").toString(), Colors.black, 14),
+                                         ],
+                                       ),
+                                     ),
+                                   ],
+                                 ),
+                               );
+                             }
+
                          ),
-                       ))
+                       )
+                       // Expanded(child: SingleChildScrollView(
+                       //   child: Column(
+                       //     children: wNumberList(),
+                       //   ),
+                       // ))
                      ],
                    ),
                  ))
@@ -650,6 +706,15 @@ class _MainPageState extends State<MainPage> {
           Navigator.push(context, MaterialPageRoute(builder: (context) =>   const CurrentUserPrize(pUserCode: "")));
 
         }
+
+        else if(nav == 18){
+          Navigator.push(context, MaterialPageRoute(builder: (context) =>   const AppUpdate()));
+
+        }
+        else if(nav == 19){
+          Navigator.push(context, MaterialPageRoute(builder: (context) =>  const  SpecialUserList(pRoleCode: 'SPECIAL',)));
+
+        }
         else{
           Navigator.push(context, MaterialPageRoute(builder: (context) =>   UserList(pRoleCode: text,)));
 
@@ -680,6 +745,7 @@ class _MainPageState extends State<MainPage> {
       onPressed: (){
         if(mounted){
           setState(() {
+            fSelectedGame = "ALL";
             gCountNum = num;
             txtNum.clear();
           });
@@ -969,8 +1035,27 @@ class _MainPageState extends State<MainPage> {
     var agent = fAgentCode.isEmpty || fAgentCode == "ALL"?null:fAgentCode;
     var type = fSelectedGame.isEmpty || fSelectedGame == "ALL"?null:fSelectedGame;
     var number = txtNum.text.isEmpty ?null:txtNum.text;
+    var typeList = [];
+    if(gCountNum > 0){
+      if(fSelectedGame.isEmpty || fSelectedGame == "ALL"){
+        if(gCountNum == 3){
+          typeList.add({"COL_VAL":"BOX"});
+          typeList.add({"COL_VAL":"SUPER"});
+        }else  if(gCountNum == 2){
+          typeList.add({"COL_VAL":"AB"});
+          typeList.add({"COL_VAL":"BC"});
+          typeList.add({"COL_VAL":"AC"});
+        }else  if(gCountNum == 1){
+          typeList.add({"COL_VAL":"A"});
+          typeList.add({"COL_VAL":"B"});
+          typeList.add({"COL_VAL":"C"});
+        }
+      }else{
+        typeList.add({"COL_VAL":fSelectedGame});
+      }
+    }
 
-    futureForm =  ApiCall().apiCountReport(g.wstrCompany, setDate(2, fResDate), g.wstrSelectedGame, stockist, dealer, agent, type, number);
+    futureForm =  ApiCall().apiCountReport(g.wstrCompany, setDate(2, fResDate), g.wstrSelectedGame, stockist, dealer, agent, null, number,typeList);
     futureForm.then((value) => apiCountReportRes(value));
   }
 

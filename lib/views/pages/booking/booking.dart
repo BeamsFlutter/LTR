@@ -1,5 +1,7 @@
 
  
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bounce/flutter_bounce.dart';
 import 'package:get/get.dart';
@@ -119,32 +121,40 @@ class _BookingState extends State<Booking> {
                       Row(
                         children: [
                           GestureDetector(
-                              onTap: (){
-                                Navigator.pop(context);
-                              },
-                              child: const Icon(Icons.arrow_back_ios,color: Colors.white,size: 20,)),
+                            onTap: (){
+                              Navigator.pop(context);
+                            },
+                            child: Container(
+                              decoration: boxBaseDecoration(Colors.white,10),
+                              padding: const EdgeInsets.all(5),
+                              child: const Icon(Icons.arrow_back,color: Colors.black,size: 20,),
+                            ),
+                          ),
                           gapWC(5),
-                          tcn('$lstrSelectedGame Game', Colors.white, 20)
+                          tcn('$lstrSelectedGame Game', Colors.white, 20),
+                          gapWC(5),
+                          widget.mode != "EDIT"?
+                          PopupMenuButton<Menu>(
+                            position: PopupMenuPosition.under,
+                            tooltip: "",
+                            onSelected: (Menu item) {
+
+                            },
+                            shape:  RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10)),
+                            itemBuilder: (BuildContext context) => <PopupMenuEntry<Menu>>[
+                              PopupMenuItem<Menu>(
+                                value: Menu.itemOne,
+                                padding: const EdgeInsets.symmetric(vertical: 0,horizontal: 0),
+                                child: wGamePopup(),
+                              ),
+                            ],
+                            child:   const Icon(Icons.dashboard_outlined,color: Colors.white,size: 20,),
+                          ):gapHC(0),
                         ],
                       ),
-                      // widget.mode != "EDIT"?
-                      // PopupMenuButton<Menu>(
-                      //   position: PopupMenuPosition.under,
-                      //   tooltip: "",
-                      //   onSelected: (Menu item) {
-                      //
-                      //   },
-                      //   shape:  RoundedRectangleBorder(
-                      //       borderRadius: BorderRadius.circular(10)),
-                      //   itemBuilder: (BuildContext context) => <PopupMenuEntry<Menu>>[
-                      //     PopupMenuItem<Menu>(
-                      //       value: Menu.itemOne,
-                      //       padding: const EdgeInsets.symmetric(vertical: 0,horizontal: 0),
-                      //       child: wGamePopup(),
-                      //     ),
-                      //   ],
-                      //   child:   const Icon(Icons.dashboard_outlined,color: Colors.white,size: 20,),
-                      // ):gapHC(0)
+
+
                       widget.mode != "EDIT"?
                       Bounce(
                         onPressed: (){
@@ -644,10 +654,11 @@ class _BookingState extends State<Booking> {
                             var total = qty*amount;
                             var color = Colors.white;
                             var deleteYn = (e["DELETE_YN"]??"");
-                            color = (e["STATUS"]??"")=="Y"?Colors.white:e["PLAN"] == "SUPER"?Colors.black: e["PLAN"] == "BOX" ? Colors.pink: e["PLAN"].toString().length == 2?Colors.green:e["PLAN"].toString().length ==1?Colors.orange:Colors.white;
+                            var errorYn = (e["ERROR_YN"]??"");
+                            color = (e["STATUS"]??"")=="Y" || (e["ERROR_YN"]??"")=="Y"?Colors.white:e["PLAN"] == "SUPER"?Colors.black: e["PLAN"] == "BOX" ? Colors.pink: e["PLAN"].toString().length == 2?Colors.green:e["PLAN"].toString().length ==1?Colors.orange:Colors.white;
                             return deleteYn !="Y"? Container(
                               padding: const EdgeInsets.symmetric(horizontal: 5,vertical: 2),
-                              decoration: boxBaseDecoration((e["STATUS"]??"")=="Y"?Colors.redAccent.withOpacity(0.8): Colors.white, 0),
+                              decoration: boxBaseDecoration((e["STATUS"]??"")=="Y"?Colors.redAccent.withOpacity(0.8):(e["ERROR_YN"]??"")=="Y"?Colors.purple.withOpacity(0.8): Colors.white, 0),
                               child: Column(
                                 children: [
                                   Row(
@@ -1117,8 +1128,9 @@ class _BookingState extends State<Booking> {
 
           Navigator.pop(context);
           setState(() {
-            lstrSelectedGame = (e["GAME_CODE"]??"").toString();
+            lstrSelectedGame = (e["CODE"]??"").toString();
           });
+          apiValidateGame(lstrSelectedGame);
         },
         child: Container(
           decoration: boxBaseDecoration(greyLight, 5),
@@ -1128,7 +1140,7 @@ class _BookingState extends State<Booking> {
             children: [
               const Icon(Icons.confirmation_num,color:bgColorDark,size: 15,),
               gapWC(5),
-              Expanded(child: tcn((e["GAME_CODE"]??"").toString(), Colors.black, 12))
+              Expanded(child: tcn((e["CODE"]??"").toString(), Colors.black, 12))
             ],
           ),
         ),
@@ -1338,13 +1350,16 @@ class _BookingState extends State<Booking> {
 
   //=======================================PAGE FN
   fnValidateBooking(){
-    apiValidateGame();
+    if(mounted){
+      setState(() {
+        lstrSelectedGame = g.wstrSelectedGame;
+      });
+    }
+    apiValidateGame(g.wstrSelectedGame);
   }
   fnGetPageData(){
       if(mounted){
-        setState(() {
-          lstrSelectedGame = g.wstrSelectedGame;
-        });
+
       if(g.wstrUserRole.toString().toUpperCase() == "STOCKIST" ){
         setState(() {
           fStockistCode = g.wstrUserCd;
@@ -1367,7 +1382,7 @@ class _BookingState extends State<Booking> {
         if((widget.pDocno??"").isNotEmpty){
           fnEditFill();
         }else{
-          apiAvailableGames();
+          apiGetGameList();
         }
       }
     }
@@ -1430,7 +1445,7 @@ class _BookingState extends State<Booking> {
                 countList.add({
                   "PLAN":plan,
                   "NUMBER":"${i.toString()[0]}00",
-                  "COUNT":txtCount.text,
+                  "COUNT":g.mfnInt(txtCount.text.toString()).toString(),
                   "AMOUNT":10.00,
                 });
               }
@@ -1448,7 +1463,7 @@ class _BookingState extends State<Booking> {
                 countList.add({
                   "PLAN":plan,
                   "NUMBER":(i.toString()[0]+i.toString()[0]+i.toString()[0]).toString(),
-                  "COUNT":txtCount.text,
+                  "COUNT":g.mfnInt(txtCount.text.toString()).toString(),
                   "AMOUNT":10.00,
                 });
               }
@@ -1463,20 +1478,20 @@ class _BookingState extends State<Booking> {
             countList.add({
               "PLAN":"SUPER",
               "NUMBER":txtNum.text,
-              "COUNT":txtCount.text,
+              "COUNT":g.mfnInt(txtCount.text.toString()).toString(),
               "AMOUNT":10.00,
             });
             countList.add({
               "PLAN":"BOX",
               "NUMBER":txtNum.text,
-              "COUNT":txtBoxCount.text,
+              "COUNT":g.mfnInt(txtBoxCount.text).toString(),
               "AMOUNT":10.00,
             });
           }else{
             countList.add({
               "PLAN":plan,
               "NUMBER":txtNum.text,
-              "COUNT":txtCount.text,
+              "COUNT":g.mfnInt(txtCount.text.toString()).toString(),
               "AMOUNT":10.00,
             });
           }
@@ -1486,26 +1501,26 @@ class _BookingState extends State<Booking> {
             countList.add({
               "PLAN":"AB",
               "NUMBER":txtNum.text,
-              "COUNT":txtCount.text,
+              "COUNT":g.mfnInt(txtCount.text.toString()).toString(),
               "AMOUNT":10.00,
             });
             countList.add({
               "PLAN":"BC",
               "NUMBER":txtNum.text,
-              "COUNT":txtCount.text,
+              "COUNT":g.mfnInt(txtCount.text.toString()).toString(),
               "AMOUNT":10.00,
             });
             countList.add({
               "PLAN":"AC",
               "NUMBER":txtNum.text,
-              "COUNT":txtCount.text,
+              "COUNT":g.mfnInt(txtCount.text.toString()).toString(),
               "AMOUNT":10.00,
             });
           }else{
             countList.add({
               "PLAN":plan,
               "NUMBER":txtNum.text,
-              "COUNT":txtCount.text,
+              "COUNT":g.mfnInt(txtCount.text.toString()).toString(),
               "AMOUNT":10.00,
             });
           }
@@ -1515,26 +1530,26 @@ class _BookingState extends State<Booking> {
             countList.add({
               "PLAN":"A",
               "NUMBER":txtNum.text,
-              "COUNT":txtCount.text,
+              "COUNT":g.mfnInt(txtCount.text.toString()).toString(),
               "AMOUNT":10.00,
             });
             countList.add({
               "PLAN":"B",
               "NUMBER":txtNum.text,
-              "COUNT":txtCount.text,
+              "COUNT":g.mfnInt(txtCount.text.toString()).toString(),
               "AMOUNT":10.00,
             });
             countList.add({
               "PLAN":"C",
               "NUMBER":txtNum.text,
-              "COUNT":txtCount.text,
+              "COUNT":g.mfnInt(txtCount.text.toString()).toString(),
               "AMOUNT":10.00,
             });
           }else{
             countList.add({
               "PLAN":plan,
               "NUMBER":txtNum.text,
-              "COUNT":txtCount.text,
+              "COUNT":g.mfnInt(txtCount.text.toString()).toString(),
               "AMOUNT":10.00,
             });
           }
@@ -1592,7 +1607,7 @@ class _BookingState extends State<Booking> {
                   countList.add({
                     "PLAN":"SUPER",
                     "NUMBER":"${i.toString()[0]}00",
-                    "COUNT":txtCount.text,
+                    "COUNT":g.mfnInt(txtCount.text.toString()).toString(),
                     "AMOUNT":supPrice,
                   });
                 }
@@ -1600,7 +1615,7 @@ class _BookingState extends State<Booking> {
                   countList.add({
                     "PLAN":"BOX",
                     "NUMBER":"${i.toString()[0]}00",
-                    "COUNT":txtCount.text,
+                    "COUNT":g.mfnInt(txtCount.text.toString()).toString(),
                     "AMOUNT":boxPrice,
                   });
                 }
@@ -1610,7 +1625,7 @@ class _BookingState extends State<Booking> {
                   countList.add({
                     "PLAN":plan,
                     "NUMBER":"${i.toString()[0]}00",
-                    "COUNT":txtCount.text,
+                    "COUNT":g.mfnInt(txtCount.text.toString()).toString(),
                     "AMOUNT":price,
                   });
                 }
@@ -1624,7 +1639,7 @@ class _BookingState extends State<Booking> {
                   countList.add({
                     "PLAN":"SUPER",
                     "NUMBER":(i.toString()[0]+i.toString()[0]+i.toString()[0]).toString(),
-                    "COUNT":txtCount.text,
+                    "COUNT":g.mfnInt(txtCount.text.toString()).toString(),
                     "AMOUNT":supPrice,
                   });
                 }
@@ -1632,7 +1647,7 @@ class _BookingState extends State<Booking> {
                   countList.add({
                     "PLAN":"BOX",
                     "NUMBER":(i.toString()[0]+i.toString()[0]+i.toString()[0]).toString(),
-                    "COUNT":txtCount.text,
+                    "COUNT":g.mfnInt(txtCount.text.toString()).toString(),
                     "AMOUNT":boxPrice,
                   });
                 }
@@ -1642,7 +1657,7 @@ class _BookingState extends State<Booking> {
                   countList.add({
                     "PLAN":plan,
                     "NUMBER":(i.toString()[0]+i.toString()[0]+i.toString()[0]).toString(),
-                    "COUNT":txtCount.text,
+                    "COUNT":g.mfnInt(txtCount.text.toString()).toString(),
                     "AMOUNT":price,
                   });
                 }
@@ -1654,9 +1669,12 @@ class _BookingState extends State<Booking> {
           }
         }
         else if(gOption == "Book" ){
+
+          dprint("STARTED");
           if(txtNum.text.toString().length != gCountNum){
             return;
           }
+          dprint("NOW");
           var fromNum = txtNum.text;
           var toNum = g.mfnDbl(fromNum)+4;
           if(toNum >= 999){
@@ -1672,7 +1690,7 @@ class _BookingState extends State<Booking> {
                   countList.add({
                     "PLAN":"SUPER",
                     "NUMBER":iNum.toString(),
-                    "COUNT":txtCount.text,
+                    "COUNT":g.mfnInt(txtCount.text.toString()).toString(),
                     "AMOUNT":supPrice,
                   });
                 }
@@ -1680,25 +1698,24 @@ class _BookingState extends State<Booking> {
                   countList.add({
                     "PLAN":"BOX",
                     "NUMBER":iNum.toString(),
-                    "COUNT":txtCount.text,
+                    "COUNT":g.mfnInt(txtCount.text.toString()).toString(),
                     "AMOUNT":boxPrice,
                   });
                 }
-            }
-
-
-
             }else{
-              if(iNum.length == 3){
+                dprint("123");
                 if(fnCheckNumberInList(iNum.toString(),plan)){
                   countList.add({
                     "PLAN":plan,
                     "NUMBER":iNum.toString(),
-                    "COUNT":txtCount.text,
+                    "COUNT":g.mfnInt(txtCount.text.toString()).toString(),
                     "AMOUNT":price,
                   });
                 }
+
               }
+
+
 
             }
           }
@@ -1721,7 +1738,7 @@ class _BookingState extends State<Booking> {
                 countList.add({
                   "PLAN":"SUPER",
                   "NUMBER":iNum,
-                  "COUNT":txtCount.text,
+                  "COUNT":g.mfnInt(txtCount.text.toString()).toString(),
                   "AMOUNT":supPrice,
                 });
               }
@@ -1729,7 +1746,7 @@ class _BookingState extends State<Booking> {
                 countList.add({
                   "PLAN":"BOX",
                   "NUMBER":iNum,
-                  "COUNT":txtCount.text,
+                  "COUNT":g.mfnInt(txtCount.text.toString()).toString(),
                   "AMOUNT":boxPrice,
                 });
               }
@@ -1739,7 +1756,7 @@ class _BookingState extends State<Booking> {
                 countList.add({
                   "PLAN":plan,
                   "NUMBER":iNum,
-                  "COUNT":txtCount.text,
+                  "COUNT":g.mfnInt(txtCount.text.toString()).toString(),
                   "AMOUNT":price,
                 });
               }
@@ -1764,7 +1781,7 @@ class _BookingState extends State<Booking> {
                 countList.add({
                   "PLAN":"SUPER",
                   "NUMBER":num,
-                  "COUNT":txtCount.text,
+                  "COUNT":g.mfnInt(txtCount.text.toString()).toString(),
                   "AMOUNT":supPrice,
                 });
               }
@@ -1772,7 +1789,7 @@ class _BookingState extends State<Booking> {
                 countList.add({
                   "PLAN":"BOX",
                   "NUMBER":num,
-                  "COUNT":txtCount.text,
+                  "COUNT":g.mfnInt(txtCount.text.toString()).toString(),
                   "AMOUNT":boxPrice,
                 });
               }
@@ -1781,7 +1798,7 @@ class _BookingState extends State<Booking> {
                 countList.add({
                   "PLAN":plan,
                   "NUMBER":num,
-                  "COUNT":txtCount.text,
+                  "COUNT":g.mfnInt(txtCount.text.toString()).toString(),
                   "AMOUNT":price,
                 });
               }
@@ -1813,7 +1830,7 @@ class _BookingState extends State<Booking> {
             countList.add({
               "PLAN":"SUPER",
               "NUMBER":txtNum.text,
-              "COUNT":txtCount.text,
+              "COUNT":g.mfnInt(txtCount.text.toString()).toString(),
               "AMOUNT":supPrice,
             });
           }
@@ -1821,7 +1838,7 @@ class _BookingState extends State<Booking> {
             countList.add({
               "PLAN":"BOX",
               "NUMBER":txtNum.text,
-              "COUNT":bCount,
+              "COUNT":g.mfnInt(bCount.toString()).toString(),
               "AMOUNT":boxPrice,
             });
           }
@@ -1832,7 +1849,7 @@ class _BookingState extends State<Booking> {
             countList.add({
               "PLAN":plan,
               "NUMBER":txtNum.text,
-              "COUNT": plan == "BOX"?bCount: txtCount.text,
+              "COUNT": plan == "BOX"?g.mfnInt(bCount.toString()).toString(): g.mfnInt(txtCount.text).toString(),
               "AMOUNT":price,
             });
           }
@@ -1862,7 +1879,7 @@ class _BookingState extends State<Booking> {
                 countList.add({
                   "PLAN":"AB",
                   "NUMBER":"${i.toString()[0]}0",
-                  "COUNT":txtCount.text,
+                  "COUNT":g.mfnInt(txtCount.text.toString()).toString(),
                   "AMOUNT":twoPrice,
                 });
               }
@@ -1870,7 +1887,7 @@ class _BookingState extends State<Booking> {
                 countList.add({
                   "PLAN":"BC",
                   "NUMBER":"${i.toString()[0]}0",
-                  "COUNT":txtCount.text,
+                  "COUNT":g.mfnInt(txtCount.text.toString()).toString(),
                   "AMOUNT":twoPrice,
                 });
               }
@@ -1878,7 +1895,7 @@ class _BookingState extends State<Booking> {
                 countList.add({
                   "PLAN":"AC",
                   "NUMBER":"${i.toString()[0]}0",
-                  "COUNT":txtCount.text,
+                  "COUNT":g.mfnInt(txtCount.text.toString()).toString(),
                   "AMOUNT":twoPrice,
                 });
               }
@@ -1888,7 +1905,7 @@ class _BookingState extends State<Booking> {
                 countList.add({
                   "PLAN":plan,
                   "NUMBER":"${i.toString()[0]}0",
-                  "COUNT":txtCount.text,
+                  "COUNT":g.mfnInt(txtCount.text.toString()).toString(),
                   "AMOUNT":price,
                 });
               }
@@ -1903,7 +1920,7 @@ class _BookingState extends State<Booking> {
                 countList.add({
                   "PLAN":"AB",
                   "NUMBER":(i.toString()[0]+i.toString()[0]).toString(),
-                  "COUNT":txtCount.text,
+                  "COUNT":g.mfnInt(txtCount.text.toString()).toString(),
                   "AMOUNT":supPrice,
                 });
               }
@@ -1911,7 +1928,7 @@ class _BookingState extends State<Booking> {
                 countList.add({
                   "PLAN":"BC",
                   "NUMBER":(i.toString()[0]+i.toString()[0]).toString(),
-                  "COUNT":txtCount.text,
+                  "COUNT":g.mfnInt(txtCount.text.toString()).toString(),
                   "AMOUNT":boxPrice,
                 });
               }
@@ -1919,7 +1936,7 @@ class _BookingState extends State<Booking> {
                 countList.add({
                   "PLAN":"AC",
                   "NUMBER":(i.toString()[0]+i.toString()[0]).toString(),
-                  "COUNT":txtCount.text,
+                  "COUNT":g.mfnInt(txtCount.text.toString()).toString(),
                   "AMOUNT":boxPrice,
                 });
               }
@@ -1929,7 +1946,7 @@ class _BookingState extends State<Booking> {
                 countList.add({
                   "PLAN":plan,
                   "NUMBER":(i.toString()[0]+i.toString()[0]).toString(),
-                  "COUNT":txtCount.text,
+                  "COUNT":g.mfnInt(txtCount.text.toString()).toString(),
                   "AMOUNT":price,
                 });
               }
@@ -1960,7 +1977,7 @@ class _BookingState extends State<Booking> {
                 countList.add({
                   "PLAN":"AB",
                   "NUMBER":iNum.toString(),
-                  "COUNT":txtCount.text,
+                  "COUNT":g.mfnInt(txtCount.text.toString()).toString(),
                   "AMOUNT":twoPrice,
                 });
               }
@@ -1968,7 +1985,7 @@ class _BookingState extends State<Booking> {
                 countList.add({
                   "PLAN":"BC",
                   "NUMBER":iNum.toString(),
-                  "COUNT":txtCount.text,
+                  "COUNT":g.mfnInt(txtCount.text.toString()).toString(),
                   "AMOUNT":twoPrice,
                 });
               }
@@ -1976,7 +1993,7 @@ class _BookingState extends State<Booking> {
                 countList.add({
                   "PLAN":"AC",
                   "NUMBER":iNum.toString(),
-                  "COUNT":txtCount.text,
+                  "COUNT":g.mfnInt(txtCount.text.toString()).toString(),
                   "AMOUNT":twoPrice,
                 });
               }
@@ -1986,7 +2003,7 @@ class _BookingState extends State<Booking> {
                 countList.add({
                   "PLAN":plan,
                   "NUMBER":iNum.toString(),
-                  "COUNT":txtCount.text,
+                  "COUNT":g.mfnInt(txtCount.text.toString()).toString(),
                   "AMOUNT":price,
                 });
               }
@@ -2013,7 +2030,7 @@ class _BookingState extends State<Booking> {
               countList.add({
                 "PLAN":"AB",
                 "NUMBER":iNum,
-                "COUNT":txtCount.text,
+                "COUNT":g.mfnInt(txtCount.text.toString()).toString(),
                 "AMOUNT":twoPrice,
               });
             }
@@ -2022,7 +2039,7 @@ class _BookingState extends State<Booking> {
               countList.add({
                 "PLAN":"BC",
                 "NUMBER":iNum,
-                "COUNT":txtCount.text,
+                "COUNT":g.mfnInt(txtCount.text.toString()).toString(),
                 "AMOUNT":twoPrice,
               });
             }
@@ -2031,7 +2048,7 @@ class _BookingState extends State<Booking> {
               countList.add({
                 "PLAN":"AC",
                 "NUMBER":iNum,
-                "COUNT":txtCount.text,
+                "COUNT":g.mfnInt(txtCount.text.toString()).toString(),
                 "AMOUNT":twoPrice,
               });
             }
@@ -2041,7 +2058,7 @@ class _BookingState extends State<Booking> {
               countList.add({
                 "PLAN":plan,
                 "NUMBER":iNum,
-                "COUNT":txtCount.text,
+                "COUNT":g.mfnInt(txtCount.text.toString()).toString(),
                 "AMOUNT":price,
               });
             }
@@ -2067,7 +2084,7 @@ class _BookingState extends State<Booking> {
               countList.add({
                 "PLAN":"A",
                 "NUMBER":i,
-                "COUNT":txtCount.text,
+                "COUNT":g.mfnInt(txtCount.text.toString()).toString(),
                 "AMOUNT":onePrice,
               });
             }
@@ -2075,7 +2092,7 @@ class _BookingState extends State<Booking> {
               countList.add({
                 "PLAN":"B",
                 "NUMBER":i,
-                "COUNT":txtCount.text,
+                "COUNT":g.mfnInt(txtCount.text.toString()).toString(),
                 "AMOUNT":onePrice,
               });
             }
@@ -2083,7 +2100,7 @@ class _BookingState extends State<Booking> {
               countList.add({
                 "PLAN":"C",
                 "NUMBER":i,
-                "COUNT":txtCount.text,
+                "COUNT":g.mfnInt(txtCount.text.toString()).toString(),
                 "AMOUNT":onePrice,
               });
             }
@@ -2094,7 +2111,7 @@ class _BookingState extends State<Booking> {
               countList.add({
                 "PLAN":plan,
                 "NUMBER":i,
-                "COUNT":txtCount.text,
+                "COUNT":g.mfnInt(txtCount.text.toString()).toString(),
                 "AMOUNT":price,
               });
             }
@@ -2118,7 +2135,7 @@ class _BookingState extends State<Booking> {
               countList.add({
                 "PLAN":"A",
                 "NUMBER":iNum,
-                "COUNT":txtCount.text,
+                "COUNT":g.mfnInt(txtCount.text.toString()).toString(),
                 "AMOUNT":onePrice,
               });
             }
@@ -2127,7 +2144,7 @@ class _BookingState extends State<Booking> {
               countList.add({
                 "PLAN":"B",
                 "NUMBER":iNum,
-                "COUNT":txtCount.text,
+                "COUNT":g.mfnInt(txtCount.text.toString()).toString(),
                 "AMOUNT":onePrice,
               });
             }
@@ -2136,7 +2153,7 @@ class _BookingState extends State<Booking> {
               countList.add({
                 "PLAN":"C",
                 "NUMBER":iNum,
-                "COUNT":txtCount.text,
+                "COUNT":g.mfnInt(txtCount.text.toString()).toString(),
                 "AMOUNT":onePrice,
               });
             }
@@ -2146,7 +2163,7 @@ class _BookingState extends State<Booking> {
               countList.add({
                 "PLAN":plan,
                 "NUMBER":iNum,
-                "COUNT":txtCount.text,
+                "COUNT":g.mfnInt(txtCount.text.toString()).toString(),
                 "AMOUNT":price,
               });
             }
@@ -2162,7 +2179,7 @@ class _BookingState extends State<Booking> {
             countList.add({
               "PLAN":planName,
               "NUMBER":txtNum.text,
-              "COUNT":txtCount.text,
+              "COUNT":g.mfnInt(txtCount.text.toString()).toString(),
               "AMOUNT":price,
             });
           }
@@ -2171,7 +2188,7 @@ class _BookingState extends State<Booking> {
             countList.add({
               "PLAN":planName,
               "NUMBER":txtNum.text,
-              "COUNT":txtCount.text,
+              "COUNT":g.mfnInt(txtCount.text.toString()).toString(),
               "AMOUNT":price,
             });
           }
@@ -2180,7 +2197,7 @@ class _BookingState extends State<Booking> {
             countList.add({
               "PLAN":planName,
               "NUMBER":txtNum.text,
-              "COUNT":txtCount.text,
+              "COUNT":g.mfnInt(txtCount.text.toString()).toString(),
               "AMOUNT":price,
             });
           }
@@ -2189,7 +2206,7 @@ class _BookingState extends State<Booking> {
             countList.add({
               "PLAN":plan,
               "NUMBER":txtNum.text,
-              "COUNT":txtCount.text,
+              "COUNT":g.mfnInt(txtCount.text.toString()).toString(),
               "AMOUNT":price,
             });
           }
@@ -2209,7 +2226,8 @@ class _BookingState extends State<Booking> {
         txtNum.clear();
         txtNumTo.clear();
         txtDiff.clear();
-        txtCount.clear();
+        //txtCount.clear();
+        txtCount.selection = TextSelection(baseOffset: 0, extentOffset: txtCount.text.length);
         txtBoxCount.clear();
         fnNum.requestFocus();
       });
@@ -2263,7 +2281,7 @@ class _BookingState extends State<Booking> {
       var rate =  g.mfnDbl(e["AMOUNT"].toString());
       var sts =  (e["STATUS"]??"").toString();
       var total  =  qty * rate;
-
+      e["ERROR_YN"]="N";
       if(widget.mode == "EDIT"){
         det.add({
           "GAME_TYPE":e["PLAN"],
@@ -2272,7 +2290,7 @@ class _BookingState extends State<Booking> {
           "RATE":e["AMOUNT"],
           "TOT_AMT":total,
           "DELETE_YN":sts,
-          "EDIT_YN":(e["EDIT_YN"]??"")
+          "EDIT_YN":(e["EDIT_YN"]??""),
         });
 
       }else{
@@ -2282,7 +2300,8 @@ class _BookingState extends State<Booking> {
             "NUMBER":e["NUMBER"],
             "QTY":e["COUNT"],
             "RATE":e["AMOUNT"],
-            "TOT_AMT":total
+            "TOT_AMT":total,
+
           });
         }
       }
@@ -2421,8 +2440,8 @@ class _BookingState extends State<Booking> {
   //=======================================API CALL
 
 
-  apiValidateGame(){
-    futureForm =  ApiCall().apiValidateGame(g.wstrCompany, g.wstrUserCd, g.wstrSelectedGame, setDate(2, DateTime.now()));
+  apiValidateGame(game){
+    futureForm =  ApiCall().apiValidateGame(g.wstrCompany, g.wstrUserCd,  game, setDate(2, DateTime.now()));
     futureForm.then((value) => apiValidateGameRes(value));
   }
   apiValidateGameRes(value){
@@ -2524,6 +2543,35 @@ class _BookingState extends State<Booking> {
             PageDialog().showSaveSuccess(context,(){
               Navigator.pop(context);
             },docno);
+          }else if(sts == "0"){
+            errorMsg(context, msg);
+            try{
+              var errorList =  jsonDecode(value[0]["ERROR"]);
+              var errorDataList = [];
+              print(errorList);
+
+
+              for(var e in countList){
+                if(errorList.where((element) => element["NUMBER"] == e["NUMBER"]).isNotEmpty){
+                  errorDataList.add(e);
+                }
+              }
+              for(var e in errorDataList){
+                setState(() {
+                  countList.remove(e);
+                });
+              }
+              for(var e in errorDataList){
+                setState(() {
+                  countList.add(e);
+                  e["ERROR_YN"]="Y";
+                });
+              }
+
+
+            }catch(e){
+              dprint(e);
+            }
           }else{
             errorMsg(context, msg);
           }

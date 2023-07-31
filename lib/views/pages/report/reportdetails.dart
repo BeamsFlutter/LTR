@@ -40,6 +40,7 @@ class _ReportsState extends State<ReportDetails> {
 
   var gCountNum = 0;
   var fSelectedGame = "";
+  bool blAllGame  = false;
 
   //Controller
   var txtNum = TextEditingController();
@@ -221,6 +222,38 @@ class _ReportsState extends State<ReportDetails> {
                       )):gapHC(0),
                     ],
                   ),
+                  gapHC(10),
+                  widget.reportCode == "4"?
+                  GestureDetector(
+                    onTap: (){
+                      if(mounted){
+                        setState(() {
+                          blAllGame = !blAllGame;
+                        });
+                      }
+                    },
+                    child: Container(
+                      decoration: boxBaseDecoration(greyLight, 30),
+                      padding: const EdgeInsets.all(5),
+                      margin: const EdgeInsets.symmetric(horizontal: 10),
+                      child: Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(4),
+                            decoration: boxBaseDecoration(Colors.white, 30),
+                            child: Container(
+                              height: 18,
+                              width: 18,
+                              decoration: blAllGame?boxDecoration( bgColorDark, 30):boxBaseDecoration( Colors.white, 30),
+                              child: const Icon(Icons.done,color: Colors.white,size: 13,),
+                            ),
+                          ),
+                          gapWC(10),
+                          tcn('All Game',blAllGame? Colors.black: Colors.black, 15)
+                        ],
+                      ),
+                    ),
+                  ):gapHC(0),
                   gapHC(10),
                   widget.reportCode != "4"?
                   Row(
@@ -450,7 +483,7 @@ class _ReportsState extends State<ReportDetails> {
       onPressed: (){
         if(mounted){
           setState(() {
-            gCountNum = num;
+            gCountNum = gCountNum == num?0:num;
             txtNum.clear();
           });
         }
@@ -551,7 +584,7 @@ class _ReportsState extends State<ReportDetails> {
         context: context,
         initialDate: fFromDate,
         firstDate: DateTime(2020),
-        lastDate: DateTime.now(),
+        lastDate:  DateTime(2100),
       builder: (context, child) {
         return Theme(
           data: Theme.of(context).copyWith(
@@ -576,7 +609,7 @@ class _ReportsState extends State<ReportDetails> {
         context: context,
         initialDate: fToDate,
         firstDate: DateTime(2020),
-        lastDate: DateTime.now(),
+        lastDate:  DateTime(2100),
       builder: (context, child) {
         return Theme(
           data: Theme.of(context).copyWith(
@@ -604,6 +637,30 @@ class _ReportsState extends State<ReportDetails> {
     var dealer = fDealerCode.isEmpty || fDealerCode == "ALL"?null:fDealerCode;
     var agent = fAgentCode.isEmpty || fAgentCode == "ALL"?null:fAgentCode;
     var type = fSelectedGame.isEmpty || fSelectedGame == "ALL"?null:fSelectedGame;
+
+
+    var typeList  = [];
+
+    if(gCountNum > 0){
+      if(fSelectedGame.isEmpty || fSelectedGame == "ALL"){
+        if(gCountNum == 3){
+          typeList.add({"COL_VAL":"BOX"});
+          typeList.add({"COL_VAL":"SUPER"});
+        }else  if(gCountNum == 2){
+          typeList.add({"COL_VAL":"AB"});
+          typeList.add({"COL_VAL":"BC"});
+          typeList.add({"COL_VAL":"AC"});
+        }else  if(gCountNum == 1){
+          typeList.add({"COL_VAL":"A"});
+          typeList.add({"COL_VAL":"B"});
+          typeList.add({"COL_VAL":"C"});
+        }
+      }else{
+        typeList.add({"COL_VAL":fSelectedGame});
+      }
+    }
+
+
     var number = txtNum.text.isEmpty ?null:txtNum.text;
 
     var filterData = [];
@@ -612,12 +669,16 @@ class _ReportsState extends State<ReportDetails> {
       "DEALER":dealer,
       "AGENT":agent,
       "TYPE":blFullView?type:null,
+      "TYPE_LIST":blFullView?typeList:[],
       "NUMBER":blFullView?number:null,
       "DATE_FROM":setDate(2, fFromDate),
       "DATE_TO":setDate(2, fToDate),
       "MODE":blFullView? "FULL":"SUM",
       "CHILD":blRate? 1:0,
+      "GAME":blAllGame? null:g.wstrSelectedGame,
       "DAILY_MODE":blDay && blGame? "GAMEDATE":blDay?"DATE":blGame?"GAME":"USER",
+      "blGame":blGame,
+      "blDay":blDay
     });
 
 

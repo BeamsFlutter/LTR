@@ -111,7 +111,7 @@ class _HomePageState extends State<HomePage> {
                       onLongPress: (){
 
                       },
-                      child: const Icon(Icons.menu,color: Colors.white,size: 30,),
+                      child: const Icon(Icons.menu,color: Colors.white,size: 50,),
                     ),
                     // GestureDetector(
                     //   onTap: (){

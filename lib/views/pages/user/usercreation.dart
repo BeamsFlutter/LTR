@@ -117,12 +117,12 @@ class _UserCreationState extends State<UserCreation> {
                                 child: Container(
                                   height: 18,
                                   width: 18,
-                                  decoration: blEdit?boxDecoration( bgColorDark, 30):boxBaseDecoration( Colors.white, 30),
+                                  decoration: blEdit?boxDecoration( bgColorDark, 30):boxOutlineCustom1(Colors.white, 30, Colors.black, 0.5),
                                   child: const Icon(Icons.done,color: Colors.white,size: 13,),
                                 ),
                               ),
                               gapWC(10),
-                              tcn('Password Edit',blEdit? Colors.black: Colors.grey, 15)
+                              tcn('Password Edit',Colors.black, 15)
                             ],
                           ),
                         ),
@@ -443,6 +443,8 @@ class _UserCreationState extends State<UserCreation> {
           txtWeeklyCredit.text = g.mfnDbl((headData[0]['WEEKLY_CR_LIMIT'].toString())).toString();
           txtDailyCredit.text = g.mfnDbl((headData[0]['DAILY_CR_LIMIT'].toString())).toString();
           txtSharePerc.text = g.mfnDbl((headData[0]['SHARE_PER'].toString())).toString();
+          txtPassword.text = (headData[0]['PWD'].toString()).toString();
+          txtConfirmPwd.text = (headData[0]['PWD'].toString()).toString();
 
           if(wstrRole == "Agent"){
             blCanViewComm = (headData[0]['CANVIEW_COM'].toString()) == "Y"?true:false;
@@ -513,7 +515,7 @@ class _UserCreationState extends State<UserCreation> {
 
     var sharePerc = g.mfnDbl(txtSharePerc.text.toString());
 
-    futureForm = apiCall.apiCreateUser(g.wstrCompany, txtId.text, wstrRole.toString().toUpperCase(),parentCode, txtPassword.text, txtWeeklyCredit.text, txtDailyCredit.text,blEdit?"PASSWORD": wstrPageMode,sharePerc,canView,defAgent,games);
+    futureForm = apiCall.apiCreateUser(g.wstrCompany, txtId.text, wstrRole.toString().toUpperCase(),parentCode, txtPassword.text, txtWeeklyCredit.text, txtDailyCredit.text,blEdit?"PASSWORD": wstrPageMode,sharePerc,canView,defAgent,games,[]);
     futureForm.then((value) => apiCreateUserRes(value));
   }
   apiCreateUserRes(value){

@@ -51,6 +51,7 @@ dependencies:
   marquee: ^2.2.3
   webview_flutter: ^4.2.2
   share_plus: ^7.0.2
+  mqtt_client: ^9.8.1
 
 
 

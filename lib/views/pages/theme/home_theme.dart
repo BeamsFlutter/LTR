@@ -34,6 +34,7 @@ class _HomeThemeState extends State<HomeTheme> {
   var blInternet = true;
 
 
+
   var webController = WebViewController()
     ..setJavaScriptMode(JavaScriptMode.unrestricted)
     ..setBackgroundColor(Colors.white)
@@ -65,7 +66,7 @@ class _HomeThemeState extends State<HomeTheme> {
   @override
   void initState() {
     // TODO: implement initState
-    g.wstrCompany = "03";
+    g.wstrCompany = "02";
     super.initState();
     fnGetPageData();
     subscription = Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
