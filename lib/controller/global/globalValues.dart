@@ -47,10 +47,14 @@ class Global {
     _wstrDeivceId ='';
     _wstrSGameLink = "";
     _wstrSGameEdit = "";
+    _wstrCompanyMqKey  = "";
+    _wstrThemeUrl  = "";
   }
   var _wstrToken  = '';
   var _wstrCompany = '';
   var _wstrCompanyName = '';
+  var _wstrCompanyMqKey  = "";
+  var _wstrThemeUrl  = "";
 
 
   var _wstrUserCd = '';
@@ -373,5 +377,17 @@ class Global {
 
   set wstrDeviceName(value) {
     _wstrDeviceName = value;
+  }
+
+  get wstrThemeUrl => _wstrThemeUrl;
+
+  set wstrThemeUrl(value) {
+    _wstrThemeUrl = value;
+  }
+
+  get wstrCompanyMqKey => _wstrCompanyMqKey;
+
+  set wstrCompanyMqKey(value) {
+    _wstrCompanyMqKey = value;
   }
 }

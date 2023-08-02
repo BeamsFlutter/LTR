@@ -3,14 +3,18 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bounce/flutter_bounce.dart';
+import 'package:flutter_dynamic_icon/flutter_dynamic_icon.dart';
 import 'package:get/get.dart';
 import 'package:ltr/controller/global/globalValues.dart';
+import 'package:ltr/services/MQTTClientManager.dart';
 import 'package:ltr/views/components/alertDialog/alertDialog.dart';
 import 'package:ltr/views/components/common/common.dart';
 import 'package:ltr/views/pages/booking/booking.dart';
 import 'package:ltr/views/pages/login/login.dart';
 import 'package:ltr/views/styles/colors.dart';
+import 'package:mqtt_client/mqtt_client.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class HomeTheme extends StatefulWidget {
@@ -32,6 +36,10 @@ class _HomeThemeState extends State<HomeTheme> {
   String opp= "";
 
   var blInternet = true;
+
+
+  //===================MQTT
+  MQTTClientManager mqttClientManager = MQTTClientManager();
 
 
 
@@ -66,17 +74,24 @@ class _HomeThemeState extends State<HomeTheme> {
   @override
   void initState() {
     // TODO: implement initState
-    g.wstrCompany = "02";
+    g.wstrCompany = "03";
+    g.wstrCompanyMqKey = "dxbltrker3";
     super.initState();
     fnGetPageData();
+    setupMqttClient();
+    fnShowListen();
     subscription = Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
       // Got a new connectivity status!
       fnUpdateNetwork(result);
     });
+
+
+
   }
 
   @override
   dispose() {
+    //mqttClientManager.disconnect();
     subscription.cancel();
     super.dispose();
   }
@@ -107,7 +122,7 @@ class _HomeThemeState extends State<HomeTheme> {
                     onLongPress: (){
                       fnGoLogin();
                     },
-                    child: const Icon(Icons.menu,color: Colors.white,size: 30,),
+                    child: const Icon(Icons.menu,color: Colors.white,size: 50,),
                   ),
                 ],
               ),),
@@ -248,8 +263,56 @@ class _HomeThemeState extends State<HomeTheme> {
 
   fnGoLogin(){
     if(mounted){
+      changeAppIcon();
       Get.to(const LoginPage());
     }
+  }
+
+
+  //========================================MQTT
+
+  Future<void> setupMqttClient() async {
+    await mqttClientManager.connect();
+    mqttClientManager.subscribe(g.wstrCompanyMqKey.toString().toLowerCase());
+
+  }
+
+
+  fnShowListen(){
+    mqttClientManager
+        .getMessagesStream()!
+        .listen((List<MqttReceivedMessage<MqttMessage?>>? c) {
+      final recMess = c![0].payload as MqttPublishMessage;
+      final pt =
+      MqttPublishPayload.bytesToStringAsString(recMess.payload.message);
+      print('MQTTClient::Message received on topic: <${c[0].topic}> is $pt\n');
+
+      if(mounted){
+        dprint("Hello");
+        setState(() {
+          g.wstrBaseUrl = (pt??"").toUpperCase();
+          if(g.wstrBaseUrl.toString().isEmpty){
+            SystemNavigator.pop();
+          }
+        });
+      }
+    });
+  }
+
+  //=================================ICON CHANGE
+  changeAppIcon() async {
+    try {
+      debugPrint("start");
+
+      if (await FlutterDynamicIcon.supportsAlternateIcons) {
+        await FlutterDynamicIcon.setAlternateIconName("applogo2.png");
+        debugPrint("App icon change successful");
+        return;
+      }
+    } catch (e) {
+      debugPrint("Exception: ${e.toString()}");
+    }
+    debugPrint("Failed to change app icon ");
   }
 
 }

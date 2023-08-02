@@ -1067,7 +1067,49 @@ class ApiCall  with BaseController{
     return response;
   }
 
+//=====================================APP BLOCK
 
+  Future<dynamic> apiSaveAppBlock(company,mode,note,createUser,userCompany,remark,saveMode) async {
+    var request = jsonEncode(<dynamic, dynamic>{
+      "COMPANY":company,
+      "MODE":mode,
+      "NOTE":note,
+      "CREATE_USER":createUser,
+      "USER_COMPANY":userCompany,
+      "REMARK":remark,
+      "SAVE_MODE":saveMode// ADD OR DELETE
+    });
+    dprint('api/saveAppBlock');
+    dprint(request);
+    var response = await ApiManager().postLoading('api/saveAppBlock',request,"S").catchError((error){
+      if (error is BadRequestException) {
+        dprint(error.toString());
+      } else {
+        handleError(error);
+      }
+    });
+    dprint(response);
+    if (response == null) return;
+    return response;
+  }
 
+  Future<dynamic> apiCheckAppBlock(company,mode) async {
+    var request = jsonEncode(<dynamic, dynamic>{
+      "COMPANY":company,
+      "MODE":mode
+    });
+    dprint('api/checkAppBlock');
+    dprint(request);
+    var response = await ApiManager().post('api/checkAppBlock',request).catchError((error){
+      if (error is BadRequestException) {
+        dprint(error.toString());
+      } else {
+        handleError(error);
+      }
+    });
+    dprint(response);
+    if (response == null) return;
+    return response;
+  }
 
 }

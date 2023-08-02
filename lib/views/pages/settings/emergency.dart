@@ -1,6 +1,8 @@
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bounce/flutter_bounce.dart';
 import 'package:ltr/controller/global/globalValues.dart';
+import 'package:ltr/services/apiController.dart';
 import 'package:ltr/views/components/common/common.dart';
 import 'package:ltr/views/styles/colors.dart';
 
@@ -15,10 +17,25 @@ class _EmergencyState extends State<EmergencySettings> {
 
   //Global
   var g = Global();
+  var apiCall  = ApiCall();
+  late Future<dynamic> futureForm;
 
   //Page Variable
   var blEdit = false;
+  var fBlockList  = [];
 
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    fnGetPageData();
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -85,15 +102,15 @@ class _EmergencyState extends State<EmergencySettings> {
                 margin: const EdgeInsets.all(10),
                 child: Column(
                   children: [
-                    wBlockCard("Block Sales"),
+                    wBlockCard("Block Sales","SALE"),
                     gapHC(10),
-                    wBlockCard("Block Report"),
+                    wBlockCard("Block Report","REPORT"),
                     gapHC(10),
-                    wBlockCard("Block App"),
+                    wBlockCard("Block App","APP"),
                     gapHC(10),
-                    wBlockCard("Block Download"),
+                    wBlockCard("Block Download","DOWNLOAD"),
                     gapHC(10),
-                    wBlockCard("Block Result"),
+                    wBlockCard("Block Result","RESULT"),
 
                   ],
                 ),
@@ -106,7 +123,12 @@ class _EmergencyState extends State<EmergencySettings> {
   }
 
   //================================WIDGET
-    Widget wBlockCard(text){
+    Widget wBlockCard(text,mode){
+        var blockList =  fBlockList.where((element) => element["MODE"] == mode).toList();
+        var blockSts =  "N";
+        if(blockList.isNotEmpty){
+          blockSts = (blockList[0]["BLOCK_YN"]??"");
+        }
         return Container(
           padding: EdgeInsets.all(10),
           decoration: boxBaseDecoration(greyLight, 10),
@@ -124,16 +146,24 @@ class _EmergencyState extends State<EmergencySettings> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           tc(text,blEdit?  Colors.black:Colors.grey, 15),
-                          tc("OPEN", Colors.green , 10),
+                          tcn(blockSts == "Y"?"BLOCKED":"OPEN",blockSts == "Y"?Colors.red: Colors.green , 10),
                         ],
                       ),
                     ],
                   ),
-                  Container(
-                    padding: const EdgeInsets.symmetric(vertical: 5,horizontal: 20),
-                    decoration: boxDecoration(blEdit?Colors.redAccent:Colors.redAccent.withOpacity(0.5), 30),
-                    child: Center(
-                      child: tcn('BLOCK', Colors.white , 15),
+                  Bounce(
+                    onPressed: (){
+                      if(blEdit){
+                        apiBlockUnBlock(mode,blockSts == "Y"?"DELETE":"ADD");
+                      }
+                    },
+                    duration: const Duration(milliseconds: 110),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(vertical: 5,horizontal: 20),
+                      decoration: blockSts == "Y"? boxDecoration(blEdit?Colors.blueAccent:Colors.blue.withOpacity(0.5),30): boxDecoration(blEdit?Colors.redAccent:Colors.redAccent.withOpacity(0.5), 30),
+                      child: Center(
+                        child: tcn( blockSts == "Y"?'UNBLOCK':"BLOCK", Colors.white , 15),
+                      ),
                     ),
                   )
                 ],
@@ -144,5 +174,50 @@ class _EmergencyState extends State<EmergencySettings> {
         );
     }
   //================================PAGE FN
+
+  fnGetPageData(){
+    if(mounted){
+      apiCheckAppBlock(null);
+    }
+  }
+
   //================================API CALL
+
+  apiBlockUnBlock(mode,blockMode){
+    futureForm = apiCall.apiSaveAppBlock(null,mode,"",g.wstrUserCd,g.wstrCompany,"",blockMode);
+    futureForm.then((value) => apiBlockUnBlockRes(value));
+  }
+  apiBlockUnBlockRes(value){
+    if(mounted){
+      if(g.fnValCheck(value)){
+        // [{STATUS: 0, MSG: USER NOT FOUND}]
+        var sts  =  value["STATUS"];
+        var msg  =  value["MSG"];
+        if(sts == "1"){
+          successMsg(context, "Success!!");
+          apiCheckAppBlock(null);
+          blEdit =  false;
+        }else{
+          errorMsg(context, msg.toString());
+        }
+      }
+    }
+  }
+
+
+  apiCheckAppBlock(mode){
+    futureForm = apiCall.apiCheckAppBlock(g.wstrCompany, mode);
+    futureForm.then((value) => apiCheckAppBlockRes(value));
+  }
+  apiCheckAppBlockRes(value){
+    if(mounted){
+      setState(() {
+        fBlockList =  [];
+        if(g.fnValCheck(value)){
+          fBlockList = value??[];
+        }
+      });
+    }
+  }
+
 }

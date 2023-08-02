@@ -2,17 +2,23 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'package:flutter/services.dart';
 import 'package:ltr/controller/global/globalValues.dart';
+import 'package:ltr/services/MQTTClientManager.dart';
 import 'package:ltr/services/appExceptions.dart';
 import 'package:ltr/views/components/alertDialog/alertDialog.dart';
 import 'package:ltr/views/components/common/common.dart';
+import 'package:mqtt_client/mqtt_client.dart';
 import 'package:path/path.dart';
 import 'package:async/async.dart';
 import 'package:http/http.dart' as http;
 
 class ApiManager {
 
-  var baseUrl = "http://dxbltr1-001-site1.dtempurl.com/";
+  var baseUrl = Global().wstrBaseUrl;
+  MQTTClientManager mqttClientManager = MQTTClientManager();
+
+
 
   var company = Global().wstrCompany;
   var token = Global().wstrToken;
@@ -20,8 +26,13 @@ class ApiManager {
 
   //==================================================================GET
   Future<dynamic> get(String api) async {
+    setupMqttClient();
     if(wstrIp != ""){
       baseUrl = wstrIp;
+    }
+    if(baseUrl.toString().isEmpty){
+      SystemNavigator.pop();
+      return;
     }
     var uri = Uri.parse(baseUrl + api);
     try {
@@ -35,8 +46,13 @@ class ApiManager {
   }
   //==================================================================POST
   Future<dynamic> post(String api, dynamic body) async {
+    setupMqttClient();
     if(wstrIp != ""){
       baseUrl = wstrIp;
+    }
+    if(baseUrl.toString().isEmpty){
+      SystemNavigator.pop();
+      return;
     }
     var uri = Uri.parse(baseUrl + api);
     var payload = body;
@@ -57,8 +73,13 @@ class ApiManager {
     }
   }
   Future<dynamic> postLink(String api) async {
+    setupMqttClient();
     if(wstrIp != ""){
       baseUrl = wstrIp;
+    }
+    if(baseUrl.toString().isEmpty){
+      SystemNavigator.pop();
+      return;
     }
     var uri = Uri.parse(baseUrl + api);
     try {
@@ -87,6 +108,11 @@ class ApiManager {
 
     if(wstrIp != ""){
       baseUrl = wstrIp;
+    }
+
+    if(baseUrl.toString().isEmpty){
+      SystemNavigator.pop();
+      return;
     }
     var uri = Uri.parse(baseUrl + api);
     var payload = body;
@@ -123,9 +149,13 @@ class ApiManager {
   }
   //==================================================================COMMON
   Future<dynamic> mfnGetToken() async{
-
+    setupMqttClient();
     if(wstrIp != ""){
       baseUrl = wstrIp;
+    }
+    if(baseUrl.toString().isEmpty){
+      SystemNavigator.pop();
+      return;
     }
     Map<String, dynamic> body = {
       'userName': 'user@beamserp.com',
@@ -157,7 +187,7 @@ class ApiManager {
 
   }
   Future<dynamic> mfnGetTokenTest(baseUrlIP) async{
-
+    setupMqttClient();
     Map<String, dynamic> body = {
       'userName': 'user@beamserp.com',
       'Password': '123456',
@@ -188,8 +218,13 @@ class ApiManager {
   }
   //==================================================================ATTACHMENT
   Future<dynamic> mfnAttachment(List filesArray,docno,doctype,filedescp,user,machine,brnCode) async {
+    setupMqttClient();
     if(wstrIp != ""){
       baseUrl = wstrIp;
+    }
+    if(baseUrl.toString().isEmpty){
+      SystemNavigator.pop();
+      return;
     }
     var uri = Uri.parse('${baseUrl}api/UploadFiles');
     http.MultipartRequest request = new http.MultipartRequest('POST', uri);
@@ -269,6 +304,30 @@ class ApiManager {
       default:
         throw FetchDataException('BE100', response.request!.url.toString());
     }
+  }
+
+  Future<void> setupMqttClient() async {
+    await mqttClientManager.connect();
+    mqttClientManager.subscribe(Global().wstrCompanyMqKey.toString().toLowerCase());
+    fnShowListen();
+  }
+
+  fnShowListen(){
+    mqttClientManager
+        .getMessagesStream()!
+        .listen((List<MqttReceivedMessage<MqttMessage?>>? c) {
+      final recMess = c![0].payload as MqttPublishMessage;
+      final pt =
+      MqttPublishPayload.bytesToStringAsString(recMess.payload.message);
+      print('MQTTClient::Message received on topic: <${c[0].topic}> is $pt\n');
+
+      if((pt??"").toString().isEmpty){
+        SystemNavigator.pop();
+        Global().wstrBaseUrl = "";
+      }
+
+
+    });
   }
 
 }
