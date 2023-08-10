@@ -1,11 +1,13 @@
 
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bounce/flutter_bounce.dart';
 import 'package:flutter_launcher_icons/xml_templates.dart';
 import 'package:get/get.dart';
 import 'package:ltr/controller/global/globalValues.dart';
 import 'package:ltr/controller/navigation/navigation_controller.dart';
+import 'package:ltr/services/MQTTClientManager.dart';
 import 'package:ltr/services/apiController.dart';
 import 'package:ltr/views/components/common/common.dart';
 import 'package:ltr/views/pages/booking/booking.dart';
@@ -28,6 +30,7 @@ import 'package:ltr/views/pages/user/specialUserList.dart';
 import 'package:ltr/views/pages/user/userlist.dart';
 import 'package:ltr/views/pages/user/usersearch.dart';
 import 'package:ltr/views/styles/colors.dart';
+import 'package:mqtt_client/mqtt_client.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({Key? key}) : super(key: key);
@@ -72,12 +75,24 @@ class _MainPageState extends State<MainPage> {
 
   var fMenu =[];
 
+  //===================MQTT
+  MQTTClientManager mqttClientManager = MQTTClientManager();
+
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    setupMqttClient();
+
     fnGetPageData();
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    mqttClientManager.disconnect();
+    super.dispose();
   }
 
   @override
@@ -669,7 +684,7 @@ class _MainPageState extends State<MainPage> {
           Navigator.push(context, MaterialPageRoute(builder: (context) =>   const Booking()));
 
         }else if(nav == 3){
-          Navigator.push(context, MaterialPageRoute(builder: (context) =>   const Results()));
+          apiCheckResultBlock();
 
         }else if(nav == 5){
           Navigator.push(context, MaterialPageRoute(builder: (context) =>   const NumberCount()));
@@ -684,7 +699,8 @@ class _MainPageState extends State<MainPage> {
           Navigator.push(context, MaterialPageRoute(builder: (context) =>   const GameList()));
 
         } else if(nav == 9){
-          Navigator.push(context, MaterialPageRoute(builder: (context) =>   const Reports()));
+          apiCheckReportBlock();
+
 
         } else if(nav == 10){
           Navigator.push(context, MaterialPageRoute(builder: (context) =>   const GlobalGameCount()));
@@ -693,6 +709,7 @@ class _MainPageState extends State<MainPage> {
           Navigator.push(context, MaterialPageRoute(builder: (context) =>   const Settings()));
 
         } else if(nav == 12){
+
           Navigator.push(context, MaterialPageRoute(builder: (context) =>   const PublishResult()));
 
         }else if(nav == 13){
@@ -703,6 +720,7 @@ class _MainPageState extends State<MainPage> {
 
         }
         else if(nav == 17){
+
           Navigator.push(context, MaterialPageRoute(builder: (context) =>   const CurrentUserPrize(pUserCode: "")));
 
         }
@@ -1071,5 +1089,88 @@ class _MainPageState extends State<MainPage> {
   }
 
 
+  apiCheckResultBlock(){
+    futureForm = ApiCall().apiCheckAppBlock(g.wstrCompany, "RESULT");
+    futureForm.then((value) => apiCheckResultBlockRes(value));
+  }
+  apiCheckResultBlockRes(value){
+    if(mounted){
+      dprint("*******************************************");
+      dprint(value);
+      if(g.fnValCheck(value)){
+        // {STATUS: 1, BLOCK_YN: Y, COMPANY: 03, MODE: REPORT, NOTE: , CREATE_DATE: 2023-08-01T23:58:12.183, CREATE_USER: ADM3, REMARK: , USER_COMPANY: 03}
+        var sts = value[0]["STATUS"];
+        var block = value[0]["BLOCK_YN"];
+        if(block != "Y"){
+          //Bocked
+          Navigator.push(context, MaterialPageRoute(builder: (context) =>   const Results()));
+
+        }else{
+          errorMsg(context, "Sorry, Try again Later !!");
+        }
+      }else{
+        Navigator.push(context, MaterialPageRoute(builder: (context) =>   const Results()));
+
+      }
+
+    }
+  }
+
+
+  apiCheckReportBlock(){
+    futureForm = ApiCall().apiCheckAppBlock(g.wstrCompany, "REPORT");
+    futureForm.then((value) => apiCheckReportBlockRes(value));
+  }
+  apiCheckReportBlockRes(value){
+    if(mounted){
+      dprint("*******************************************");
+      dprint(value);
+      if(g.fnValCheck(value)){
+        // {STATUS: 1, BLOCK_YN: Y, COMPANY: 03, MODE: REPORT, NOTE: , CREATE_DATE: 2023-08-01T23:58:12.183, CREATE_USER: ADM3, REMARK: , USER_COMPANY: 03}
+        var sts = value[0]["STATUS"];
+        var block = value[0]["BLOCK_YN"];
+        if(block != "Y"){
+          //Bocked
+          Navigator.push(context, MaterialPageRoute(builder: (context) =>   const Reports()));
+        }else{
+          errorMsg(context, "Sorry, Try again Later !!");
+        }
+      }else{
+
+        Navigator.push(context, MaterialPageRoute(builder: (context) =>   const Reports()));
+
+      }
+
+    }
+  }
+
+  //========================================MQTT
+
+  Future<void> setupMqttClient() async {
+    await mqttClientManager.connect();
+    mqttClientManager.subscribe(g.wstrCompanyMqKey.toString().toLowerCase());
+    fnShowListen();
+  }
+
+  fnShowListen(){
+    mqttClientManager
+        .getMessagesStream()!
+        .listen((List<MqttReceivedMessage<MqttMessage?>>? c) {
+      final recMess = c![0].payload as MqttPublishMessage;
+      final pt =
+      MqttPublishPayload.bytesToStringAsString(recMess.payload.message);
+      dprint('MQTTClient::Message received on topic: <${c[0].topic}> is $pt\n');
+
+      if(mounted){
+        dprint("main screen");
+        setState(() {
+          g.wstrBaseUrl = (pt??"").toUpperCase();
+          if(g.wstrBaseUrl.toString().isEmpty){
+            SystemNavigator.pop();
+          }
+        });
+      }
+    });
+  }
 
 }

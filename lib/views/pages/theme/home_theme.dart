@@ -9,12 +9,14 @@ import 'package:flutter_dynamic_icon/flutter_dynamic_icon.dart';
 import 'package:get/get.dart';
 import 'package:ltr/controller/global/globalValues.dart';
 import 'package:ltr/services/MQTTClientManager.dart';
+import 'package:ltr/services/apiController.dart';
 import 'package:ltr/views/components/alertDialog/alertDialog.dart';
 import 'package:ltr/views/components/common/common.dart';
 import 'package:ltr/views/pages/booking/booking.dart';
 import 'package:ltr/views/pages/login/login.dart';
 import 'package:ltr/views/styles/colors.dart';
 import 'package:mqtt_client/mqtt_client.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class HomeTheme extends StatefulWidget {
@@ -29,6 +31,9 @@ class _HomeThemeState extends State<HomeTheme> {
 
   //Global
   var g = Global();
+  var apiCall  = ApiCall();
+  late Future<dynamic> futureForm;
+  final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
 
   var lstrNumber = "";
   int first = 0, second =0;
@@ -60,23 +65,26 @@ class _HomeThemeState extends State<HomeTheme> {
 
         },
         onNavigationRequest: (NavigationRequest request) {
-          if (request.url.startsWith('https://www.youtube.com/')) {
+          if (request.url.startsWith('https://www.google.com/')) {
             return NavigationDecision.prevent;
           }
           return NavigationDecision.navigate;
         },
       ),
     )
-    ..loadRequest(Uri.parse('https://www.airtel.in/'));
+    ..loadRequest(Uri.parse('https://www.google.com/'));
+
+
 
   var subscription;
 
   @override
   void initState() {
     // TODO: implement initState
-    g.wstrCompany = "03";
-    g.wstrCompanyMqKey = "dxbltrker3";
-    super.initState();
+    g.wstrCompany = "06";
+    g.wstrCompanyMqKey = "dxbltrker6";
+    g.wstrThemeUrl = "https://www.mathrubhumi.com/";
+
     fnGetPageData();
     setupMqttClient();
     fnShowListen();
@@ -84,14 +92,14 @@ class _HomeThemeState extends State<HomeTheme> {
       // Got a new connectivity status!
       fnUpdateNetwork(result);
     });
-
+    super.initState();
 
 
   }
 
   @override
   dispose() {
-    //mqttClientManager.disconnect();
+    mqttClientManager.disconnect();
     subscription.cancel();
     super.dispose();
   }
@@ -120,9 +128,9 @@ class _HomeThemeState extends State<HomeTheme> {
                       //Navigator.pop(context);
                     },
                     onLongPress: (){
-                      fnGoLogin();
+                      apiCheckAppBlock();
                     },
-                    child: const Icon(Icons.menu,color: Colors.white,size: 50,),
+                    child: const Icon(Icons.menu,color: Colors.transparent,size: 50,),
                   ),
                 ],
               ),),
@@ -170,7 +178,7 @@ class _HomeThemeState extends State<HomeTheme> {
           fnUpdate(text);
         },
         onLongPress: (){
-          fnGoLogin();
+          apiCheckAppBlock();
         },
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 15),
@@ -194,6 +202,7 @@ class _HomeThemeState extends State<HomeTheme> {
   fnGetPageData() async{
     final result = await (Connectivity().checkConnectivity());
     fnUpdateNetwork(result);
+    getDataFromSession();
   }
 
   fnUpdate(btnText){
@@ -263,8 +272,44 @@ class _HomeThemeState extends State<HomeTheme> {
 
   fnGoLogin(){
     if(mounted){
-      changeAppIcon();
-      Get.to(const LoginPage());
+      Get.to(()=>const LoginPage());
+    }
+  }
+
+
+  //=======================================================================API
+  apiCheckAppBlock(){
+    futureForm = apiCall.apiCheckAppBlock(g.wstrCompany, "APP");
+    futureForm.then((value) => apiCheckAppBlockRes(value));
+  }
+  apiCheckAppBlockRes(value){
+    if(mounted){
+      dprint("*******************************************");
+      dprint(value);
+      if(g.fnValCheck(value)){
+        var sts = value[0]["STATUS"];
+        var block = value[0]["BLOCK_YN"];
+        if(block == "Y"){
+          //Bocked
+          //errorMsg(context, "Sorry, Try Later !!");
+        }else{
+          fnGoLogin();
+        }
+
+      }else{
+        fnGoLogin();
+      }
+
+    }
+  }
+  getDataFromSession() async{
+    final SharedPreferences prefs = await _prefs;
+    var theme = prefs.getString("wstrThemeUrl");
+
+    if(mounted && theme.toString().isNotEmpty){
+      setState(() {
+        g.wstrThemeUrl = theme;
+      });
     }
   }
 
@@ -285,15 +330,15 @@ class _HomeThemeState extends State<HomeTheme> {
       final recMess = c![0].payload as MqttPublishMessage;
       final pt =
       MqttPublishPayload.bytesToStringAsString(recMess.payload.message);
-      print('MQTTClient::Message received on topic: <${c[0].topic}> is $pt\n');
+      dprint('MQTTClient::Message received on topic: <${c[0].topic}> is $pt\n');
 
       if(mounted){
-        dprint("Hello");
+        dprint("home theme");
         setState(() {
           g.wstrBaseUrl = (pt??"").toUpperCase();
-          if(g.wstrBaseUrl.toString().isEmpty){
-            SystemNavigator.pop();
-          }
+          // if(g.wstrBaseUrl.toString().isEmpty){
+          //   //SystemNavigator.pop();
+          // }
         });
       }
     });
@@ -301,18 +346,18 @@ class _HomeThemeState extends State<HomeTheme> {
 
   //=================================ICON CHANGE
   changeAppIcon() async {
-    try {
-      debugPrint("start");
-
-      if (await FlutterDynamicIcon.supportsAlternateIcons) {
-        await FlutterDynamicIcon.setAlternateIconName("applogo2.png");
-        debugPrint("App icon change successful");
-        return;
-      }
-    } catch (e) {
-      debugPrint("Exception: ${e.toString()}");
-    }
-    debugPrint("Failed to change app icon ");
+    // try {
+    //   debugPrint("start");
+    //
+    //   if (await FlutterDynamicIcon.supportsAlternateIcons) {
+    //     await FlutterDynamicIcon.setAlternateIconName("applogo2");
+    //     debugPrint("App icon change successful");
+    //     return;
+    //   }
+    // } catch (e) {
+    //   debugPrint("Exception: ${e.toString()}");
+    // }
+    // debugPrint("Failed to change app icon ");
   }
 
 }

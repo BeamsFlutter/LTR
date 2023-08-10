@@ -13,6 +13,7 @@ import 'package:ltr/services/apiController.dart';
 import 'package:ltr/views/components/common/common.dart';
 import 'package:ltr/views/pages/home/homepage.dart';
 import 'package:ltr/views/styles/colors.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -30,6 +31,7 @@ class _LoginPageState extends State<LoginPage> {
   late Future<dynamic> futureForm;
   final loginFormKey = GlobalKey<FormState>();
   static final DeviceInfoPlugin deviceInfoPlugin = DeviceInfoPlugin();
+  final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
 
   //Page Variable
   var passWordView = true;
@@ -214,6 +216,7 @@ class _LoginPageState extends State<LoginPage> {
       }
     }
    fnLoginDone(data) async{
+     final SharedPreferences prefs = await _prefs;
     try{
       var now = DateTime.now();
       var lstrLoginDate = setDate(9,now);
@@ -226,6 +229,10 @@ class _LoginPageState extends State<LoginPage> {
       g.wstrUserRoleDescp = g.mfnTxt(data["ROLE_DESCP"]);
       g.wstrSysTime =  DateTime.parse(data["SYS_DATE"]);
       g.wstrCurrTime =  DateTime.now();
+
+      g.wstrThemeUrl = g.mfnTxt(data["THEME"]);
+      prefs.setString('wstrThemeUrl', g.mfnTxt(data["THEME"]));
+
       dprint(g.wstrSysTime.toString());
 
       fnGoHome();

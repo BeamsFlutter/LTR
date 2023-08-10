@@ -38,6 +38,7 @@ class _BookingState extends State<Booking> {
 
   //Page variable
   var lstrSelectedGame = "";
+  var lstrSelectedGameColor = bgColorDark;
   var countList = [];
   var frGameList = [];
   var blFromTo = false;
@@ -102,6 +103,7 @@ class _BookingState extends State<Booking> {
 
   @override
   Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
     return WillPopScope(child: Scaffold(
       resizeToAvoidBottomInset: false,
       body: Container(
@@ -111,7 +113,7 @@ class _BookingState extends State<Booking> {
 
             Container(
               padding: const EdgeInsets.all(10),
-              decoration: boxDecoration(g.wstrGameColor, 0),
+              decoration: boxDecoration(lstrSelectedGameColor, 0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -131,8 +133,7 @@ class _BookingState extends State<Booking> {
                             ),
                           ),
                           gapWC(5),
-                          tcn('$lstrSelectedGame Game', Colors.white, 20),
-                          gapWC(5),
+
                           widget.mode != "EDIT"?
                           PopupMenuButton<Menu>(
                             position: PopupMenuPosition.under,
@@ -146,11 +147,25 @@ class _BookingState extends State<Booking> {
                               PopupMenuItem<Menu>(
                                 value: Menu.itemOne,
                                 padding: const EdgeInsets.symmetric(vertical: 0,horizontal: 0),
-                                child: wGamePopup(),
+                                child: wGamePopup(size),
                               ),
                             ],
-                            child:   const Icon(Icons.dashboard_outlined,color: Colors.white,size: 20,),
+                            child:   Row(
+                              children: [
+                                tcn('$lstrSelectedGame Game', Colors.white, 20),
+                                gapWC(5),
+                                const Icon(Icons.dashboard_outlined,color: Colors.white,size: 20,),
+                              ],
+                            ),
                           ):gapHC(0),
+                          gapWC(10),
+                          GestureDetector(
+                            onTap: (){
+                              fnShowPopUp();
+                            },
+                            child: const Icon(Icons.message,color: Colors.white,size: 20,),
+                          )
+
                         ],
                       ),
 
@@ -602,23 +617,25 @@ class _BookingState extends State<Booking> {
                   tcn("BILL ID : ", Colors.black, 12),
                   tc(widget.pDocno.toString(), Colors.black, 12),
                   gapWC(20),
-                  Expanded(child: Container(
-                    height: 35,
-                    padding: const EdgeInsets.symmetric(horizontal: 15),
-                    decoration: boxBaseDecoration(greyLight, 5),
-                    child: TextFormField(
-                      controller: txtName,
-                      focusNode: fnName,
-                      decoration: const InputDecoration(
-                        hintText: 'Name',
-                        counterText: "",
-                        border: InputBorder.none,
-                      ),
-                      onChanged: (val){
+                  Expanded(child:
+                    Container(
+                      height: 35,
+                      padding: const EdgeInsets.symmetric(horizontal: 15),
+                      decoration: boxBaseDecoration(greyLight, 5),
+                      child: TextFormField(
+                        controller: txtName,
+                        focusNode: fnName,
+                        decoration: const InputDecoration(
+                          hintText: 'Name',
+                          counterText: "",
+                          border: InputBorder.none,
+                        ),
+                        onChanged: (val){
 
-                      },
-                    ),
-                  ))
+                        },
+                      ),
+                    )
+                  )
                 ],
               ),
             ),
@@ -847,7 +864,7 @@ class _BookingState extends State<Booking> {
                     },
                     duration: const Duration(milliseconds: 110),
                     child: Container(
-                      decoration: boxDecoration(g.wstrGameBColor, 30),
+                      decoration: boxDecoration(lstrSelectedGameColor, 30),
                       padding: const EdgeInsets.symmetric(vertical: 10),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -1108,11 +1125,11 @@ class _BookingState extends State<Booking> {
       ),
     );
   }
-  Widget wGamePopup(){
+  Widget wGamePopup(size){
     return Container(
-      width: 100,
+      width: 200,
       decoration: boxBaseDecoration(Colors.white, 0),
-      padding: const EdgeInsets.all(10),
+      padding: const EdgeInsets.only(left: 20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: wBranchCard(),
@@ -1121,26 +1138,30 @@ class _BookingState extends State<Booking> {
   }
   List<Widget> wBranchCard(){
     List<Widget> rtnList  =  [];
-
     for(var e in frGameList){
+      var colorCode = (e["CODE"]??"").toString();
+      var color  =  colorCode == "1PM"?oneColor:colorCode == "3PM"?threeColor:colorCode == "6PM"?sixColor:colorCode == "8PM"?eightColor:Colors.amber;
+
       rtnList.add(GestureDetector(
         onTap: (){
 
           Navigator.pop(context);
           setState(() {
+            lstrSelectedGameColor = color;
             lstrSelectedGame = (e["CODE"]??"").toString();
           });
           apiValidateGame(lstrSelectedGame);
         },
         child: Container(
-          decoration: boxBaseDecoration(greyLight, 5),
-          padding: const EdgeInsets.symmetric(vertical: 10,horizontal: 5),
+          decoration: boxBaseDecoration(color, 5),
+          padding: const EdgeInsets.symmetric(vertical: 20,horizontal: 5),
           margin: const EdgeInsets.only(bottom: 5),
           child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(Icons.confirmation_num,color:bgColorDark,size: 15,),
+              const Icon(Icons.confirmation_num,color:Colors.white,size: 15,),
               gapWC(5),
-              Expanded(child: tcn((e["CODE"]??"").toString(), Colors.black, 12))
+              tcn((e["CODE"]??"").toString(), Colors.white, 15)
             ],
           ),
         ),
@@ -1349,10 +1370,20 @@ class _BookingState extends State<Booking> {
 
 
   //=======================================PAGE FN
+  fnShowPopUp(){
+    PageDialog().showCaptcha(context, Container(
+      child: Column(
+        children: [
+
+        ],
+      ),
+    ), "Whatsapp");
+  }
   fnValidateBooking(){
     if(mounted){
       setState(() {
         lstrSelectedGame = g.wstrSelectedGame;
+        lstrSelectedGameColor = g.wstrGameColor;
       });
     }
     apiValidateGame(g.wstrSelectedGame);
@@ -2366,7 +2397,6 @@ class _BookingState extends State<Booking> {
 
     }
   }
-
   List<List<int>> permute(List<int> digits) {
     List<List<int>> result = [];
     void backtrack(List<int> curr, List<int> remaining) {
@@ -2385,7 +2415,6 @@ class _BookingState extends State<Booking> {
     backtrack([], digits);
     return result;
   }
-
   fnCheckNumberInList(number,plan){
     return true;
     // if(countList.where((element) => element["NUMBER"].toString() == number.toString() && element["PLAN"].toString() == plan.toString()).isEmpty){
@@ -2400,7 +2429,6 @@ class _BookingState extends State<Booking> {
   fnGameTime(){
      
   }
-
   fnClear(){
     if(mounted){
       setState(() {

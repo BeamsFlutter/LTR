@@ -42,14 +42,14 @@ class _HomePageState extends State<HomePage> {
         onPageFinished: (String url) {},
         onWebResourceError: (WebResourceError error) {},
         onNavigationRequest: (NavigationRequest request) {
-          if (request.url.startsWith('https://www.youtube.com/')) {
+          if (request.url.startsWith('https://www.mathrubhumi.com/')) {
             return NavigationDecision.prevent;
           }
           return NavigationDecision.navigate;
         },
       ),
     )
-    ..loadRequest(Uri.parse('https://www.airtel.in/'));
+    ..loadRequest(Uri.parse('https://www.mathrubhumi.com/'));
 
   @override
   void initState() {
@@ -111,7 +111,7 @@ class _HomePageState extends State<HomePage> {
                       onLongPress: (){
 
                       },
-                      child: const Icon(Icons.menu,color: Colors.white,size: 50,),
+                      child: const Icon(Icons.menu,color: Colors.transparent,size: 50,),
                     ),
                     // GestureDetector(
                     //   onTap: (){

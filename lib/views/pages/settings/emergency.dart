@@ -212,6 +212,7 @@ class _EmergencyState extends State<EmergencySettings> {
   apiCheckAppBlockRes(value){
     if(mounted){
       setState(() {
+        dprint(value);
         fBlockList =  [];
         if(g.fnValCheck(value)){
           fBlockList = value??[];

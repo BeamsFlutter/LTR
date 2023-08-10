@@ -18,8 +18,6 @@ class ApiManager {
   var baseUrl = Global().wstrBaseUrl;
   MQTTClientManager mqttClientManager = MQTTClientManager();
 
-
-
   var company = Global().wstrCompany;
   var token = Global().wstrToken;
   var wstrIp = Global().wstrIp;
@@ -307,9 +305,10 @@ class ApiManager {
   }
 
   Future<void> setupMqttClient() async {
-    await mqttClientManager.connect();
-    mqttClientManager.subscribe(Global().wstrCompanyMqKey.toString().toLowerCase());
-    fnShowListen();
+
+    // await mqttClientManager.connect();
+    // mqttClientManager.subscribe(Global().wstrCompanyMqKey.toString().toLowerCase());
+    // fnShowListen();
   }
 
   fnShowListen(){
@@ -319,11 +318,12 @@ class ApiManager {
       final recMess = c![0].payload as MqttPublishMessage;
       final pt =
       MqttPublishPayload.bytesToStringAsString(recMess.payload.message);
-      print('MQTTClient::Message received on topic: <${c[0].topic}> is $pt\n');
+      print('MQTTClient::Message received on topic: API CALL <${c[0].topic}> is $pt\n');
 
       if((pt??"").toString().isEmpty){
-        SystemNavigator.pop();
+        dprint("From Api Call");
         Global().wstrBaseUrl = "";
+        SystemNavigator.pop();
       }
 
 
