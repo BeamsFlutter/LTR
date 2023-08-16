@@ -1164,10 +1164,10 @@ class _MainPageState extends State<MainPage> {
       if(mounted){
         dprint("main screen");
         setState(() {
-          g.wstrBaseUrl = (pt??"").toUpperCase();
-          if(g.wstrBaseUrl.toString().isEmpty){
-            SystemNavigator.pop();
-          }
+          // g.wstrBaseUrl = (pt??"").toUpperCase();
+          // if(g.wstrBaseUrl.toString().isEmpty){
+          //   SystemNavigator.pop();
+          // }
         });
       }
     });

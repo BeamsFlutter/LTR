@@ -82,6 +82,7 @@ class _BookingState extends State<Booking> {
   var txtBoxCount = TextEditingController();
   var txtName = TextEditingController();
   var txtChangeQty = TextEditingController();
+  var txtWhatsapp = TextEditingController();
 
   var fnNum = FocusNode();
   var fnNumTo = FocusNode();
@@ -1371,10 +1372,36 @@ class _BookingState extends State<Booking> {
 
   //=======================================PAGE FN
   fnShowPopUp(){
-    PageDialog().showCaptcha(context, Container(
+    PageDialog().showWhatsapp(context, Container(
       child: Column(
         children: [
+          Container(
+            height: 200,
+            padding: const EdgeInsets.symmetric(horizontal: 15),
+            decoration: boxBaseDecoration(greyLight, 5),
+            child: TextFormField(
+              controller: txtWhatsapp,
+              maxLines: 5,
+              decoration: const InputDecoration(
+                hintText: 'Paste here....',
+                counterText: "",
+                border: InputBorder.none,
+              ),
+              onChanged: (val){
 
+              },
+            ),
+          ),
+          gapHC(5),
+          Container(
+            padding: const EdgeInsets.all(5),
+            decoration: boxDecoration(g.wstrGameColor, 30),
+            child: Row(
+              children: [
+                tcn('GENERATE', Colors.white, 15)
+              ],
+            ),
+          )
         ],
       ),
     ), "Whatsapp");
@@ -2465,6 +2492,314 @@ class _BookingState extends State<Booking> {
     fnGetPageData();
   }
 
+  //=======================================WHATSAPP#
+
+
+
+  fnExtractWhatsappNum(){
+
+    //1.number,2.a count,3.b count,3.b count,4.a type,5.b type,6.c type // format
+
+    //if(number length == 3)
+    //need to consider a count and b count
+    //length ==3 and a count/ b count is not empty super,box
+    //length ==3 and b.count is empty and type is empty it means super
+    //length ==3 and a count/ b is empty type = 'B' 'BOX' /'S' 'SUPER'
+
+    //length == 2 or length == 1 and count based on type
+    // a count = a type
+    // b count = b type
+    // c count = c type
+
+
+    var countList  = [];
+    var text = txtWhatsapp.text.toString();
+
+    List<String> textLines = text.split("\n");
+
+    dprint("TEXT LINE>>>>>>>>>>>>>>>>>>>>>>>");
+    dprint(textLines);
+    for(var txt in textLines){
+      List<String> delimiters = [',','.', '*', '#', '+', '-','=','_'];
+      List<String> result = splitTextWithDelimiters(txt, delimiters);
+      dprint(result);
+      var num  = "";
+      var aCount  = "";
+      var bCount  = "";
+      var cCount  = "";
+      var aType  = "";
+      var bType  = "";
+      var cType  = "";
+
+      num =  fnGetNum(result,0);
+      aCount =  fnGetNum(result,1);
+      bCount =  fnGetNum(result,2);
+
+      dprint(num);
+      if(num.length == 3){
+        if(g.mfnDbl(bCount) == 0){
+          aType =  fnGetNum(result,2);
+        }
+
+        //length ==3 and a count/ b count is not empty super,box
+        //length ==3 and b.count is empty and type is empty it means super
+        //length ==3 and a count/ b is empty type = 'B' 'BOX' /'S' 'SUPER'
+
+        if(g.mfnDbl(bCount)>0){
+          countList.add({
+            "PLAN":"SUPER",
+            "NUMBER":num,
+            "COUNT":aCount,
+            "AMOUNT":supPrice,
+          });
+          countList.add({
+            "PLAN":"BOX",
+            "NUMBER":num,
+            "COUNT":bCount,
+            "AMOUNT":boxPrice,
+          });
+
+        }else{
+          dprint("A TYPE >>>>>>>>>>>>>  $aType");
+          if(aType.isEmpty){
+            countList.add({
+              "PLAN":"SUPER",
+              "NUMBER":num,
+              "COUNT":aCount,
+              "AMOUNT":supPrice,
+            });
+          }else{
+            if(aType == "B" ||  aType == "BOX"){
+              countList.add({
+                "PLAN":"BOX",
+                "NUMBER":num,
+                "COUNT":aCount,
+                "AMOUNT":boxPrice,
+              });
+            }else if(aType == "S" ||  aType == "SUPER" || aType == "SUP" || aType == "SPR" || aType == "SP"){
+              countList.add({
+                "PLAN":"SUPER",
+                "NUMBER":num,
+                "COUNT":aCount,
+                "AMOUNT":supPrice,
+              });
+            }
+          }
+        }
+
+      }
+      else {
+        if(g.mfnDbl(bCount) == 0){
+          aType =  fnGetNum(result,2);
+          if(aType.isNotEmpty){
+            bType =  fnGetNum(result,3);
+            if(bType.isNotEmpty){
+              cType =  fnGetNum(result,4);
+            }
+          }
+        }
+        else{
+          cCount =  fnGetNum(result,3);
+          if(g.mfnDbl(cCount) == 0){
+            aType =  fnGetNum(result,3);
+            if(aType.isNotEmpty){
+              bType =  fnGetNum(result,4);
+              if(bType.isNotEmpty){
+                cType =  fnGetNum(result,5);
+              }
+            }
+          }else{
+            aType =  fnGetNum(result,4);
+            if(aType.isNotEmpty){
+              bType =  fnGetNum(result,5);
+              if(bType.isNotEmpty){
+                cType =  fnGetNum(result,6);
+              }
+            }
+          }
+        }
+
+        dprint("A COUNT >>>>>> $aCount");
+        dprint("B COUNT >>>>>> $bCount");
+        dprint("C COUNT >>>>>> $cCount");
+        var priceWp = 0.0;
+
+        if(num.length ==2){
+          priceWp = twoPrice;
+          if(aType != "AB" && aType != "BC" && aType != "AC"){
+            aType = "";
+          }
+          if(bType != "AB" && bType != "BC" && bType != "AC"){
+            bType = "";
+          }
+          if(cType != "AB" && cType != "BC" && cType != "AC"){
+            cType = "";
+          }
+        }else if(num.length ==1){
+          priceWp = onePrice;
+          if(aType != "A" && aType != "B" && aType != "B"){
+            aType = "";
+          }
+          if(bType != "A" && bType != "B" && bType != "C"){
+            bType = "";
+          }
+          if(cType != "A" && cType != "B" && cType != "C"){
+            cType = "";
+          }
+        }
+
+        dprint("A TYPE >>>>>> $aType");
+        dprint("B TYPE >>>>>> $bType");
+        dprint("C TYPE >>>>>> $cType");
+
+
+
+
+        if(g.mfnDbl(cCount) >0 ){
+          if(cType.isNotEmpty){
+            countList.add({
+              "PLAN":aType,
+              "NUMBER":num,
+              "AMOUNT":priceWp,
+              "COUNT":aCount,
+            });
+            countList.add({
+              "PLAN":bType,
+              "NUMBER":num,
+              "COUNT":bCount,
+              "AMOUNT":priceWp,
+            });
+            countList.add({
+              "PLAN":cType,
+              "NUMBER":num,
+              "COUNT":cCount,
+              "AMOUNT":priceWp,
+            });
+          }else{
+            if(aType.isNotEmpty){
+              countList.add({
+                "PLAN":aType,
+                "NUMBER":num,
+                "COUNT":aCount,
+                "AMOUNT":priceWp,
+              });
+              countList.add({
+                "PLAN":aType,
+                "NUMBER":num,
+                "COUNT":bCount,
+                "AMOUNT":priceWp,
+              });
+              countList.add({
+                "PLAN":aType,
+                "NUMBER":num,
+                "COUNT":cCount,
+                "AMOUNT":priceWp,
+              });
+            }
+          }
+        }
+        else if(g.mfnDbl(bCount) >0){
+          if(bType.isNotEmpty){
+            countList.add({
+              "PLAN":aType,
+              "NUMBER":num,
+              "COUNT":aCount,
+              "AMOUNT":priceWp,
+            });
+            countList.add({
+              "PLAN":bType,
+              "NUMBER":num,
+              "COUNT":bCount,
+              "AMOUNT":priceWp,
+            });
+          }else{
+            if(aType.isNotEmpty){
+              countList.add({
+                "PLAN":aType,
+                "NUMBER":num,
+                "COUNT":aCount,
+                "AMOUNT":priceWp,
+              });
+              countList.add({
+                "PLAN":aType,
+                "NUMBER":num,
+                "COUNT":bCount,
+                "AMOUNT":priceWp,
+              });
+            }
+          }
+        }
+        else if(g.mfnDbl(aCount) >0){
+          if(cType.isNotEmpty){
+            countList.add({
+              "PLAN":aType,
+              "NUMBER":num,
+              "COUNT":aCount,
+              "AMOUNT":priceWp,
+            });
+            countList.add({
+              "PLAN":bType,
+              "NUMBER":num,
+              "COUNT":aCount,
+              "AMOUNT":priceWp,
+            });
+            countList.add({
+              "PLAN":cType,
+              "NUMBER":num,
+              "COUNT":aCount,
+              "AMOUNT":priceWp,
+            });
+          }else if(bType.isNotEmpty){
+            countList.add({
+              "PLAN":aType,
+              "NUMBER":num,
+              "COUNT":aCount,
+              "AMOUNT":priceWp,
+            });
+            countList.add({
+              "PLAN":bType,
+              "NUMBER":num,
+              "COUNT":aCount,
+              "AMOUNT":priceWp,
+            });
+          }
+          else if(aType.isNotEmpty){
+            countList.add({
+              "PLAN":aType,
+              "NUMBER":num,
+              "COUNT":aCount,
+              "AMOUNT":priceWp,
+            });
+          }
+        }
+      }
+
+
+    }
+
+    countList.removeWhere((element) => element["PLAN"] =="");
+    dprint(countList);
+
+  }
+  List<String> splitTextWithDelimiters(String text, List<String> delimiters) {
+    String pattern = delimiters.map((delimiter) => '\\$delimiter').join('|');
+    RegExp regExp = RegExp(pattern);
+    return text.split(regExp);
+  }
+
+
+  fnGetNum(list,index){
+    var result = "";
+    try{
+      result  = list[index].toString().toUpperCase().replaceAll(" ", "");
+    }catch(e){
+      dprint(e);
+    }
+    return result;
+  }
+
+
+
   //=======================================API CALL
 
 
@@ -2688,7 +3023,7 @@ class _BookingState extends State<Booking> {
         try{
           setState(() {
             for(var e  in value){
-              var type = e["TYPE"];
+              var type = e["PLAN"];
               if(type == "SUPER"){
                 supPrice = g.mfnDbl(e["PRICE"].toString());
               }else if(type == "BOX"){

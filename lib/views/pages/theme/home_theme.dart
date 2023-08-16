@@ -84,6 +84,7 @@ class _HomeThemeState extends State<HomeTheme> {
     g.wstrCompany = "06";
     g.wstrCompanyMqKey = "dxbltrker6";
     g.wstrThemeUrl = "https://www.mathrubhumi.com/";
+    g.wstrBaseUrl = "http://dxbltr1-001-site1.dtempurl.com/";
 
     fnGetPageData();
     setupMqttClient();
@@ -335,7 +336,7 @@ class _HomeThemeState extends State<HomeTheme> {
       if(mounted){
         dprint("home theme");
         setState(() {
-          g.wstrBaseUrl = (pt??"").toUpperCase();
+          //g.wstrBaseUrl = (pt??"").toUpperCase();
           // if(g.wstrBaseUrl.toString().isEmpty){
           //   //SystemNavigator.pop();
           // }

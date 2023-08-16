@@ -264,7 +264,48 @@ class PageDialog{
       },
     );
   }
+  Future<void> showWhatsapp(context,child,headName) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        Size size = MediaQuery.of(context).size;
+        return AlertDialog(
+            backgroundColor: Colors.transparent,
+            content: Container(
+                width: 400,
+                height: 350,
+                decoration: boxDecoration(Colors.white, 10),
+                padding: EdgeInsets.all(20),
+                child: Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        th(headName,Colors.black,13),
+                        IconButton(onPressed: (){
+                          Navigator.pop(context);
+                        }, icon: const Icon(Icons.highlight_remove_sharp,color: Colors.black,size: 30,))
+                      ],
+                    ),
+                    gapHC(5),
+                    Expanded(
+                      child: SingleChildScrollView(
+                          child: Column(
+                            children: [
+                              child
+                            ],
+                          )
+                      ),
+                    )
+                  ],
+                )
 
+            )
+        );
+      },
+    );
+  }
   Future<void> deleteDialog(context,fnDelete) async {
     return showDialog<void>(
       context: context,
