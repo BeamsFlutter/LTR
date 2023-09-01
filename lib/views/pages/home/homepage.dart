@@ -42,14 +42,14 @@ class _HomePageState extends State<HomePage> {
         onPageFinished: (String url) {},
         onWebResourceError: (WebResourceError error) {},
         onNavigationRequest: (NavigationRequest request) {
-          if (request.url.startsWith('https://www.mathrubhumi.com/')) {
+          if (request.url.startsWith('https://www.google.com/')) {
             return NavigationDecision.prevent;
           }
           return NavigationDecision.navigate;
         },
       ),
     )
-    ..loadRequest(Uri.parse('https://www.mathrubhumi.com/'));
+    ..loadRequest(Uri.parse('https://www.google.com/'));
 
   @override
   void initState() {

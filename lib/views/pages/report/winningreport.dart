@@ -30,6 +30,7 @@ class _WinningReportState extends State<WinningReport> {
   var fDetGTotal = 0.0;
   var fDetTotal = 0.0;
   var fDetComm = 0.0;
+  var fGame = "";
 
   var typeList  =  [];
   var reportData = [];
@@ -81,7 +82,7 @@ class _WinningReportState extends State<WinningReport> {
                         ),
                       ),
                       gapWC(5),
-                      tcn("Winning Report (${g.wstrSelectedGame})", Colors.white, 18)
+                      tcn("Winning Report (${fGame.toString()})", Colors.white, 18)
                     ],
                   ),
                   gapHC(10),
@@ -427,6 +428,7 @@ class _WinningReportState extends State<WinningReport> {
 
       if(mounted){
         setState(() {
+          fGame = game;
           blFullView = mode == "FULL"?true:false;
           mode = mode == "FULL"?"FULL":"SUM";
         });

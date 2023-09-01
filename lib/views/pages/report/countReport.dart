@@ -19,7 +19,7 @@ class CountReport extends StatefulWidget {
   @override
   State<CountReport> createState() => _CountReportState();
 }
-
+enum Menu { itemOne, itemTwo, itemThree, itemFour }
 class _CountReportState extends State<CountReport> {
 
   //Global
@@ -44,6 +44,8 @@ class _CountReportState extends State<CountReport> {
 
   var reportDate = [];
   var typeList = [];
+  var frGameList = [];
+  var fGame = "";
 
   //Controller
   var txtNum = TextEditingController();
@@ -88,6 +90,47 @@ class _CountReportState extends State<CountReport> {
               padding: const EdgeInsets.all(10),
               child: Column(
                 children:[
+                  Row(
+                    children: [
+                      Expanded(
+                        child: PopupMenuButton<Menu>(
+                          position: PopupMenuPosition.under,
+                          tooltip: "",
+                          onSelected: (Menu item) {
+
+                          },
+                          shape:  RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10)),
+                          itemBuilder: (BuildContext context) => <PopupMenuEntry<Menu>>[
+                            PopupMenuItem<Menu>(
+                              value: Menu.itemOne,
+                              padding: const EdgeInsets.symmetric(vertical: 0,horizontal: 0),
+                              child: wGamePopup(),
+                            ),
+                          ],
+                          child:   Container(
+                            margin:const  EdgeInsets.symmetric(horizontal: 2),
+                            padding: const EdgeInsets.all(10),
+                            decoration: boxOutlineCustom1(Colors.white, 5, Colors.black, 1.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Row(
+                                  children: [
+                                    tcn('Select Game ', Colors.black, 10),
+                                    tc(fGame.toString(), Colors.black, 13),
+                                  ],
+                                ),
+                                Icon(Icons.search,color: Colors.grey,size: 18,)
+                              ],
+                            ),
+                          ),
+                        ),
+                      )
+
+                    ],
+                  ),
+                  gapHC(10),
                   GestureDetector(
                     onTap: (){
                       _selectFromDate(context);
@@ -383,6 +426,50 @@ class _CountReportState extends State<CountReport> {
     return rtnList;
   }
 
+  Widget wGamePopup(){
+    return Container(
+      width: 200,
+      decoration: boxBaseDecoration(Colors.white, 0),
+      padding: const EdgeInsets.only(left: 20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: wBranchCard(),
+      ),
+    );
+  }
+  List<Widget> wBranchCard(){
+    List<Widget> rtnList  =  [];
+    for(var e in frGameList){
+      var colorCode = (e["CODE"]??"").toString();
+      var color  =  colorCode == "1PM"?oneColor:colorCode == "3PM"?threeColor:colorCode == "6PM"?sixColor:colorCode == "8PM"?eightColor:Colors.amber;
+
+      rtnList.add(GestureDetector(
+        onTap: (){
+          Navigator.pop(context);
+          setState(() {
+            fGame = (e["CODE"]??"").toString();
+          });
+        },
+        child: Container(
+          decoration: boxBaseDecoration(color, 5),
+          padding: const EdgeInsets.symmetric(vertical: 5,horizontal: 5),
+          margin: const EdgeInsets.only(bottom: 5),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(Icons.confirmation_num,color:Colors.white,size: 15,),
+              gapWC(5),
+              tcn((e["CODE"]??"").toString(), Colors.white, 15)
+            ],
+          ),
+        ),
+      ));
+    }
+
+    return rtnList;
+  }
+
+
   //===============================PAGE FN
 
   fnGetPageData(){
@@ -401,6 +488,7 @@ class _CountReportState extends State<CountReport> {
     }
 
     setState(() {
+      fGame = g.wstrSelectedGame;
       typeList = [
         "SUPER",
         "BOX",
@@ -409,6 +497,7 @@ class _CountReportState extends State<CountReport> {
       ];
     });
 
+    apiGetGameList();
 
   }
 
@@ -587,7 +676,7 @@ class _CountReportState extends State<CountReport> {
     var child = blRate? 1:0;
 
 
-    futureForm =  ApiCall().apiCountSummaryReport(g.wstrCompany, setDate(2, fFromDate),setDate(2, fToDate), g.wstrSelectedGame, "",stockist, dealer, agent, type, number,child);
+    futureForm =  ApiCall().apiCountSummaryReport(g.wstrCompany, setDate(2, fFromDate),setDate(2, fToDate), fGame, "",stockist, dealer, agent, type, number,child);
     futureForm.then((value) => apiGetCountSummaryRes(value));
   }
   apiGetCountSummaryRes(value){
@@ -598,6 +687,23 @@ class _CountReportState extends State<CountReport> {
           reportDate = value??[];
         }else{
           errorMsg(context, "No Result Found!!");
+        }
+      });
+    }
+  }
+
+
+  apiGetGameList(){
+    //api for get user wise game list
+    futureForm = apiCall.apiGetUserGames(g.wstrCompany, g.wstrUserCd, "");
+    futureForm.then((value) => apiGetGameListRes(value));
+  }
+  apiGetGameListRes(value){
+    if(mounted){
+      setState(() {
+        frGameList = [];
+        if(g.fnValCheck(value)){
+          frGameList = value;
         }
       });
     }

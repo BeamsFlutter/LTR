@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bounce/flutter_bounce.dart';
 import 'package:ltr/controller/global/globalValues.dart';
+import 'package:ltr/services/apiController.dart';
 import 'package:ltr/views/components/common/common.dart';
 import 'package:ltr/views/pages/report/dailyreport.dart';
 import 'package:ltr/views/pages/report/salesReport.dart';
@@ -18,11 +19,13 @@ class ReportDetails extends StatefulWidget {
   @override
   State<ReportDetails> createState() => _ReportsState();
 }
-
+enum Menu { itemOne, itemTwo, itemThree, itemFour }
 class _ReportsState extends State<ReportDetails> {
 
   //Global
   var g = Global();
+  var apiCall  = ApiCall();
+  late Future<dynamic> futureForm;
 
   //Page Variable
   var reportList = [];
@@ -32,6 +35,8 @@ class _ReportsState extends State<ReportDetails> {
   var fStockistCode = "ALL";
   var fDealerCode = "ALL";
   var fAgentCode = "ALL";
+  var fGame = "";
+  var frGameList = [];
 
   var blFullView = false;
   var blRate = false;
@@ -76,15 +81,57 @@ class _ReportsState extends State<ReportDetails> {
                     ),
                   ),
                   gapWC(5),
-                  tcn("${widget.reportName} (${g.wstrSelectedGame})", Colors.white, 18)
+                  tcn("${widget.reportName} (${fGame.toString()})", Colors.white, 18)
                 ],
               ),
             ),
             gapHC(15),
+
             Expanded(child: Container(
               padding: const EdgeInsets.all(10),
               child: Column(
                 children:[
+                  Row(
+                    children: [
+                      Expanded(
+                        child: PopupMenuButton<Menu>(
+                          position: PopupMenuPosition.under,
+                          tooltip: "",
+                          onSelected: (Menu item) {
+
+                          },
+                          shape:  RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10)),
+                          itemBuilder: (BuildContext context) => <PopupMenuEntry<Menu>>[
+                            PopupMenuItem<Menu>(
+                              value: Menu.itemOne,
+                              padding: const EdgeInsets.symmetric(vertical: 0,horizontal: 0),
+                              child: wGamePopup(),
+                            ),
+                          ],
+                          child:   Container(
+                            margin:const  EdgeInsets.symmetric(horizontal: 2),
+                            padding: const EdgeInsets.all(10),
+                            decoration: boxOutlineCustom1(Colors.white, 5, Colors.black, 1.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Row(
+                                  children: [
+                                    tcn('Select Game ', Colors.black, 10),
+                                    tc(fGame.toString(), Colors.black, 13),
+                                  ],
+                                ),
+                                Icon(Icons.search,color: Colors.grey,size: 18,)
+                              ],
+                            ),
+                          ),
+                        ),
+                      )
+
+                    ],
+                  ),
+                  gapHC(10),
                   GestureDetector(
                     onTap: (){
                       _selectFromDate(context);
@@ -337,8 +384,6 @@ class _ReportsState extends State<ReportDetails> {
                                   wButton("B",Colors.orange),
                                   gapWC(5),
                                   wButton("C",Colors.orange),
-
-
                                 ],
                               ),
                             ):gapHC(0),
@@ -537,6 +582,48 @@ class _ReportsState extends State<ReportDetails> {
     );
   }
 
+  Widget wGamePopup(){
+    return Container(
+      width: 200,
+      decoration: boxBaseDecoration(Colors.white, 0),
+      padding: const EdgeInsets.only(left: 20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: wBranchCard(),
+      ),
+    );
+  }
+  List<Widget> wBranchCard(){
+    List<Widget> rtnList  =  [];
+    for(var e in frGameList){
+      var colorCode = (e["CODE"]??"").toString();
+      var color  =  colorCode == "1PM"?oneColor:colorCode == "3PM"?threeColor:colorCode == "6PM"?sixColor:colorCode == "8PM"?eightColor:Colors.amber;
+
+      rtnList.add(GestureDetector(
+        onTap: (){
+          Navigator.pop(context);
+          setState(() {
+            fGame = (e["CODE"]??"").toString();
+          });
+        },
+        child: Container(
+          decoration: boxBaseDecoration(color, 5),
+          padding: const EdgeInsets.symmetric(vertical: 5,horizontal: 5),
+          margin: const EdgeInsets.only(bottom: 5),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(Icons.confirmation_num,color:Colors.white,size: 15,),
+              gapWC(5),
+              tcn((e["CODE"]??"").toString(), Colors.white, 15)
+            ],
+          ),
+        ),
+      ));
+    }
+
+    return rtnList;
+  }
 
   //===============================PAGE FN
 
@@ -554,6 +641,12 @@ class _ReportsState extends State<ReportDetails> {
         fAgentCode = g.wstrUserCd;
       });
     }
+    if(mounted){
+      setState(() {
+        fGame =  g.wstrSelectedGame;
+      });
+    }
+    apiGetGameList();
   }
 
   fnSearchCallBack(rolecode,usercd){
@@ -675,7 +768,7 @@ class _ReportsState extends State<ReportDetails> {
       "DATE_TO":setDate(2, fToDate),
       "MODE":blFullView? "FULL":"SUM",
       "CHILD":blRate? 1:0,
-      "GAME":blAllGame? null:g.wstrSelectedGame,
+      "GAME":blAllGame? null: fGame,
       "DAILY_MODE":blDay && blGame? "GAMEDATE":blDay?"DATE":blGame?"GAME":"USER",
       "blGame":blGame,
       "blDay":blDay
@@ -695,4 +788,23 @@ class _ReportsState extends State<ReportDetails> {
   }
 
 //===============================API CALL
+
+
+  apiGetGameList(){
+    //api for get user wise game list
+    futureForm = apiCall.apiGetUserGames(g.wstrCompany, g.wstrUserCd, "");
+    futureForm.then((value) => apiGetGameListRes(value));
+  }
+  apiGetGameListRes(value){
+    if(mounted){
+      setState(() {
+        frGameList = [];
+        if(g.fnValCheck(value)){
+          frGameList = value;
+        }
+      });
+    }
+  }
+
+
 }

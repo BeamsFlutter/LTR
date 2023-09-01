@@ -29,6 +29,7 @@ class _SalesReportState extends State<SalesReport> {
   var fComm = 0.0;
 
   var fPageMode = "";
+  var fGame = "";
 
   var reportDate = [];
   var reportHeader = [];
@@ -74,7 +75,7 @@ class _SalesReportState extends State<SalesReport> {
                         ),
                       ),
                       gapWC(5),
-                      tcn("Sales Report (${g.wstrSelectedGame})", Colors.white, 18)
+                      tcn("Sales Report (${fGame.toString()})", Colors.white, 18)
                     ],
                   ),
                   gapHC(10),
@@ -1022,6 +1023,7 @@ class _SalesReportState extends State<SalesReport> {
 
     if(mounted){
       setState(() {
+        fGame = game;
         fPageMode = mode;
       });
     }

@@ -12,8 +12,10 @@ import 'package:ltr/services/apiController.dart';
 import 'package:ltr/views/components/common/common.dart';
 import 'package:ltr/views/pages/booking/booking.dart';
 import 'package:ltr/views/pages/booking/bookingview.dart';
+import 'package:ltr/views/pages/booking/othersales.dart';
 import 'package:ltr/views/pages/booking/publishresult.dart';
 import 'package:ltr/views/pages/booking/result.dart';
+import 'package:ltr/views/pages/booking/retailbooking.dart';
 import 'package:ltr/views/pages/home/countview.dart';
 import 'package:ltr/views/pages/number/favnumber.dart';
 import 'package:ltr/views/pages/number/gamelist.dart';
@@ -179,6 +181,8 @@ class _MainPageState extends State<MainPage> {
                       gapHC(5),
                       wMenuCard('Booking',2),
                       wMenuCard('Booking Extended',2),
+                      wMenuCard('Retail Sales',20),
+                      wMenuCard('Other Sales',21),
                       wMenuCard('Bill Edit/Delete',13),
                       wMenuCard('Result View',3),
                       wMenuCard('Reports',9),
@@ -261,7 +265,7 @@ class _MainPageState extends State<MainPage> {
                 child: Container(
                   margin: const EdgeInsets.all(10),
                   padding: const EdgeInsets.symmetric(horizontal: 10,vertical: 10),
-                  decoration: boxBaseDecoration(grey, 30),
+                  decoration: boxBaseDecoration(Colors.black, 30),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -732,6 +736,12 @@ class _MainPageState extends State<MainPage> {
         else if(nav == 19){
           Navigator.push(context, MaterialPageRoute(builder: (context) =>  const  SpecialUserList(pRoleCode: 'SPECIAL',)));
 
+        }
+        else if(nav == 20){
+          Navigator.push(context, MaterialPageRoute(builder: (context) =>   const RetailBooking()));
+        }
+        else if(nav == 21){
+          Navigator.push(context, MaterialPageRoute(builder: (context) =>   const OtherSales()));
         }
         else{
           Navigator.push(context, MaterialPageRoute(builder: (context) =>   UserList(pRoleCode: text,)));

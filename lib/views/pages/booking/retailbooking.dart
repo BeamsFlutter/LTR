@@ -5,8 +5,6 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_bounce/flutter_bounce.dart';
 import 'package:get/get.dart';
-import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:ltr/controller/global/globalValues.dart';
 import 'package:ltr/main.dart';
 import 'package:ltr/services/apiController.dart';
@@ -19,18 +17,18 @@ import 'package:ltr/views/styles/colors.dart';
 import 'package:marquee/marquee.dart';
 import 'dart:isolate';
 
-class Booking extends StatefulWidget {
+class RetailBooking extends StatefulWidget {
   final String? mode;
   final String? pDocno;
   final List<dynamic>? pData;
   final Function? fnCallBack;
-  const Booking({Key? key, this.mode, this.pDocno, this.pData, this.fnCallBack}) : super(key: key);
+  const RetailBooking({Key? key, this.mode, this.pDocno, this.pData, this.fnCallBack}) : super(key: key);
 
   @override
-  _BookingState createState() => _BookingState();
+  _RetailBookingState createState() => _RetailBookingState();
 }
 enum Menu { itemOne, itemTwo, itemThree, itemFour }
-class _BookingState extends State<Booking> {
+class _RetailBookingState extends State<RetailBooking> {
 
   //Global
   var g =  Global();
@@ -116,7 +114,7 @@ class _BookingState extends State<Booking> {
 
             Container(
               padding: const EdgeInsets.all(10),
-              decoration: boxDecoration(lstrSelectedGameColor, 0),
+              decoration: boxDecoration(Colors.black, 0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -155,43 +153,16 @@ class _BookingState extends State<Booking> {
                             ],
                             child:   Row(
                               children: [
-                                tcn('$lstrSelectedGame', Colors.white, 20),
+                                Column(
+                                  children: [
+                                    tcn('Retail- $lstrSelectedGame', Colors.white, 20),
+                                  ],
+                                ),
                                 gapWC(5),
-                                const Icon(Icons.dashboard_outlined,color: Colors.white,size: 20,),
+                               // const Icon(Icons.dashboard_outlined,color: Colors.white,size: 20,),
                               ],
                             ),
                           ):gapHC(0),
-                          gapWC(10),
-                          GestureDetector(
-                            onTap: (){
-                              if(fAgentCode.isEmpty){
-                                errorMsg(context, "Choose Agent");
-                              }else{
-                                fnShowPopUp();
-                              }
-
-                            },
-                            child: CircleAvatar(
-                                radius: 16,
-                                backgroundColor: Colors.black.withOpacity(0.2),
-                                child: const Icon(Icons.message,color: Colors.white,size: 18,)),
-                          ),
-                          gapWC(10),
-                          GestureDetector(
-                            onTap: () {
-                              if(fAgentCode.isEmpty){
-                                errorMsg(context, "Choose Agent");
-                              }else{
-                                fnImageScan();
-                              }
-
-
-                            },
-                            child: CircleAvatar(
-                                radius: 16,
-                                backgroundColor: Colors.black.withOpacity(0.2),
-                                child: const Icon(Icons.camera_alt,color: Colors.white,size: 18,)),
-                          )
 
                         ],
                       ),
@@ -367,10 +338,6 @@ class _BookingState extends State<Booking> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      wNumberCard(1),
-                      gapWC(10),
-                      wNumberCard(2),
-                      gapWC(10),
                       wNumberCard(3),
                       gapWC(10),
                       Expanded(child: Container(
@@ -390,11 +357,6 @@ class _BookingState extends State<Booking> {
                           },
                         ),
                       )),
-                      gapWC(10),
-                      gCountNum == 3?
-                      wOption("S"):gapHC(0),
-                      gapWC(10),
-                      wOption("R"),
 
                     ],
                   ),
@@ -526,109 +488,12 @@ class _BookingState extends State<Booking> {
                           ),
                         ),
                       ):gapWC(0),
-                      blFromTo && (gOption =="Any" || (gOption == "R"))?gapWC(5):gapWC(0),
-                      Flexible(
-                        child: Container(
-                          height: 35,
-                          padding: const EdgeInsets.symmetric(horizontal: 15),
-                          decoration: boxBaseDecoration(greyLight, 5),
-                          child: TextFormField(
-                            controller: txtCount,
-                            focusNode: fnCount,
-                            inputFormatters: mfnInputFormatters(),
-                            keyboardType: TextInputType.number,
-                            decoration: const InputDecoration(
-                              hintText: 'Count',
-                              border: InputBorder.none,
-                            ),
-                            onFieldSubmitted: (val){
-                              fnBoxCount.requestFocus();
-                            },
-                          ),
-                        ),
-                      ),
-                      gapWC(5),
-                      gCountNum == 3 &&  !blFromTo?
-                      Flexible(
-                        child: Container(
-                          height: 35,
-                          padding: const EdgeInsets.symmetric(horizontal: 15),
-                          decoration: boxBaseDecoration(greyLight, 5),
-                          child: TextFormField(
-                            controller: txtBoxCount,
-                            focusNode: fnBoxCount,
-                            inputFormatters: mfnInputFormatters(),
-                            keyboardType: TextInputType.number,
-                            decoration: const InputDecoration(
-                              hintText: 'Box',
-                              border: InputBorder.none,
-                            ),
-                          ),
-                        ),
-                      ):gapHC(0),
+                      gapWC(10),
+                      wButton("SUPER",bgColorDark),
+
                     ],
                   ),
                   gapHC(5),
-                  gCountNum == 3?
-                  Row(
-                    children: [
-                      wButton("BOTH",Colors.blueGrey),
-                      gapWC(5),
-                      wButton("BOX",Colors.pink),
-                      gapWC(5),
-                      wButton("SUPER",bgColorDark),
-                    ],
-                  ):
-                  gCountNum == 2?
-                  Row(
-                    children: [
-                      wButton("AB",Colors.green),
-                      gapWC(5),
-                      wButton("BC",Colors.green),
-                      gapWC(5),
-                      wButton("AC",Colors.green),
-                      gapWC(5),
-                      wButton("ALL",bgColorDark),
-                    ],
-                  ):
-                  Row(
-                    children: [
-                      wButton("A",Colors.orange),
-                      gapWC(5),
-                      wButton("B",Colors.orange),
-                      gapWC(5),
-                      wButton("C",Colors.orange),
-                      gapWC(5),
-                      wButton("ALL",bgColorDark),
-                    ],
-                  ),
-                  gapHC(10),
-                  gCountNum == 3?
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      wOption("Book"),
-                      wOption("Any"),
-                      wOption("100s"),
-                      wOption("111s"),
-                      wOption("Box"),
-                    ],
-                  ):gCountNum == 2?
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      wOption("Book"),
-                      wOption("Any"),
-                      wOption("10s"),
-                      wOption("11s"),
-                    ],
-                  ):Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      wOption("Any"),
-                      wOption("2s"),
-                    ],
-                  ),
 
 
                 ],
@@ -674,7 +539,7 @@ class _BookingState extends State<Booking> {
                 child: Column(
                   children: [
                     Container(
-                      decoration: boxBaseDecorationC(grey,10,10,0,0),
+                      decoration: boxBaseDecorationC(Colors.black,10,10,0,0),
                       padding: const EdgeInsets.all(5),
                       child: Row(
                         children: [
@@ -891,7 +756,7 @@ class _BookingState extends State<Booking> {
                     },
                     duration: const Duration(milliseconds: 110),
                     child: Container(
-                      decoration: boxDecoration(lstrSelectedGameColor, 30),
+                      decoration: boxDecoration(Colors.green, 30),
                       padding: const EdgeInsets.symmetric(vertical: 10),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -1060,7 +925,7 @@ class _BookingState extends State<Booking> {
         height: 30,
         width: 30,
         alignment: Alignment.center,
-        decoration: gCountNum == num?boxBaseDecoration(g.wstrGameBColor, 5):boxOutlineCustom1(Colors.white, 5, g.wstrGameBColor, 1.0),
+        decoration: gCountNum == num?boxBaseDecoration(Colors.redAccent, 5):boxOutlineCustom1(Colors.white, 5, Colors.redAccent, 1.0),
         child: tc(num.toString(), gCountNum == num?g.wstrGameOTColor:g.wstrGameTColor, 15),
       ),
     );
@@ -1134,8 +999,8 @@ class _BookingState extends State<Booking> {
         },
         duration: const Duration(milliseconds: 110),
         child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 5),
-          decoration: boxBaseDecoration(color, 5),
+          padding: const EdgeInsets.symmetric(vertical: 10),
+          decoration: boxBaseDecoration(Colors.redAccent, 30),
           child: Column(
             children: [
               Row(
@@ -1420,10 +1285,7 @@ class _BookingState extends State<Booking> {
           Bounce(
             onPressed: (){
               if(txtWhatsapp.text.isNotEmpty){
-
-                  fnExtractWhatsappNum("msg","");
-
-
+                fnExtractWhatsappNum();
               }else{
                 Navigator.pop(context);
               }
@@ -1517,7 +1379,7 @@ class _BookingState extends State<Booking> {
       errorMsg(context, "Choose Agent");
       return;
     }
-
+    txtCount.text = "1";
     if(g.mfnDbl(txtCount.text) <=0 && plan == "BOX" && txtBoxCount.text.isNotEmpty){
       txtCount.text =  txtBoxCount.text;
     }
@@ -2385,7 +2247,7 @@ class _BookingState extends State<Booking> {
 
 
 
-  fnExtractWhatsappNum(from,numCam){
+  fnExtractWhatsappNum(){
 
     //1.number,2.a count,3.b count,3.b count,4.a type,5.b type,6.c type // format
 
@@ -2399,27 +2261,21 @@ class _BookingState extends State<Booking> {
     // a count = a type
     // b count = b type
     // c count = c type
-    var text = "";
-    if(from == "msg"){
-      Navigator.pop(context);
-      text = txtWhatsapp.text.toString();
-    }else{
-      text = numCam.toString();
-    }
+
+    Navigator.pop(context);
 
     if(fAgentCode.isEmpty){
       errorMsg(context, "Choose Agent");
       return;
     }
 
-
+    var text = txtWhatsapp.text.toString();
 
     List<String> textLines = text.split("\n");
 
     dprint("TEXT LINE>>>>>>>>>>>>>>>>>>>>>>>");
     dprint(textLines);
     for(var txt in textLines){
-      dprint(txt);
       List<String> delimiters = [',','.', '*', '#', '+', '-','=','_'];
       List<String> result = splitTextWithDelimiters(txt, delimiters);
       dprint(result);
@@ -2546,10 +2402,6 @@ class _BookingState extends State<Booking> {
           if(cType != "A" && cType != "B" && cType != "C"){
             cType = "";
           }
-        }else{
-          aType = "";
-          bType = "";
-          cType = "";
         }
 
         dprint("A TYPE >>>>>> $aType");
@@ -2561,7 +2413,6 @@ class _BookingState extends State<Booking> {
 
         if(g.mfnDbl(cCount) >0 ){
           if(cType.isNotEmpty){
-
             countList.add({
               "PLAN":aType,
               "NUMBER":num,
@@ -2685,8 +2536,6 @@ class _BookingState extends State<Booking> {
     if(mounted){
       setState(() {
         countList.removeWhere((element) => element["PLAN"] =="");
-        countList.removeWhere((element) => (element["PLAN"] !="AB" && element["PLAN"] !="BC" && element["PLAN"] !="AC" && element["PLAN"] !="A" && element["PLAN"] !="B" && element["PLAN"] !="C"&& element["PLAN"] !="SUPER" && element["PLAN"] !="BOX"));
-        countList.removeWhere((element) => g.mfnDbl(element["COUNT"]) <= 0 );
         txtWhatsapp.clear();
       });
     }
@@ -2705,33 +2554,12 @@ class _BookingState extends State<Booking> {
   fnGetNum(list,index){
     var result = "";
     try{
-      result  = list[index].toString().toUpperCase().replaceAll(" ", "").trim();
+      result  = list[index].toString().toUpperCase().replaceAll(" ", "");
     }catch(e){
       dprint(e);
     }
     return result;
   }
-
-
-  //===============SCAN FROM IMAGE
-    fnImageScan() async{
-      final image = await ImagePicker().pickImage(source: ImageSource.camera);
-      dprint("IMG PATH  >>>>> ${image!.path.toString()}");
-
-      // GoogleMlKit vision languageModelManager
-      final textRecognizer = TextRecognizer();
-      final RecognizedText recognisedText = await textRecognizer.processImage(
-        InputImage.fromFilePath(image.path),
-      );
-      dprint("TEXT >>>>>>>>>>>>>>>>>>>>>>>");
-      dprint(recognisedText.text.toString().trim());
-      if(recognisedText.text.toString().isNotEmpty){
-        fnExtractWhatsappNum("cam",recognisedText.text.toString().trim());
-      }
-
-    }
-
-  //===============SCAN FROM IMAGE END
 
 
 
@@ -2989,7 +2817,6 @@ class _BookingState extends State<Booking> {
 
   complexTask2(SendPort sendPort) {
     var total = 0.0;
-
     sendPort.send(total);
   }
 
