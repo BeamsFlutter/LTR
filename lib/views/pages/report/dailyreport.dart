@@ -82,12 +82,12 @@ class _DailyReportState extends State<DailyReport> {
                       tcn("Daily Report (${g.wstrSelectedGame})", Colors.white, 18)
                     ],
                   ),
-                  Divider(
+                  const Divider(
                     color: Colors.white,
                   ),
                   Row(
                     children: [
-                      Icon(Icons.calendar_month,color: Colors.white,size: 13,),
+                      const Icon(Icons.calendar_month,color: Colors.white,size: 13,),
                       gapWC(5),
                       tcn('Date', Colors.white, 13),
                       gapWC(25),
@@ -105,7 +105,7 @@ class _DailyReportState extends State<DailyReport> {
                       )
                     ],
                   ),
-                  Divider(
+                  const Divider(
                     color: Colors.white,
                   ),
                   gapHC(5),

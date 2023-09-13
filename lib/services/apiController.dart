@@ -1112,4 +1112,49 @@ class ApiCall  with BaseController{
     return response;
   }
 
+  Future<dynamic> apiPayoutStandingReport(company,user) async {
+    var request = jsonEncode(<dynamic, dynamic>{
+      "COMPANY":company,
+      "TXN_TO_USER":user //PAYMENT TO USER
+    });
+    dprint('api/payoutstandingReport');
+    dprint(request);
+    var response = await ApiManager().post('api/payoutstandingReport',request).catchError((error){
+      if (error is BadRequestException) {
+        dprint(error.toString());
+      } else {
+        handleError(error);
+      }
+    });
+    dprint(response);
+    if (response == null) return;
+    return response;
+  }
+
+  Future<dynamic> apiSavePayment(company,mode,docno,doctype,user,toUser,amount,remarks,txnMode) async {
+    var request = jsonEncode(<dynamic, dynamic>{
+      "COMPANY":company,
+      "MODE":mode,//ADD OR EDIT
+      "DOCNO":docno,//ON EDIT MODE
+      "DOCTYPE":doctype,//ON EDIT MODE
+      "TXN_USER":user, // PAYING USER
+      "TXN_TO_USER":toUser, //PAYMENT TO USER
+      "AMOUNT":amount,//DECIMAL,
+      "REMARKS":remarks,//
+      "TXN_MODE":txnMode//PAY or REC/PAYMENT TO USER
+    });
+    dprint('api/savePAYMENT');
+    dprint(request);
+    var response = await ApiManager().post('api/savePAYMENT',request).catchError((error){
+      if (error is BadRequestException) {
+        dprint(error.toString());
+      } else {
+        handleError(error);
+      }
+    });
+    dprint(response);
+    if (response == null) return;
+    return response;
+  }
+
 }

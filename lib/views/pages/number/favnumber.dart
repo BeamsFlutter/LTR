@@ -33,9 +33,6 @@ class _FavNumberState extends State<FavNumber> {
   bool blAllGame  = false;
 
 
-
-
-
   var txtNum = TextEditingController();
   var txtNumTo = TextEditingController();
   var txtDiff = TextEditingController();
