@@ -6,6 +6,7 @@ import 'package:ltr/controller/global/globalValues.dart';
 import 'package:ltr/views/components/common/common.dart';
 import 'package:ltr/views/pages/report/balancereport.dart';
 import 'package:ltr/views/pages/report/countReport.dart';
+import 'package:ltr/views/pages/report/paymentReport.dart';
 import 'package:ltr/views/pages/report/reportdetails.dart';
 import 'package:ltr/views/styles/colors.dart';
 
@@ -80,6 +81,9 @@ class _ReportsState extends State<Reports> {
         onPressed: (){
           if(e["CODE"] == 3){
             Navigator.push(context, MaterialPageRoute(builder: (context) =>    CountReport(reportName: e["NAME"], reportCode: e["CODE"].toString())));
+
+          }else if(e["CODE"] == 5){
+            Navigator.push(context, MaterialPageRoute(builder: (context) =>    const PaymentReport()));
 
           }else if(e["CODE"] == 6){
             Navigator.push(context, MaterialPageRoute(builder: (context) =>    BalanceReport(reportName: e["NAME"], reportCode: e["CODE"].toString())));

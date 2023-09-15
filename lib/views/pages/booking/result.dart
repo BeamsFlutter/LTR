@@ -17,7 +17,7 @@ class Results extends StatefulWidget {
   @override
   State<Results> createState() => _ResultsState();
 }
-
+enum Menu { itemOne, itemTwo, itemThree, itemFour }
 class _ResultsState extends State<Results> {
   
   //Global
@@ -29,6 +29,10 @@ class _ResultsState extends State<Results> {
   var frResultData = [];
   var fResDate = DateTime.now();
   var fLiveLink  = "";
+
+  var frGameList = [];
+  var fGame = "";
+
   
   @override
   void initState() {
@@ -65,7 +69,7 @@ class _ResultsState extends State<Results> {
                         ),
                       ),
                       gapWC(5),
-                      tcn("Results (${g.wstrSelectedGame.toString()})", Colors.white, 20)
+                      tcn("Results (${fGame.toString()})", Colors.white, 20)
                     ],
                   ),
                   GestureDetector(
@@ -95,6 +99,47 @@ class _ResultsState extends State<Results> {
             //     tcn('Last published date $today', grey, 10),
             //   ],
             // ),
+            Row(
+              children: [
+                Expanded(
+                  child: PopupMenuButton<Menu>(
+                    position: PopupMenuPosition.under,
+                    tooltip: "",
+                    onSelected: (Menu item) {
+
+                    },
+                    shape:  RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10)),
+                    itemBuilder: (BuildContext context) => <PopupMenuEntry<Menu>>[
+                      PopupMenuItem<Menu>(
+                        value: Menu.itemOne,
+                        padding: const EdgeInsets.symmetric(vertical: 0,horizontal: 0),
+                        child: wGamePopup(),
+                      ),
+                    ],
+                    child:   Container(
+                      margin:const  EdgeInsets.symmetric(horizontal: 5),
+                      padding: const EdgeInsets.all(10),
+                      decoration: boxOutlineCustom1(Colors.white, 5, Colors.black, 1.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Row(
+                            children: [
+                              tcn('Select Game ', Colors.black, 10),
+                              tc(fGame.toString(), Colors.black, 13),
+                            ],
+                          ),
+                          const Icon(Icons.search,color: Colors.grey,size: 18,)
+                        ],
+                      ),
+                    ),
+                  ),
+                )
+
+              ],
+            ),
+            gapHC(2),
             GestureDetector(
               onTap: (){
                 _selectResultDate(context);
@@ -296,13 +341,60 @@ class _ResultsState extends State<Results> {
         ),
       ));
     }
+
+  Widget wGamePopup(){
+    return Container(
+      width: 200,
+      decoration: boxBaseDecoration(Colors.white, 0),
+      padding: const EdgeInsets.only(left: 20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: wBranchCard(),
+      ),
+    );
+  }
+  List<Widget> wBranchCard(){
+    List<Widget> rtnList  =  [];
+    for(var e in frGameList){
+      var colorCode = (e["CODE"]??"").toString();
+      var color  =  colorCode == "1PM"?oneColor:colorCode == "3PM"?threeColor:colorCode == "6PM"?sixColor:colorCode == "8PM"?eightColor:Colors.amber;
+
+      rtnList.add(GestureDetector(
+        onTap: (){
+          Navigator.pop(context);
+          setState(() {
+            fGame = (e["CODE"]??"").toString();
+          });
+          apiGetResultData();
+        },
+        child: Container(
+          decoration: boxBaseDecoration(color, 5),
+          padding: const EdgeInsets.symmetric(vertical: 5,horizontal: 5),
+          margin: const EdgeInsets.only(bottom: 5),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(Icons.confirmation_num,color:Colors.white,size: 15,),
+              gapWC(5),
+              tcn((e["CODE"]??"").toString(), Colors.white, 15)
+            ],
+          ),
+        ),
+      ));
+    }
+
+    return rtnList;
+  }
   //=================================================PAGE FN
 
   fnGetPageData(){
     if(mounted){
       setState(() {
+        fGame = g.wstrSelectedGame;
         fLiveLink = g.wstrSGameLink;
       });
+
+      apiGetGameList();
       apiGetResultData();
     }
   }
@@ -387,7 +479,7 @@ class _ResultsState extends State<Results> {
     }
 
 
-    Share.share('*RESULT ${g.wstrSelectedGame}* \n ${setDate(6, fResDate)}\n$result');
+    Share.share('*RESULT $fGame* \n ${setDate(6, fResDate)}\n$result');
   }
 
 
@@ -398,7 +490,7 @@ class _ResultsState extends State<Results> {
     setState(() {
       frResultData = [];
     });
-    futureForm =  ApiCall().apiGetLiveResult(g.wstrSelectedGame, setDate(2, fResDate));
+    futureForm =  ApiCall().apiGetLiveResult(fGame, setDate(2, fResDate));
     futureForm.then((value) => apiGetResultDataRes(value));
   }
   apiGetResultDataRes(value){
@@ -427,6 +519,22 @@ class _ResultsState extends State<Results> {
       }else{
         errorMsg(context, "Result not published!");
       }
+    }
+  }
+
+  apiGetGameList(){
+    //api for get user wise game list
+    futureForm = apiCall.apiGetUserGames(g.wstrCompany, g.wstrUserCd, "");
+    futureForm.then((value) => apiGetGameListRes(value));
+  }
+  apiGetGameListRes(value){
+    if(mounted){
+      setState(() {
+        frGameList = [];
+        if(g.fnValCheck(value)){
+          frGameList = value;
+        }
+      });
     }
   }
 

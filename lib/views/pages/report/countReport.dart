@@ -121,7 +121,7 @@ class _CountReportState extends State<CountReport> {
                                     tc(fGame.toString(), Colors.black, 13),
                                   ],
                                 ),
-                                Icon(Icons.search,color: Colors.grey,size: 18,)
+                                const Icon(Icons.search,color: Colors.grey,size: 18,)
                               ],
                             ),
                           ),

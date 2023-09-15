@@ -49,6 +49,13 @@ const Color eightTextColor = Color(0xFF000000);
 const Color eightOnTextColor = Color(0xFFFFFFFF);
 
 
+
+const Color adminColor = Color(0xFF000000);
+const Color adminButtonColor = Color(0xFF000000);
+const Color adminTextColor = Color(0xFF000000);
+const Color adminOnTextColor = Color(0xFFFFFFFF);
+
+
 //=====================================================COLORS
 
 const Color redLight = Color(0xFFFFE8E8);

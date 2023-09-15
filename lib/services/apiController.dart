@@ -941,7 +941,10 @@ class ApiCall  with BaseController{
       "RANK":null,
       "BOOKING_DOCNO":docno,
       "CHILD_PRICE":childPrice,
-      "TYPE_LIST":typeList
+      "TYPE_LIST":typeList,
+      "COMPANY_LIST":[
+        {"COL_VAL":company}
+      ]
     });
     dprint('api/salesReport');
     dprint(request);
@@ -1181,5 +1184,38 @@ class ApiCall  with BaseController{
     if (response == null) return;
     return response;
   }
+
+  Future<dynamic> apiAdminSalesReport(company,date,toDate,game,admCode,stockist,dealer,agent,type,number,docno,childPrice,typeList,companyList) async {
+    var request = jsonEncode(<dynamic, dynamic>{
+      "COMPANY":company,
+      "DATE_FROM": date,
+      "DATE_TO": toDate,
+      "GAME_CODE": game,//null
+      "ADMIN_CODE":admCode,
+      "STOCKIST_CODE":stockist,
+      "DEALER_CODE":dealer,
+      "AGENT_CODE":agent,
+      "TYPE":type,
+      "NUMBER":number,
+      "RANK":null,
+      "BOOKING_DOCNO":docno,
+      "CHILD_PRICE":childPrice,
+      "TYPE_LIST":typeList,
+      "COMPANY_LIST":companyList
+    });
+    dprint('api/salesReport');
+    dprint(request);
+    var response = await ApiManager().postLoading('api/salesReport',request,"S").catchError((error){
+      if (error is BadRequestException) {
+        dprint(error.toString());
+      } else {
+        handleError(error);
+      }
+    });
+    dprint(response);
+    if (response == null) return;
+    return response;
+  }
+
 
 }

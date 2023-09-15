@@ -81,7 +81,7 @@ class _HomeThemeState extends State<HomeTheme> {
   @override
   void initState() {
     // TODO: implement initState
-    g.wstrCompany = "02";
+    g.wstrCompany = "00";
     g.wstrCompanyMqKey = "dxbltrker6";
     g.wstrThemeUrl = "https://www.google.com/";
     g.wstrBaseUrl = "http://dxbltr1-001-site1.dtempurl.com/";

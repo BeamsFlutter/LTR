@@ -1,5 +1,5 @@
 
- 
+
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -61,10 +61,10 @@ class _BookingState extends State<Booking> {
   var gSelectS = false;
 
   //price
-  var supPrice  = 8.0;
-  var boxPrice  = 7.0;
-  var twoPrice  = 9.0;
-  var onePrice  = 10.0;
+  var supPrice  = 0.0;
+  var boxPrice  = 0.0;
+  var twoPrice  = 0.0;
+  var onePrice  = 0.0;
 
   //Edit
   var editDocno = "";
@@ -2957,8 +2957,11 @@ class _BookingState extends State<Booking> {
 
         try{
           setState(() {
+            dprint("========================================>>>>>>>>>>>>>>>>>>>PRICE");
             for(var e  in value){
-              var type = e["PLAN"];
+
+              var type = e["TYPE"];
+              dprint(e);
               if(type == "SUPER"){
                 supPrice = g.mfnDbl(e["PRICE"].toString());
               }else if(type == "BOX"){
@@ -2968,7 +2971,13 @@ class _BookingState extends State<Booking> {
               }else if(type == "A"){
                 onePrice = g.mfnDbl(e["PRICE"].toString());
               }
+
             }
+            dprint("PRZE supPrice $supPrice");
+            dprint("PRZE boxPrice $boxPrice");
+            dprint("PRZE twoPrice $twoPrice");
+            dprint("PRZE onePrice $onePrice");
+            dprint("========================================>>>>>>>>>>>>>>>>>>>PRICE");
           });
         }catch(e){
           dprint(e);

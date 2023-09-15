@@ -648,6 +648,7 @@ Widget subHead(name){
         var formatDate14 = DateFormat('MMMM');
         var formatDate15 = DateFormat('dd MMM yyyy');
         var formatDate16 = DateFormat('dd');
+        var formatDate17 = DateFormat('dd MMM yyyy hh:mm a');
 
         try{
             switch(mode){
@@ -713,6 +714,10 @@ Widget subHead(name){
                 break;
                 case 16:{
                     dateRtn =  formatDate16.format(date);
+                }
+                break;
+                case 17:{
+                    dateRtn =  formatDate17.format(date);
                 }
                 break;
                 default: {

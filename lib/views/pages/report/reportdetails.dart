@@ -32,6 +32,7 @@ class _ReportsState extends State<ReportDetails> {
   var fFromDate =  DateTime.now();
   var fToDate =  DateTime.now();
 
+  var fAdminCode = "ALL";
   var fStockistCode = "ALL";
   var fDealerCode = "ALL";
   var fAgentCode = "ALL";
@@ -181,7 +182,30 @@ class _ReportsState extends State<ReportDetails> {
                   gapHC(10),
                   Row(
                     children: [
-                      (g.wstrUserRole == "ADMIN")?
+                      (g.wstrCompany == "00")?
+                      Expanded(child: Bounce(
+                        onPressed: (){
+                          Navigator.push(context, MaterialPageRoute(builder: (context) =>   UserSearch(pRoleCode: "Admin", pUserCode: "", pFnCallBack: fnSearchCallBack,pAllYn: "Y")));
+                        },
+                        duration: const Duration(milliseconds: 110),
+                        child: Container(
+                          margin:const  EdgeInsets.symmetric(horizontal: 2),
+                          padding: const EdgeInsets.all(10),
+                          decoration: boxOutlineCustom1(Colors.white, 5, Colors.black, 1.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Row(
+                                children: [
+                                  tcn('Admin ', Colors.black, 10),
+                                  tc(fAdminCode.toString(), Colors.black, 13),
+                                ],
+                              ),
+                              const Icon(Icons.search,color: Colors.grey,size: 18,)
+                            ],
+                          ),
+                        ),
+                      )):(g.wstrUserRole == "ADMIN")?
                       Expanded(child: Bounce(
                         onPressed: (){
                           Navigator.push(context, MaterialPageRoute(builder: (context) =>   UserSearch(pRoleCode: "Stockist", pUserCode: g.wstrUserCd.toString(), pFnCallBack: fnSearchCallBack,pAllYn: "Y")));
@@ -666,6 +690,12 @@ class _ReportsState extends State<ReportDetails> {
 
         }else if(rolecode == "Agent"){
           fAgentCode = usercd;
+
+        }else if(rolecode == "Admin"){
+          fAdminCode = usercd;
+          fStockistCode = "";
+          fDealerCode = "";
+          fAgentCode = "";
 
         }
       });

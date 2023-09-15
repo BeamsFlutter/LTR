@@ -12,6 +12,7 @@ import 'package:ltr/controller/global/globalValues.dart';
 import 'package:ltr/services/apiController.dart';
 import 'package:ltr/views/components/common/common.dart';
 import 'package:ltr/views/pages/home/homepage.dart';
+import 'package:ltr/views/pages/home/specialHome.dart';
 import 'package:ltr/views/styles/colors.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -244,10 +245,31 @@ class _LoginPageState extends State<LoginPage> {
 
   }
   fnGoHome(){
+    if(g.wstrCompany == "00"){
 
-    Navigator.pushReplacement(context, MaterialPageRoute(
-        builder: (context) =>  const HomePage()
-    ));
+      if(mounted){
+        setState(() {
+          setState(() {
+            g.wstrSelectedGame = "";
+            g.wstrSelectedGameName = "";
+            g.wstrGameColor = adminColor;
+            g.wstrGameBColor = adminButtonColor;
+            g.wstrGameTColor = adminTextColor;
+            g.wstrGameOTColor = adminOnTextColor;
+          });
+        });
+      }
+
+
+      Navigator.pushReplacement(context, MaterialPageRoute(
+          builder: (context) =>  const SpecialHome()
+      ));
+    }else{
+      Navigator.pushReplacement(context, MaterialPageRoute(
+          builder: (context) =>  const HomePage()
+      ));
+    }
+
   }
 
   //==================================API CALL

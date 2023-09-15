@@ -8,14 +8,14 @@ import 'package:ltr/views/pages/payment/payment.dart';
 import 'package:ltr/views/pages/user/usersearch.dart';
 import 'package:ltr/views/styles/colors.dart';
 
-class PaymentDetails extends StatefulWidget {
-  const PaymentDetails({Key? key}) : super(key: key);
+class PaymentReport extends StatefulWidget {
+  const PaymentReport({Key? key}) : super(key: key);
 
   @override
-  _PaymentDetailsState createState() => _PaymentDetailsState();
+  _PaymentReportState createState() => _PaymentReportState();
 }
 
-class _PaymentDetailsState extends State<PaymentDetails> {
+class _PaymentReportState extends State<PaymentReport> {
 
   //Global
   var g =  Global();
@@ -64,7 +64,7 @@ class _PaymentDetailsState extends State<PaymentDetails> {
                     ),
                   ),
                   gapWC(5),
-                  tcn("Payment Details", Colors.white, 20)
+                  tcn("Payment Report", Colors.white, 20)
                 ],
               ),
             ),
@@ -296,25 +296,6 @@ class _PaymentDetailsState extends State<PaymentDetails> {
                   })
             ),
             gapHC(5),
-            Bounce(
-              onPressed: (){
-                Navigator.push(context, MaterialPageRoute(builder: (context) =>   const Payment()));
-              },
-              duration: const Duration(milliseconds: 110),
-              child: Container(
-                decoration: boxDecoration(g.wstrGameBColor, 30),
-                margin: const EdgeInsets.symmetric(vertical: 10,horizontal: 10),
-                padding: const EdgeInsets.symmetric(vertical: 12,horizontal: 10),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(Icons.add,color: g.wstrGameOTColor,size: 16,),
-                    gapWC(5),
-                    tcn('ADD NEW', g.wstrGameOTColor, 16)
-                  ],
-                ),
-              ),
-            )
 
           ],
         ),

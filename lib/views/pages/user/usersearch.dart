@@ -253,7 +253,7 @@ class _UserSearchState extends State<UserSearch> {
     //   user = g.wstrUserCd;
     // }
     var srmode  = (widget.pBlockMode??"").toString().isEmpty?null:widget.pBlockMode;
-    futureForm = apiCall.apiGetChildUser(g.wstrCompany, user,wstrRole,txtSearch.text,srmode);
+    futureForm = apiCall.apiGetChildUser(g.wstrCompany, user.isEmpty?null:user ,wstrRole,txtSearch.text,srmode);
     futureForm.then((value) => apiGetUserListRes(value));
   }
 
