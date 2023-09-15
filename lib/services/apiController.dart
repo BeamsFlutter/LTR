@@ -1157,4 +1157,29 @@ class ApiCall  with BaseController{
     return response;
   }
 
+  Future<dynamic> apiPaymentReport(company,from,to,txnUser,toUser,txnMode) async {
+    var request = jsonEncode(<dynamic, dynamic>{
+      "COMPANY":company,
+      "DATE_FROM":from,
+      "DATE_TO":to,
+      "TXN_USER":txnUser ,
+      "TXN_TO_USER":toUser, //PASS NULL TO GET ALL USER SUMMERY,
+      "TXN_MODE":txnMode,//REC or PAY
+      "PAGE":1,
+      "PAGE_COUNT":100
+    });
+    dprint('api/paymentReport');
+    dprint(request);
+    var response = await ApiManager().post('api/paymentReport',request).catchError((error){
+      if (error is BadRequestException) {
+        dprint(error.toString());
+      } else {
+        handleError(error);
+      }
+    });
+    dprint(response);
+    if (response == null) return;
+    return response;
+  }
+
 }

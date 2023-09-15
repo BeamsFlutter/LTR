@@ -22,6 +22,7 @@ import 'package:ltr/views/pages/number/gamelist.dart';
 import 'package:ltr/views/pages/number/globalcount.dart';
 import 'package:ltr/views/pages/number/numbercount.dart';
 import 'package:ltr/views/pages/payment/payment.dart';
+import 'package:ltr/views/pages/payment/paymentDetails.dart';
 import 'package:ltr/views/pages/report/report.dart';
 import 'package:ltr/views/pages/settings/appUpdate.dart';
 import 'package:ltr/views/pages/settings/settings.dart';
@@ -752,7 +753,7 @@ class _MainPageState extends State<MainPage> {
         else if(nav == 21){
           Navigator.push(context, MaterialPageRoute(builder: (context) =>   const OtherSales()));
         } else if(nav == 22){
-          Navigator.push(context, MaterialPageRoute(builder: (context) =>   const Payment()));
+          Navigator.push(context, MaterialPageRoute(builder: (context) =>   const PaymentDetails()));
         }
         else{
           Navigator.push(context, MaterialPageRoute(builder: (context) =>   UserList(pRoleCode: text,)));

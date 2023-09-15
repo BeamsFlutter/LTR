@@ -28,13 +28,22 @@ class _PaymentState extends State<Payment> {
   //Page Variables
   var frPayMode  = "REC";
   var frOutStanding  = 0.00;
-  var fStockistCode = "";
+  var fSelectedUserCode = "";
+  var fSelectedUserMode = "";
+
   var wstrPageMode = "ADD";
 
   //Controller
   var txtAmount = TextEditingController();
   var txtRemarks = TextEditingController();
 
+  @override
+  void initState() {
+    // TODO: implement initState
+    fnGetPageData();
+    super.initState();
+
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -86,13 +95,27 @@ class _PaymentState extends State<Payment> {
                     tcn(' > Select Transaction User', Colors.black, 13),
                     const Divider(),
                     gapHC(5),
+                    g.wstrUserRole == "STOCKIST"?
+                    Row(
+                      children: [
+                        wUserSelection("Admin"),
+                        wUserSelection("Dealer")
+                      ],
+                    ):g.wstrUserRole == "DEALER"?
+                    Row(
+                      children: [
+                        wUserSelection("Stockist"),
+                        wUserSelection("Agent")
+                      ],
+                    ):gapHC(0),
+                    gapHC(5),
                     Row(
                       children: [
 
                         Expanded(child: Bounce(
                           onPressed: (){
 
-                            Navigator.push(context, MaterialPageRoute(builder: (context) =>   UserSearch(pRoleCode: "Stockist", pUserCode: g.wstrUserCd.toString(), pFnCallBack: fnSearchCallBack,)));
+                            Navigator.push(context, MaterialPageRoute(builder: (context) =>   UserSearch(pRoleCode: fSelectedUserMode, pUserCode: g.wstrUserCd.toString(), pFnCallBack: fnSearchCallBack,)));
 
                           },
                           duration: const Duration(milliseconds: 110),
@@ -105,8 +128,9 @@ class _PaymentState extends State<Payment> {
                               children: [
                                 Row(
                                   children: [
-                                    tcn('Stockist ', Colors.black, 10),
-                                    tc(fStockistCode.toString(), Colors.black, 15),
+                                    tcn(fSelectedUserMode, Colors.black, 10),
+                                    gapWC(5),
+                                    tc(fSelectedUserCode.toString(), Colors.black, 15),
                                   ],
                                 ),
                                 const Icon(Icons.search,color: Colors.grey,size: 18,)
@@ -171,7 +195,7 @@ class _PaymentState extends State<Payment> {
                 wstrPageMode == "ADD"?
                 Expanded(child: GestureDetector(
                   onTap: (){
-
+                    apiPaymentSave();
                   },
                   child: Container(
                     decoration: boxDecoration(g.wstrGameBColor, 30),
@@ -262,16 +286,53 @@ class _PaymentState extends State<Payment> {
       );
     }
 
+    Widget wUserSelection(mode){
+      return Flexible(child: GestureDetector(
+        onTap: (){
+          if(mounted){
+            setState(() {
+              fSelectedUserCode = "";
+              fSelectedUserMode = mode;
+            });
+          }
+        },
+        child: Container(
+          decoration: boxBaseDecoration(greyLight, 0),
+          padding: const EdgeInsets.all(5),
+          margin: const EdgeInsets.symmetric(horizontal: 10),
+          child: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(4),
+                decoration: boxBaseDecoration(Colors.white, 30),
+                child: Container(
+                  height: 18,
+                  width: 18,
+                  decoration: fSelectedUserMode == mode?boxDecoration( bgColorDark, 30):boxBaseDecoration( Colors.white, 30),
+                  child: const Icon(Icons.done,color: Colors.white,size: 13,),
+                ),
+              ),
+              gapWC(10),
+              tcn(mode,fSelectedUserMode == mode? Colors.black: Colors.grey, 15)
+            ],
+          ),
+        ),
+      ));
+    }
+
   //=======================================================PAGE FN
+
+
+  fnGetPageData(){
+    fnSetRoleWise();
+  }
 
   fnSearchCallBack(rolecode,usercd){
     if(mounted){
       setState(() {
-        if(rolecode == "Stockist"){
-          if(fStockistCode != usercd){
-          }
-          fStockistCode = usercd;
+        if(fSelectedUserCode != usercd){
         }
+        fSelectedUserCode = usercd;
       });
       apiCheckOutstanding();
       // if(rolecode == "Agent"){
@@ -280,10 +341,26 @@ class _PaymentState extends State<Payment> {
     }
   }
 
+  fnSetRoleWise(){
+    if(mounted){
+      setState(() {
+        if(g.wstrUserRole.toString() == "ADMIN"){
+          fSelectedUserMode = "Stockist";
+        }else if(g.wstrUserRole == "STOCKIST"){
+          fSelectedUserMode = "Dealer";
+        }else if(g.wstrUserRole == "DEALER"){
+          fSelectedUserMode = "Agent";
+        }else if(g.wstrUserRole == "AGENT"){
+          fSelectedUserMode = "Dealer";
+        }
+      });
+    }
+  }
+
   //=======================================================API CALL
 
   apiCheckOutstanding(){
-    futureForm =  ApiCall().apiPayoutStandingReport(g.wstrCompany, fStockistCode);
+    futureForm =  ApiCall().apiPayoutStandingReport(g.wstrCompany, fSelectedUserCode);
     futureForm.then((value) => apiCheckOutstandingRes(value));
   }
   apiCheckOutstandingRes(value){
@@ -303,9 +380,39 @@ class _PaymentState extends State<Payment> {
   }
 
   apiPaymentSave(){
-    
+
+    if(fSelectedUserCode.toString().isEmpty){
+      errorMsg(context, "Select To User");
+      return;
+    }
+
+    if(g.mfnDbl(txtAmount.text) <= 0 ){
+      errorMsg(context, "Enter valid amount");
+      return;
+    }
+
+    futureForm = apiCall.apiSavePayment(g.wstrCompany, wstrPageMode, "", "", g.wstrUserCd, fSelectedUserCode, g.mfnDbl(txtAmount.text), txtRemarks.text, frPayMode);
+    futureForm.then((value) => apiPaymentSaveRes(value));
+
   }
 
+  apiPaymentSaveRes(value){
+    if(mounted){
+      if(g.fnValCheck(value)){
+        //[{STATUS: 1, MSG: ADDED}]
+        var sts = (value[0]["STATUS"]??"").toString();
+        var msg = (value[0]["MSG"]??"").toString();
+        if(sts == "1"){
+          Navigator.pop(context);
+          successMsg(context, "Success");
+        }else{
+          errorMsg(context, msg.toString());
+        }
+      }else{
+        errorMsg(context, "Please try again");
+      }
+    }
+  }
 
 
 }
