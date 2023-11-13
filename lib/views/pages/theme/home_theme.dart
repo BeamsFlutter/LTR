@@ -81,10 +81,10 @@ class _HomeThemeState extends State<HomeTheme> {
   @override
   void initState() {
     // TODO: implement initState
-    g.wstrCompany = "00";
+    g.wstrCompany = "06";
     g.wstrCompanyMqKey = "dxbltrker6";
     g.wstrThemeUrl = "https://www.google.com/";
-    g.wstrBaseUrl = "http://dxbltr1-001-site1.dtempurl.com/";
+    g.wstrBaseUrl = "http://68.178.174.207:1100/";
 
     fnGetPageData();
     setupMqttClient();

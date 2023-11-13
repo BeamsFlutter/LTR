@@ -72,8 +72,8 @@ dev_dependencies:
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 flutter_icons:
-  image_path_android: "assets/icons/irctc.png"
-  image_path_ios: "assets/icons/irctc.png"
+  image_path_android: "assets/icons/google.png"
+  image_path_ios: "assets/icons/google.png"
   android: true # can specify file name here e.g. "ic_launcher"
   ios: true # can specify file name here e.g. "My-Launcher-Icon"
   #flutter pub run flutter_launcher_icons:main

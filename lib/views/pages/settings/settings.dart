@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bounce/flutter_bounce.dart';
 import 'package:ltr/controller/global/globalValues.dart';
 import 'package:ltr/views/components/common/common.dart';
+import 'package:ltr/views/pages/booking/extendBooking.dart';
 import 'package:ltr/views/pages/number/favnumber.dart';
 import 'package:ltr/views/pages/number/globalprize.dart';
 import 'package:ltr/views/pages/number/globalsalescommission.dart';
@@ -110,6 +111,9 @@ class _ReportsState extends State<Settings> {
           else if(e["CODE"] == 010){
             Navigator.push(context, MaterialPageRoute(builder: (context) =>   const GameTimeSettings()));
           }
+          else if(e["CODE"] == 011){
+            Navigator.push(context, MaterialPageRoute(builder: (context) =>   const ExtendBooking()));
+          }
         },
         duration: const Duration(milliseconds: 110),
         child: Container(
@@ -194,6 +198,11 @@ class _ReportsState extends State<Settings> {
             "NAME":"Global Number Count",
             "ICON":Icons.numbers_sharp
           },
+          // {
+          // "CODE":011,
+          // "NAME":"Extend Game",
+          // "ICON":Icons.calendar_month
+          // },
         ];
       });
     }

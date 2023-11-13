@@ -27,6 +27,7 @@ class _PaymentState extends State<Payment> {
 
   //Page Variables
   var frPayMode  = "REC";
+  var frParentMode  = "REC";
   var frOutStanding  = 0.00;
   var fSelectedUserCode = "";
   var fSelectedUserMode = "";
@@ -98,14 +99,14 @@ class _PaymentState extends State<Payment> {
                     g.wstrUserRole == "STOCKIST"?
                     Row(
                       children: [
-                        wUserSelection("Admin"),
-                        wUserSelection("Dealer")
+                        wUserSelection("Admin","Y"),
+                        wUserSelection("Dealer","")
                       ],
                     ):g.wstrUserRole == "DEALER"?
                     Row(
                       children: [
-                        wUserSelection("Stockist"),
-                        wUserSelection("Agent")
+                        wUserSelection("Stockist","Y"),
+                        wUserSelection("Agent","")
                       ],
                     ):gapHC(0),
                     gapHC(5),
@@ -115,7 +116,9 @@ class _PaymentState extends State<Payment> {
                         Expanded(child: Bounce(
                           onPressed: (){
 
-                            Navigator.push(context, MaterialPageRoute(builder: (context) =>   UserSearch(pRoleCode: fSelectedUserMode, pUserCode: g.wstrUserCd.toString(), pFnCallBack: fnSearchCallBack,)));
+                            if(frParentMode != "Y"){
+                              Navigator.push(context, MaterialPageRoute(builder: (context) =>   UserSearch(pRoleCode: fSelectedUserMode, pUserCode: g.wstrUserCd.toString(), pFnCallBack: fnSearchCallBack,)));
+                            }
 
                           },
                           duration: const Duration(milliseconds: 110),
@@ -286,12 +289,16 @@ class _PaymentState extends State<Payment> {
       );
     }
 
-    Widget wUserSelection(mode){
+    Widget wUserSelection(mode,pMode){
       return Flexible(child: GestureDetector(
         onTap: (){
           if(mounted){
             setState(() {
+              frParentMode = pMode;
               fSelectedUserCode = "";
+              if(pMode== "Y"){
+                fSelectedUserCode = g.wstrParentCode;
+              }
               fSelectedUserMode = mode;
             });
           }

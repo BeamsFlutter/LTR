@@ -1027,8 +1027,8 @@ class _SalesReportState extends State<SalesReport> {
         fPageMode = mode;
       });
     }
-
-    futureForm =  ApiCall().apiSalesReport(g.wstrCompany, fromDate,toDate, game, admCode,stockist, dealer, agent, type, number,"",child,typeList);
+    var supYn =  g.wstrCompany == "00"?"Y":"";
+    futureForm =  ApiCall().apiSalesReport(g.wstrCompany, fromDate,toDate, game, admCode,stockist, dealer, agent, type, number,"",child,typeList,supYn);
     futureForm.then((value) => apiSalesReportRes(value));
   }
 

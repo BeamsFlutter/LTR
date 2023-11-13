@@ -175,14 +175,14 @@ class _RetailBookingState extends State<RetailBooking> {
                         },
                         duration: const Duration(milliseconds: 110),
                         child: Container(
-                          decoration: boxDecoration(Colors.green, 30),
+                          decoration: boxDecoration(Colors.white, 30),
                           padding: const EdgeInsets.symmetric(vertical: 5,horizontal: 20),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Icon(Icons.task_alt,color: Colors.white,size: 15,),
+                              Icon(Icons.task_alt,color: Colors.black,size: 15,),
                               gapWC(5),
-                              tcn('Save', Colors.white, 15)
+                              tcn('Save', Colors.black, 15)
                             ],
                           ),
                         ),
@@ -756,7 +756,7 @@ class _RetailBookingState extends State<RetailBooking> {
                     },
                     duration: const Duration(milliseconds: 110),
                     child: Container(
-                      decoration: boxDecoration(Colors.green, 30),
+                      decoration: boxDecoration(Colors.black, 30),
                       padding: const EdgeInsets.symmetric(vertical: 10),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,

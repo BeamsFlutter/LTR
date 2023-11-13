@@ -228,6 +228,7 @@ class _LoginPageState extends State<LoginPage> {
       g.wstrUserName = g.mfnTxt(data["USER_DESCP"]);
       g.wstrUserRole = g.mfnTxt(data["ROLE_CODE"]);
       g.wstrUserRoleDescp = g.mfnTxt(data["ROLE_DESCP"]);
+      g.wstrParentCode = g.mfnTxt(data["PARENT_CODE"]);
       g.wstrSysTime =  DateTime.parse(data["SYS_DATE"]);
       g.wstrCurrTime =  DateTime.now();
 

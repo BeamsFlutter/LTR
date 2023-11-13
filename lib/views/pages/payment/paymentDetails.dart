@@ -25,6 +25,7 @@ class _PaymentDetailsState extends State<PaymentDetails> {
   //Page Variables
   var fReportData = [];
   var frPayMode  = "ALL";
+  var frParentMode  = "";
   var fSelectedUserCode = "";
   var fSelectedUserMode = "";
 
@@ -80,14 +81,14 @@ class _PaymentDetailsState extends State<PaymentDetails> {
                   g.wstrUserRole == "STOCKIST"?
                   Row(
                     children: [
-                      wUserSelection("Admin"),
-                      wUserSelection("Dealer")
+                      wUserSelection("Admin","Y"),
+                      wUserSelection("Dealer","")
                     ],
                   ):g.wstrUserRole == "DEALER"?
                   Row(
                     children: [
-                      wUserSelection("Stockist"),
-                      wUserSelection("Agent")
+                      wUserSelection("Stockist","Y"),
+                      wUserSelection("Agent","")
                     ],
                   ):gapHC(0),
                   gapHC(2),
@@ -97,7 +98,9 @@ class _PaymentDetailsState extends State<PaymentDetails> {
                       Expanded(child: Bounce(
                         onPressed: (){
 
-                          Navigator.push(context, MaterialPageRoute(builder: (context) =>   UserSearch(pRoleCode: fSelectedUserMode, pUserCode: g.wstrUserCd.toString(), pFnCallBack: fnSearchCallBack,)));
+                          if(frParentMode != "Y"){
+                            Navigator.push(context, MaterialPageRoute(builder: (context) =>   UserSearch(pRoleCode: fSelectedUserMode, pUserCode: g.wstrUserCd.toString(), pFnCallBack: fnSearchCallBack,)));
+                          }
 
                         },
                         duration: const Duration(milliseconds: 110),
@@ -351,18 +354,22 @@ class _PaymentDetailsState extends State<PaymentDetails> {
     );
   }
 
-  Widget wUserSelection(mode){
+  Widget wUserSelection(mode,pMode){
     return Flexible(child: GestureDetector(
       onTap: (){
         if(mounted){
           setState(() {
+            frParentMode = pMode;
             fSelectedUserCode = "";
+            if(pMode== "Y"){
+              fSelectedUserCode = g.wstrParentCode;
+            }
             fSelectedUserMode = mode;
           });
         }
       },
       child: Container(
-        decoration: boxBaseDecoration(greyLight, 0),
+        decoration: boxBaseDecoration(greyLight.withOpacity(0.5), 30),
         padding: const EdgeInsets.all(5),
         margin: const EdgeInsets.symmetric(horizontal: 10),
         child: Row(
@@ -378,7 +385,7 @@ class _PaymentDetailsState extends State<PaymentDetails> {
               ),
             ),
             gapWC(10),
-            tcn(mode,fSelectedUserMode == mode? Colors.black: Colors.grey, 15)
+            tcn(mode,fSelectedUserMode == mode? Colors.black: Colors.black, 15)
           ],
         ),
       ),

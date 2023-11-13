@@ -926,7 +926,7 @@ class ApiCall  with BaseController{
   }
 
 
-  Future<dynamic> apiSalesReport(company,date,toDate,game,admCode,stockist,dealer,agent,type,number,docno,childPrice,typeList) async {
+  Future<dynamic> apiSalesReport(company,date,toDate,game,admCode,stockist,dealer,agent,type,number,docno,childPrice,typeList,supAdmin) async {
     var request = jsonEncode(<dynamic, dynamic>{
       "COMPANY":company,
       "DATE_FROM": date,
@@ -942,7 +942,7 @@ class ApiCall  with BaseController{
       "BOOKING_DOCNO":docno,
       "CHILD_PRICE":childPrice,
       "TYPE_LIST":typeList,
-      "COMPANY_LIST":[
+      "COMPANY_LIST":supAdmin == "Y"?[]:[
         {"COL_VAL":company}
       ]
     });
