@@ -69,9 +69,9 @@ class _SalesReportState extends State<SalesReport> {
                           Navigator.pop(context);
                         },
                         child: Container(
-                          //decoration: boxBaseDecoration(greyLight,10),
+                          decoration: boxBaseDecoration(Colors.white,10),
                           padding: const EdgeInsets.all(5),
-                          child: const Icon(Icons.arrow_back_ios_rounded,color: Colors.white,size: 20,),
+                          child: const Icon(Icons.arrow_back,color: Colors.black,size: 20,),
                         ),
                       ),
                       gapWC(5),
@@ -112,6 +112,8 @@ class _SalesReportState extends State<SalesReport> {
                           ],
                         ),
                       ),
+                      g.wstrUserRole == "AGENT" && g.wstrCanViewComm != "Y"?
+                      gapHC(0):
                       Expanded(child: Row(
                         children: [
                           tcn('Commission', Colors.white, 12),
@@ -259,6 +261,8 @@ class _SalesReportState extends State<SalesReport> {
                                                   ],
                                                 ),
                                               ),
+                                              g.wstrUserRole == "AGENT" && g.wstrCanViewComm != "Y"?
+                                              gapHC(0):
                                               Expanded(child: Row(
                                                 children: [
                                                   tcn('Commission', Colors.white, 12),
@@ -386,6 +390,8 @@ class _SalesReportState extends State<SalesReport> {
                                             tcn(g.mfnDbl(e["TOTAL"].toString()).toStringAsFixed(2), Colors.black, 14)
                                           ],
                                         ),
+                                        g.wstrUserRole == "AGENT" && g.wstrCanViewComm != "Y"?
+                                        gapHC(0):
                                         Row(
                                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                           children: [

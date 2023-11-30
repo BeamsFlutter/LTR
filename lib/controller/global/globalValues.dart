@@ -50,6 +50,7 @@ class Global {
     _wstrCompanyMqKey  = "";
     _wstrThemeUrl  = "";
     _wstrParentCode = '';
+    _wstrCanViewComm = '';
   }
   var _wstrToken  = '';
   var _wstrCompany = '';
@@ -63,6 +64,7 @@ class Global {
   var _wstrUserRole = '';
   var _wstrUserRoleDescp = '';
   var _wstrParentCode = '';
+  var _wstrCanViewComm = '';
 
   var _wstrIp = '';
   var _wstrDeviceIP;
@@ -98,6 +100,12 @@ class Global {
   var _wstrGameBColor = Colors.white;
   var _wstrGameTColor = Colors.white;
   var _wstrGameOTColor = Colors.white;
+
+  get wstrCanViewComm => _wstrCanViewComm;
+
+  set wstrCanViewComm(value) {
+    _wstrCanViewComm = value;
+  }
 
   get wstrParentCode => _wstrParentCode;
 

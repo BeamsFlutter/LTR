@@ -13,6 +13,7 @@ import 'package:ltr/services/apiController.dart';
 import 'package:ltr/views/components/common/common.dart';
 import 'package:ltr/views/pages/home/homepage.dart';
 import 'package:ltr/views/pages/home/specialHome.dart';
+import 'package:ltr/views/pages/home/specialUserHome.dart';
 import 'package:ltr/views/styles/colors.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -231,6 +232,7 @@ class _LoginPageState extends State<LoginPage> {
       g.wstrParentCode = g.mfnTxt(data["PARENT_CODE"]);
       g.wstrSysTime =  DateTime.parse(data["SYS_DATE"]);
       g.wstrCurrTime =  DateTime.now();
+      g.wstrCanViewComm =   g.mfnTxt(data["CANVIEW_COM"]);
 
       g.wstrThemeUrl = g.mfnTxt(data["THEME"]);
       prefs.setString('wstrThemeUrl', g.mfnTxt(data["THEME"]));
@@ -246,7 +248,7 @@ class _LoginPageState extends State<LoginPage> {
 
   }
   fnGoHome(){
-    if(g.wstrCompany == "00"){
+    if(g.wstrCompany == "00" || g.wstrUserRole == "SPC"){
 
       if(mounted){
         setState(() {
@@ -261,10 +263,17 @@ class _LoginPageState extends State<LoginPage> {
         });
       }
 
+      if(g.wstrCompany == "00"){
+        Navigator.pushReplacement(context, MaterialPageRoute(
+            builder: (context) =>  const SpecialHome()
+        ));
+      }else{
+        Navigator.pushReplacement(context, MaterialPageRoute(
+            builder: (context) =>  const SpecialUserHome()
+        ));
+      }
 
-      Navigator.pushReplacement(context, MaterialPageRoute(
-          builder: (context) =>  const SpecialHome()
-      ));
+
     }else{
       Navigator.pushReplacement(context, MaterialPageRoute(
           builder: (context) =>  const HomePage()

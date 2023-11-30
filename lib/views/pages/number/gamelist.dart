@@ -50,9 +50,9 @@ class _GameListState extends State<GameList> {
                       Navigator.pop(context);
                     },
                     child: Container(
-                      //decoration: boxBaseDecoration(greyLight,10),
+                      decoration: boxBaseDecoration(Colors.white,10),
                       padding: const EdgeInsets.all(5),
-                      child: const Icon(Icons.arrow_back_ios_rounded,color: Colors.white,size: 20,),
+                      child: const Icon(Icons.arrow_back,color: Colors.black,size: 20,),
                     ),
                   ),
                   gapWC(5),
