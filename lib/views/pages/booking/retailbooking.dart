@@ -123,17 +123,7 @@ class _RetailBookingState extends State<RetailBooking> {
                     children: [
                       Row(
                         children: [
-                          GestureDetector(
-                            onTap: (){
-                              Navigator.pop(context);
-                            },
-                            child: Container(
-                              decoration: boxBaseDecoration(Colors.white,10),
-                              padding: const EdgeInsets.all(5),
-                              child: const Icon(Icons.arrow_back,color: Colors.black,size: 20,),
-                            ),
-                          ),
-                          gapWC(5),
+
 
                           widget.mode != "EDIT"?
                           PopupMenuButton<Menu>(
@@ -203,6 +193,16 @@ class _RetailBookingState extends State<RetailBooking> {
                               tcn('Update', g.wstrGameOTColor, 15)
                             ],
                           ),
+                        ),
+                      ),
+                      GestureDetector(
+                        onTap: (){
+                          Navigator.pop(context);
+                        },
+                        child: Container(
+                          decoration: boxBaseDecoration(Colors.white,10),
+                          padding: const EdgeInsets.all(5),
+                          child: const Icon(Icons.segment,color: Colors.black,size: 20,),
                         ),
                       ),
 

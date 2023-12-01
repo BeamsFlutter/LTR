@@ -17,6 +17,7 @@ import 'package:ltr/views/pages/booking/publishresult.dart';
 import 'package:ltr/views/pages/booking/result.dart';
 import 'package:ltr/views/pages/booking/retailbooking.dart';
 import 'package:ltr/views/pages/home/countview.dart';
+import 'package:ltr/views/pages/home/sidedrawer.dart';
 import 'package:ltr/views/pages/number/favnumber.dart';
 import 'package:ltr/views/pages/number/gamelist.dart';
 import 'package:ltr/views/pages/number/globalcount.dart';
@@ -104,192 +105,7 @@ class _MainPageState extends State<MainPage> {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
       key: scaffoldKey,
-      endDrawer: Container(
-          margin: MediaQuery.of(context).padding,
-          width:size.width * 0.8,
-          color: Colors.white,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                padding:const EdgeInsets.symmetric(vertical: 15,horizontal: 10),
-                decoration: boxDecoration(g.wstrGameColor, 0),
-                child: Column(
-                  children: [
-                      Row(
-                        children: [
-                          const CircleAvatar(
-                            backgroundColor: Colors.white,
-                            child:  Icon(Icons.person,color: grey,),
-                          ),
-                          gapWC(10),
-                          Expanded(child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              tc((g.wstrUserCd??"").toString(), g.wstrGameOTColor, 15),
-                              tc((g.wstrUserRole??"").toString(), g.wstrGameOTColor, 10)
-                            ],
-                          ))
-                        ],
-                      ),
-                    gapHC(5),
-                    const Divider(
-                      height: 8,
-                      color: Colors.white,
-                      thickness: 0.2,
-                    ),
-                    gapHC(5),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            tcn("GAME", Colors.white  , 15),gapWC(5),
-                            tc((g.wstrSelectedGameName??"").toString(), Colors.white  , 15)
-                          ],
-                        ),
-                        Bounce(
-                          onPressed: (){
-                            Navigator.pop(context);
-                            Navigator.pop(context);
-                          },
-                          duration: const Duration(milliseconds: 110),
-                          child: Container(
-                            decoration: boxBaseDecoration(greyLight, 30),
-                            padding: const EdgeInsets.symmetric(vertical: 5,horizontal: 20),
-                            child: tcn('Change Game', Colors.black, 13),
-                          ),
-                        ),
-                      ],
-                    ),
-
-                  ],
-                ),
-              ),
-              Expanded(child: Container(
-                padding: const EdgeInsets.all(10),
-                decoration: boxDecoration(Colors.white, 0),
-                child: SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      tc('Booking', Colors.black , 14),
-                      gapHC(5),
-                      const Divider(
-                        thickness: 0.5,
-                        height: 15,
-                      ),
-                      gapHC(5),
-                      wMenuCard('Booking',2),
-                      //wMenuCard('Booking Extended',2),
-                      wMenuCard('Retail Sales',20),
-                     // wMenuCard('Other Sales',21),
-                      wMenuCard('Bill Edit/Delete',13),
-                      wMenuCard('Result View',3),
-                      wMenuCard('Reports',9),
-                      g.wstrUserRole != "AGENT"?
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          tc('Users', Colors.black , 14),
-                          gapHC(5),
-                          const Divider(
-                            thickness: 0.5,
-                            height: 15,
-                          ),
-                          g.wstrUserRole == "ADMIN"?
-                          wMenuCard('Stockist',4):gapHC(0),
-                          (g.wstrUserRole == "ADMIN" || g.wstrUserRole == "STOCKIST")?
-                          wMenuCard('Dealer',4):gapHC(0),
-                          (g.wstrUserRole == "ADMIN" || g.wstrUserRole == "STOCKIST" || g.wstrUserRole == "DEALER")?
-                          wMenuCard('Agent',4):gapHC(0),
-                          g.wstrUserRole == "ADMIN"?
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              tc('Global', Colors.black , 14),
-                              gapHC(5),
-                              const Divider(
-                                thickness: 0.5,
-                                height: 15,
-                              ),
-                              // wMenuCard('Games',8),
-                              wMenuCard('Game Count',10),
-                              wMenuCard('Number Count',5),
-                              wMenuCard('Favorite Numbers',6),
-                              wMenuCard('Result Publish',12)
-                            ],
-                          ):gapHC(0),
-                        ],
-                      ):gapHC(5),
-                      // tc('Reports', Colors.black , 14),
-                      // gapHC(5),
-                      // const Divider(
-                      //   thickness: 0.5,
-                      //   height: 15,
-                      // ),
-                      // gapHC(5),
-                      // wMenuCard('All Reports',9),
-                      // // wMenuCard('Count View',7),
-                      tc('Payment & Receipt', Colors.black , 14),
-                      gapHC(5),
-                      const Divider(
-                        thickness: 0.5,
-                        height: 15,
-                      ),
-                      gapHC(5),
-                      wMenuCard('Payment & Receipt',22),
-                      tc('Details', Colors.black , 14),
-                      gapHC(5),
-                      const Divider(
-                        thickness: 0.5,
-                        height: 15,
-                      ),
-                      gapHC(5),
-                      wMenuCard('Sales Rate',16),
-                      wMenuCard('Prize and DC',17),
-                      tc('Settings', Colors.black , 14),
-                      gapHC(5),
-                      const Divider(
-                        thickness: 0.5,
-                        height: 15,
-                      ),
-                      gapHC(5),
-                      g.wstrUserRole == "ADMIN"?
-                      wMenuCard('App Settings',11):gapHC(0),
-                      g.wstrUserRole == "ADMIN"?
-                      wMenuCard('Special User',19):gapHC(0),
-                      wMenuCard('App Update',18),
-
-
-                    ],
-                  ),
-                ),
-              )),
-              Bounce(
-                onPressed: (){
-                  Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) =>   const HomeTheme()), (route) => false);
-                },
-                duration: const Duration(milliseconds: 110),
-                child: Container(
-                  margin: const EdgeInsets.all(10),
-                  padding: const EdgeInsets.symmetric(horizontal: 10,vertical: 10),
-                  decoration: boxBaseDecoration(Colors.black, 30),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Icon(Icons.power_settings_new,color: Colors.white,size: 18,),
-                      gapWC(10),
-                      tcn('Exit', Colors.white, 18)
-                    ],
-                  ),
-                ),
-              )
-            ],
-          ),
-
-        ),
+      endDrawer: const SideDrawer(),
       body: Container(
         margin: MediaQuery.of(context).padding,
         child: Column(
@@ -309,8 +125,13 @@ class _MainPageState extends State<MainPage> {
                        onTap: (){
                          scaffoldKey.currentState?.openEndDrawer();
                        },
-                       child: const Icon(Icons.segment,color: Colors.white,size: 30,),
+                       child: Container(
+                         decoration: boxBaseDecoration(Colors.white,10),
+                         padding: const EdgeInsets.all(5),
+                         child: const Icon(Icons.segment,color: Colors.black,size: 20,),
+                       ),
                      ),
+
                    ],
                  ),
                  // const Divider(
@@ -888,7 +709,7 @@ class _MainPageState extends State<MainPage> {
 
   //===================================PAGE FN
 
-    fnGetPageData(){
+  fnGetPageData(){
       if(mounted){
         var now = DateTime.now();
         setState(() {
@@ -959,7 +780,7 @@ class _MainPageState extends State<MainPage> {
       }
     }
 
-    fnGameDetailsFill(){
+  fnGameDetailsFill(){
       if(mounted){
         setState(() {
           frSoldCount = 0;

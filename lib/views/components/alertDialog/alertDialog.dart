@@ -17,34 +17,10 @@ class PageDialog{
         return AlertDialog(
             backgroundColor: Colors.transparent,
             content: Container(
-                width: size.width*0.5,
-                height: size.height*0.63,
+                width: size.width*0.7,
+                height: size.height*0.8,
                 decoration: boxDecoration(Colors.white, 10),
-                padding: const EdgeInsets.all(20),
-                child: Column(
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        th(headName,Colors.black,13),
-                        IconButton(onPressed: (){
-                          Navigator.pop(context);
-                        }, icon: Icon(Icons.highlight_remove_sharp,color: Colors.black,size: 30,))
-                      ],
-                    ),
-                    gapHC(5),
-                    Container(
-                      height: size.height*0.5,
-                      child: SingleChildScrollView(
-                          child: Column(
-                            children: [
-                              child
-                            ],
-                          )
-                      ),
-                    )
-                  ],
-                )
+                child: child
 
             )
         );

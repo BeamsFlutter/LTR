@@ -14,6 +14,7 @@ import 'package:ltr/views/components/alertDialog/alertDialog.dart';
 import 'package:ltr/views/components/common/common.dart';
 import 'package:ltr/views/components/enum.dart';
 import 'package:ltr/views/components/inputfield/commonTextField.dart';
+import 'package:ltr/views/pages/home/sidedrawer.dart';
 import 'package:ltr/views/pages/user/usersearch.dart';
 import 'package:ltr/views/styles/colors.dart';
 import 'package:marquee/marquee.dart';
@@ -37,6 +38,7 @@ class _BookingState extends State<Booking> {
   var apiCall  = ApiCall();
   late Future<dynamic> futureForm;
   var wstrPageMode = "ADD";
+  final scaffoldKey = GlobalKey<ScaffoldState>();
 
   //Page variable
   var lstrSelectedGame = "";
@@ -108,6 +110,7 @@ class _BookingState extends State<Booking> {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return WillPopScope(child: Scaffold(
+      key: scaffoldKey,
       resizeToAvoidBottomInset: false,
       body: Container(
         margin: MediaQuery.of(context).padding,
@@ -125,17 +128,17 @@ class _BookingState extends State<Booking> {
                     children: [
                       Row(
                         children: [
-                          GestureDetector(
-                            onTap: (){
-                              Navigator.pop(context);
-                            },
-                            child: Container(
-                              decoration: boxBaseDecoration(Colors.white,10),
-                              padding: const EdgeInsets.all(5),
-                              child: const Icon(Icons.arrow_back,color: Colors.black,size: 20,),
-                            ),
-                          ),
-                          gapWC(5),
+                          // GestureDetector(
+                          //   onTap: (){
+                          //     Navigator.pop(context);
+                          //   },
+                          //   child: Container(
+                          //     decoration: boxBaseDecoration(Colors.white,10),
+                          //     padding: const EdgeInsets.all(5),
+                          //     child: const Icon(Icons.arrow_back,color: Colors.black,size: 20,),
+                          //   ),
+                          // ),
+                          // gapWC(5),
 
                           widget.mode != "EDIT"?
                           PopupMenuButton<Menu>(
@@ -234,6 +237,17 @@ class _BookingState extends State<Booking> {
                           ),
                         ),
                       ),
+                      GestureDetector(
+                        onTap: (){
+                          Navigator.pop(context);
+                        },
+                        child: Container(
+                          decoration: boxBaseDecoration(Colors.white,10),
+                          padding: const EdgeInsets.all(5),
+                          child: const Icon(Icons.segment,color: Colors.black,size: 20,),
+                        ),
+                      ),
+
 
                     ],
                   ),
@@ -257,10 +271,16 @@ class _BookingState extends State<Booking> {
                           if(countList.isNotEmpty){
                             PageDialog().cDialog(context, "WARNING!!", "Do you want to change?\nSelected numbers will Lost.", (){
                               Navigator.pop(context);
-                              Navigator.push(context, MaterialPageRoute(builder: (context) =>   UserSearch(pRoleCode: "Stockist", pUserCode: g.wstrUserCd.toString(), pFnCallBack: fnSearchCallBack,)));
+                              PageDialog().show(context,
+                                  UserSearch(pRoleCode: "Stockist", pUserCode: g.wstrUserCd.toString(), pFnCallBack: fnSearchCallBack,),
+                                  "Choose");
+                             //Navigator.push(context, MaterialPageRoute(builder: (context) =>   UserSearch(pRoleCode: "Stockist", pUserCode: g.wstrUserCd.toString(), pFnCallBack: fnSearchCallBack,)));
                             });
                           }else{
-                            Navigator.push(context, MaterialPageRoute(builder: (context) =>   UserSearch(pRoleCode: "Stockist", pUserCode: g.wstrUserCd.toString(), pFnCallBack: fnSearchCallBack,)));
+                            PageDialog().show(context,
+                                UserSearch(pRoleCode: "Stockist", pUserCode: g.wstrUserCd.toString(), pFnCallBack: fnSearchCallBack,),
+                                "Choose");
+                           // Navigator.push(context, MaterialPageRoute(builder: (context) =>   UserSearch(pRoleCode: "Stockist", pUserCode: g.wstrUserCd.toString(), pFnCallBack: fnSearchCallBack,)));
                           }
 
                          },
@@ -274,7 +294,7 @@ class _BookingState extends State<Booking> {
                             children: [
                               Row(
                                 children: [
-                                  tcn('Stockist ', Colors.black, 10),
+                                  tcn('Stockist ', Colors.black, 8),
                                   tc(fStockistCode.toString(), Colors.black, 13),
                                 ],
                               ),
@@ -295,10 +315,18 @@ class _BookingState extends State<Booking> {
                           if(countList.isNotEmpty){
                             PageDialog().cDialog(context, "WARNING!!", "Do you want to change?\nSelected numbers will Lost.", (){
                               Navigator.pop(context);
-                              Navigator.push(context, MaterialPageRoute(builder: (context) =>   UserSearch(pRoleCode: "Dealer", pUserCode: fStockistCode, pFnCallBack: fnSearchCallBack,)));
+                             // Navigator.push(context, MaterialPageRoute(builder: (context) =>   UserSearch(pRoleCode: "Dealer", pUserCode: fStockistCode, pFnCallBack: fnSearchCallBack,)));
+
+                              PageDialog().show(context,
+                                  UserSearch(pRoleCode: "Dealer", pUserCode: fStockistCode, pFnCallBack: fnSearchCallBack,),
+                                  "Choose");
+
                             });
                           }else{
-                            Navigator.push(context, MaterialPageRoute(builder: (context) =>   UserSearch(pRoleCode: "Dealer", pUserCode: fStockistCode, pFnCallBack: fnSearchCallBack,)));
+                            PageDialog().show(context,
+                                UserSearch(pRoleCode: "Dealer", pUserCode: fStockistCode, pFnCallBack: fnSearchCallBack,),
+                                "Choose");
+                           // Navigator.push(context, MaterialPageRoute(builder: (context) =>   UserSearch(pRoleCode: "Dealer", pUserCode: fStockistCode, pFnCallBack: fnSearchCallBack,)));
                           }
 
 
@@ -313,7 +341,7 @@ class _BookingState extends State<Booking> {
                             children: [
                               Row(
                                 children: [
-                                  tcn('Dealer ', Colors.black, 10),
+                                  tcn('Dealer ', Colors.black, 8),
                                   tc(fDealerCode.toString(), Colors.black, 13),
                                 ],
                               ),
@@ -334,10 +362,17 @@ class _BookingState extends State<Booking> {
                           if(countList.isNotEmpty){
                             PageDialog().cDialog(context, "WARNING!!", "Do you want to change?\nSelected numbers will Lost.", (){
                               Navigator.pop(context);
-                              Navigator.push(context, MaterialPageRoute(builder: (context) =>   UserSearch(pRoleCode: "Agent", pUserCode: fDealerCode, pFnCallBack: fnSearchCallBack,)));
+                              //Navigator.push(context, MaterialPageRoute(builder: (context) =>   UserSearch(pRoleCode: "Agent", pUserCode: fDealerCode, pFnCallBack: fnSearchCallBack,)));
+
+                              PageDialog().show(context,
+                                  UserSearch(pRoleCode: "Agent", pUserCode: fDealerCode,  pFnCallBack: fnSearchCallBack,),
+                                  "Choose");
                             });
                           }else{
-                            Navigator.push(context, MaterialPageRoute(builder: (context) =>   UserSearch(pRoleCode: "Agent", pUserCode: fDealerCode, pFnCallBack: fnSearchCallBack,)));
+                            PageDialog().show(context,
+                                UserSearch(pRoleCode: "Agent", pUserCode: fDealerCode,  pFnCallBack: fnSearchCallBack,),
+                                "Choose");
+                            //Navigator.push(context, MaterialPageRoute(builder: (context) =>   UserSearch(pRoleCode: "Agent", pUserCode: fDealerCode, pFnCallBack: fnSearchCallBack,)));
                           }
 
 
@@ -352,7 +387,7 @@ class _BookingState extends State<Booking> {
                             children: [
                               Row(
                                 children: [
-                                  tcn('Agent ', Colors.black, 10),
+                                  tcn('Agent ', Colors.black, 8),
                                   tc(fAgentCode.toString(), Colors.black, 13),
                                 ],
                               ),
@@ -602,7 +637,7 @@ class _BookingState extends State<Booking> {
                       wButton("ALL",bgColorDark),
                     ],
                   ),
-                  gapHC(10),
+                  gapHC(5),
                   gCountNum == 3?
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -1116,7 +1151,7 @@ class _BookingState extends State<Booking> {
         padding: const EdgeInsets.symmetric(vertical: 1,horizontal: 8),
         alignment: Alignment.center,
         decoration: gOption == rs  ?boxBaseDecoration(g.wstrGameBColor, 5):boxOutlineCustom1(Colors.white, 5, g.wstrGameBColor, 1.0),
-        child: tcn(rs.toString(), gOption == rs?g.wstrGameOTColor:g.wstrGameTColor, 15),
+        child: tcn(rs.toString(), gOption == rs?g.wstrGameOTColor:g.wstrGameTColor, 12),
       ),
     );
   }
@@ -1141,7 +1176,7 @@ class _BookingState extends State<Booking> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  tc(text.toString(), Colors.white, 15)
+                  tc(text.toString(), Colors.white, 13)
                 ],
               )
             ],

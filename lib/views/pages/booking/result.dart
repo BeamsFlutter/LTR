@@ -56,8 +56,26 @@ class _ResultsState extends State<Results> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
+                  tcn("Results (${fGame.toString()})", Colors.white, 20),
                   Row(
                     children: [
+                      GestureDetector(
+                        onTap: (){
+                          fnShare();
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 15,vertical: 5),
+                          decoration: boxDecoration(Colors.white, 30),
+                          child: Row(
+                            children: [
+                              tcn('Share', grey, 15),
+                              gapWC(5),
+                              const Icon(Icons.share_outlined,color: grey,size: 15,)
+                            ],
+                          ),
+                        ),
+                      ),
+                      gapWC(5),
                       GestureDetector(
                         onTap: (){
                           Navigator.pop(context);
@@ -65,28 +83,10 @@ class _ResultsState extends State<Results> {
                         child: Container(
                           decoration: boxBaseDecoration(Colors.white,10),
                           padding: const EdgeInsets.all(5),
-                          child: const Icon(Icons.arrow_back,color: Colors.black,size: 20,),
+                          child: const Icon(Icons.segment,color: Colors.black,size: 20,),
                         ),
                       ),
-                      gapWC(5),
-                      tcn("Results (${fGame.toString()})", Colors.white, 20)
                     ],
-                  ),
-                  GestureDetector(
-                    onTap: (){
-                      fnShare();
-                    },
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 15,vertical: 5),
-                      decoration: boxDecoration(Colors.white, 30),
-                      child: Row(
-                        children: [
-                          tcn('Share', grey, 15),
-                          gapWC(5),
-                          const Icon(Icons.share_outlined,color: grey,size: 15,)
-                        ],
-                      ),
-                    ),
                   )
 
                 ],

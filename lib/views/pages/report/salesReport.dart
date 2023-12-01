@@ -333,7 +333,7 @@ class _SalesReportState extends State<SalesReport> {
                           );
                         },
                         child: Container(
-                          margin: EdgeInsets.symmetric(vertical: 5),
+                          margin: EdgeInsets.symmetric(vertical: 2,horizontal: 2),
                           decoration: boxBaseDecoration(headerDeleteYn == "Y"?Colors.red.withOpacity(0.1):headerEditYn == "Y"?Colors.amber.withOpacity(0.3): Colors.white, 10),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -344,7 +344,7 @@ class _SalesReportState extends State<SalesReport> {
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
-                                    tc('Bill ID #${e["DOCNO"].toString()}', Colors.white, 14),
+                                    tc('Bill ID #${e["DOCNO"].toString()}', Colors.white, 12),
 
                                     GestureDetector(
                                       onTap: (){
@@ -356,7 +356,7 @@ class _SalesReportState extends State<SalesReport> {
                                         child: Row(
                                           mainAxisAlignment: MainAxisAlignment.center,
                                           children: [
-                                            tcn('LOG VIEW', Colors.black, 12),
+                                            tcn('LOG VIEW', Colors.black, 8),
                                           ],
                                         ),
                                       ),
@@ -364,7 +364,7 @@ class _SalesReportState extends State<SalesReport> {
                                   ],
                                 ),
                               ),
-                              gapHC(5),
+                              gapHC(2),
                               Padding(
                                 padding: const EdgeInsets.all(5),
                                 child: Row(
@@ -386,8 +386,8 @@ class _SalesReportState extends State<SalesReport> {
                                         Row(
                                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                           children: [
-                                            tcn('Total', Colors.black, 13),
-                                            tcn(g.mfnDbl(e["TOTAL"].toString()).toStringAsFixed(2), Colors.black, 14)
+                                            tcn('Total', Colors.black, 11),
+                                            tcn(g.mfnDbl(e["TOTAL"].toString()).toStringAsFixed(2), Colors.black, 12)
                                           ],
                                         ),
                                         g.wstrUserRole == "AGENT" && g.wstrCanViewComm != "Y"?
@@ -395,8 +395,8 @@ class _SalesReportState extends State<SalesReport> {
                                         Row(
                                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                           children: [
-                                            tcn('Comm', Colors.black, 13),
-                                            tcn(g.mfnDbl(e["COM"].toString()).toStringAsFixed(2), Colors.black, 14)
+                                            tcn('Comm', Colors.black, 11),
+                                            tcn(g.mfnDbl(e["COM"].toString()).toStringAsFixed(2), Colors.black, 12)
                                           ],
                                         ),
                                         Divider(
@@ -405,8 +405,8 @@ class _SalesReportState extends State<SalesReport> {
                                         Row(
                                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                           children: [
-                                            tc('Grand Total', Colors.black, 13),
-                                            tc(grandTotal.toStringAsFixed(2), Colors.black, 15)
+                                            tc('Grand Total', Colors.black, 11),
+                                            tc(grandTotal.toStringAsFixed(2), Colors.black, 12)
                                           ],
                                         ),
                                       ],
@@ -414,19 +414,19 @@ class _SalesReportState extends State<SalesReport> {
                                   ],
                                 ),
                               ) ,
-                              gapHC(10),
+                              gapHC(5),
                               Container(
                                 padding: const EdgeInsets.all(5),
                                 decoration: boxBaseDecorationC(Colors.grey.withOpacity(0.05), 0,0,10,10),
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
-                                    tcn('Customer  ${(e["CUSTOMER_NAME"]??"").toString().toUpperCase()}', Colors.black, 12),
+                                    tcn('Customer  ${(e["CUSTOMER_NAME"]??"").toString().toUpperCase()}', Colors.black, 10),
                                     Row(
                                       children: [
-                                        const Icon(Icons.access_time_outlined,color: Colors.black,size: 12,),
+                                        const Icon(Icons.access_time_outlined,color: Colors.black,size: 10,),
                                         gapWC(5),
-                                        tcn(actionDate.toString(), Colors.black, 12)
+                                        tcn(actionDate.toString(), Colors.black, 10)
                                       ],
                                     )
                                   ],
@@ -580,14 +580,14 @@ class _SalesReportState extends State<SalesReport> {
           flex: 3,
           child: Row(
           children: [
-            tcn(head, Colors.black, 12),
+            tcn(head, Colors.black, 10),
           ],
         ),),
         Flexible(
           flex: 7,
           child: Row(
           children: [
-            tcn(sub, Colors.black, 13),
+            tcn(sub, Colors.black, 11),
           ],
         ),)
       ],

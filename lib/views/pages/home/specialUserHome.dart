@@ -2,11 +2,13 @@
 import 'package:flutter/material.dart';
 import 'package:ltr/controller/global/globalValues.dart';
 import 'package:ltr/controller/navigation/navigation_controller.dart';
+import 'package:ltr/services/apiController.dart';
 import 'package:ltr/views/components/common/common.dart';
 import 'package:ltr/views/pages/booking/booking.dart';
 import 'package:ltr/views/pages/booking/bookingview.dart';
 import 'package:ltr/views/pages/booking/othersales.dart';
 import 'package:ltr/views/pages/booking/publishresult.dart';
+import 'package:ltr/views/pages/booking/result.dart';
 import 'package:ltr/views/pages/booking/retailbooking.dart';
 import 'package:ltr/views/pages/home/countview.dart';
 import 'package:ltr/views/pages/number/favnumber.dart';
@@ -20,6 +22,7 @@ import 'package:ltr/views/pages/user/currentuserprize.dart';
 import 'package:ltr/views/pages/user/currentusersalesrate.dart';
 import 'package:ltr/views/pages/user/specialUserList.dart';
 import 'package:ltr/views/pages/user/userlist.dart';
+import 'package:ltr/views/styles/colors.dart';
 
 import '../number/globalcount.dart';
 
@@ -35,6 +38,7 @@ class _SpecialHomeState extends State<SpecialUserHome> {
   //Global
   var g =  Global();
   var n =  NavigationController();
+  var apiCall = ApiCall();
   final scaffoldKey = GlobalKey<ScaffoldState>();
   late Future<dynamic> futureForm;
 
@@ -42,6 +46,8 @@ class _SpecialHomeState extends State<SpecialUserHome> {
   //Page Variable
   var frDate = "";
   var fMenu =[];
+  var fUserMenu  = [];
+  var gameList  = [];
 
 
   @override
@@ -89,31 +95,7 @@ class _SpecialHomeState extends State<SpecialUserHome> {
               child: SingleChildScrollView(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    tc('Booking', Colors.black , 14),
-                    gapHC(5),
-                    const Divider(
-                      thickness: 0.5,
-                      height: 15,
-                    ),
-                    gapHC(5),
-                    wMenuCard('Reports',9),
-                    gapHC(5),
-
-                    tc('Settings', Colors.black , 14),
-                    gapHC(5),
-                    const Divider(
-                      thickness: 0.5,
-                      height: 15,
-                    ),
-                    gapHC(5),
-                    g.wstrUserRole == "ADMIN"?
-                    wMenuCard('App Settings',11):gapHC(0),
-                    g.wstrUserRole == "ADMIN"?
-                    wMenuCard('Special User',19):gapHC(0),
-                    wMenuCard('App Update',18),
-
-                  ],
+                  children: wMenuList(),
                 ),
               ),
             )),
@@ -124,6 +106,30 @@ class _SpecialHomeState extends State<SpecialUserHome> {
   }
 
   //===================================WIDGET
+
+  List<Widget> wMenuList(){
+    List<Widget> rtnList  = [];
+    rtnList.add(Row());
+
+    for(var e in fUserMenu){
+
+      var menuCode  =  (e["MENU_CODE"]??"").toString();
+      if(menuCode  == "M01"){
+        rtnList.add(wMenuCard('Booking',2));
+        rtnList.add(gapHC(5));
+      }else if(menuCode  == "M02"){
+        rtnList.add(wMenuCard('Reports',9));
+        rtnList.add(gapHC(5));
+      }else if(menuCode  == "M03"){
+        rtnList.add( wMenuCard('Result View',3));
+        rtnList.add(gapHC(5));
+        rtnList.add(  wMenuCard('Result Publish',12));
+        rtnList.add(gapHC(5));
+      }
+
+    }
+    return rtnList;
+  }
 
   Widget wMenuCard(text,nav){
 
@@ -136,7 +142,7 @@ class _SpecialHomeState extends State<SpecialUserHome> {
 
         }else if(nav == 3){
 
-
+          Navigator.push(context, MaterialPageRoute(builder: (context) =>   const Results()));
         }else if(nav == 5){
           Navigator.push(context, MaterialPageRoute(builder: (context) =>   const NumberCount()));
 
@@ -268,7 +274,70 @@ class _SpecialHomeState extends State<SpecialUserHome> {
         ];
       });
 
+
+      apiGetMenuList();
+
     }
   }
+
+
+
  //===================================API CALL
+
+  apiGetMenuList(){
+    futureForm = apiCall.apiGetUserDetails(g.wstrCompany, g.wstrUserCd, "USERDET", "");
+    futureForm.then((value) => apiGetMenuListRes(value));
+  }
+  apiGetMenuListRes(value){
+    if(mounted){
+      if(g.fnValCheck(value)){
+        setState(() {
+          fUserMenu = value["USERMENU"]??[];
+        });
+        apiGetGameList();
+      }
+    }
+  }
+
+  apiGetGameList(){
+    //api for get user wise game list
+    futureForm = apiCall.apiGetUserGames(g.wstrCompany, g.wstrUserCd, "");
+    futureForm.then((value) => apiGetGameListRes(value));
+  }
+  apiGetGameListRes(value){
+    if(mounted){
+      setState(() {
+        gameList = [];
+        if(g.fnValCheck(value)){
+          gameList = value;
+          var e = gameList[0];
+          var code = g.mfnTxt(e["CODE"]);
+          var name = g.mfnTxt(e["DESCP"]);
+          var link = g.mfnTxt(e["LIVE_LINK"]);
+          var editTime = g.mfnTxt(e["EDIT_MINUT"]);
+          var end = g.mfnTxt(e["END_TIME"]);
+
+          var colorCode  =  g.mfnTxt(e["CODE"]);
+          // var color  =  colorCode == "1PM"?Colors.blueAccent:colorCode == "3PM"?Colors.amber:colorCode == "6PM"?Colors.green:colorCode == "8PM"?Colors.redAccent:Colors.amber;
+          var color  =  colorCode == "1PM"?oneColor:colorCode == "3PM"?threeColor:colorCode == "6PM"?sixColor:colorCode == "8PM"?eightColor:Colors.amber;
+          var bcolor  =  colorCode == "1PM"?oneButtonColor:colorCode == "3PM"?threeButtonColor:colorCode == "6PM"?sixButtonColor:colorCode == "8PM"?eightButtonColor:Colors.amber;
+          var tcolor  =  colorCode == "1PM"?oneTextColor:colorCode == "3PM"?threeTextColor:colorCode == "6PM"?sixTextColor:colorCode == "8PM"?eightTextColor:Colors.amber;
+          var otcolor  =  colorCode == "1PM"?oneOnTextColor:colorCode == "3PM"?threeOnTextColor:colorCode == "6PM"?sixOnTextColor:colorCode == "8PM"?eightOnTextColor:Colors.amber;
+
+
+          g.wstrSelectedGame = code;
+          g.wstrSelectedGameName = name;
+          g.wstrGameColor = color;
+          g.wstrGameBColor = bcolor;
+          g.wstrGameTColor = tcolor;
+          g.wstrGameOTColor = otcolor;
+          g.wstrSGameLink = link;
+          g.wstrSGameEdit = editTime;
+          g.wstrSGameEnd = end;
+        }
+      });
+    }
+  }
+
+
 }

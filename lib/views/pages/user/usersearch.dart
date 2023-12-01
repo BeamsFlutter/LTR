@@ -57,7 +57,7 @@ class _UserSearchState extends State<UserSearch> {
         child: Column(
           children: [
             Container(
-              padding: const EdgeInsets.symmetric(vertical: 13,horizontal: 10),
+              padding: const EdgeInsets.symmetric(vertical: 7,horizontal: 5),
               decoration: boxDecoration(g.wstrGameBColor, 0),
               child: Row(
                 children: [
@@ -68,7 +68,7 @@ class _UserSearchState extends State<UserSearch> {
                     child: Container(
                       decoration: boxBaseDecoration(Colors.white,10),
                       padding: const EdgeInsets.all(5),
-                      child: const Icon(Icons.arrow_back,color: Colors.black,size: 20,),
+                      child: const Icon(Icons.arrow_back,color: Colors.black,size: 15,),
                     ),
                   ),
                   gapWC(5),
@@ -134,14 +134,14 @@ class _UserSearchState extends State<UserSearch> {
                     duration: const Duration(milliseconds: 110),
                     child: Container(
                       margin: const EdgeInsets.only(bottom: 0),
-                      padding: const EdgeInsets.symmetric(horizontal: 15,vertical: 15),
+                      padding: const EdgeInsets.symmetric(horizontal: 5,vertical: 5),
                       decoration: boxBaseDecoration( (index%2 != 0)? Colors.white: Colors.blueGrey.withOpacity(0.1), 0),
                       child: Row(
                         children: [
                           Container(
                             decoration: boxBaseDecoration((index%2 == 0)? Colors.black.withOpacity(0.05): Colors.white, 30),
                             padding: const EdgeInsets.all(5),
-                            child:  const Icon(Icons.person,color: Colors.black,size: 12,),
+                            child:  const Icon(Icons.person,color: Colors.black,size: 10,),
                           ),
                           gapWC(10),
                           Expanded(child: Column(

@@ -186,7 +186,8 @@ class _DailyReportState extends State<DailyReport> {
                   wRowDet(2,'NAME'),
                   wRowDet(2,'SALE'),
                   wRowDet(2,'PRIZE+COMM'),
-                  wRowDet(2,'SHARE'),
+                  fShare > 0?
+                  wRowDet(2,'SHARE'):gapHC(0),
                   wRowDet(2,'TOTAL'),
                 ],
               ),
@@ -249,7 +250,8 @@ class _DailyReportState extends State<DailyReport> {
               height: 30,
               decoration: boxBaseDecoration(Colors.black.withOpacity(0.2), 0),
             ),
-            wColumnCard(2,(share).toString(),"${(e["SHARE_PER"]??"0.0")}%"),
+            fShare > 0 ?
+            wColumnCard(2,(share).toString(),"${(e["SHARE_PER"]??"0.0")}%"):gapHC(0),
             Container(
               width: 1,
               height: 30,

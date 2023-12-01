@@ -18,7 +18,7 @@ class PublishResult extends StatefulWidget {
   @override
   State<PublishResult> createState() => _PublishResultState();
 }
-
+enum Menu { itemOne, itemTwo, itemThree, itemFour }
 class _PublishResultState extends State<PublishResult> {
 
   //Global
@@ -34,7 +34,9 @@ class _PublishResultState extends State<PublishResult> {
   var fResDate = DateTime.now();
   var frResultData = [];
   var frGameData  =[];
+  var frGameList  =[];
   var frCapthaKey  = "";
+  var fGame = "";
 
   List<TextEditingController>  txtControllerList = [];
 
@@ -164,7 +166,31 @@ class _PublishResultState extends State<PublishResult> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Row(
+
                     children: [
+
+                      blOldEdit?
+                      tcn("Old Result Entry", Colors.white, 18):
+                      tcn("Publish Result (${fGame.toString()})", Colors.white, 18),
+
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      GestureDetector(
+                        onTap: (){
+                          if(frResultData.isEmpty){
+                            errorMsg(context, "No Data found");
+                            return;
+                          }
+
+                          PageDialog().cDialog(context, "Update", "Do you want to edit old result entry?",(){
+                            fnShowCaptcha(fnOldEditCaptchaSuccess);
+                          });
+                        },
+                        child: const Icon(Icons.history,color: Colors.white,size: 22,),
+                      ),
+                      gapWC(5),
                       GestureDetector(
                         onTap: (){
                           Navigator.pop(context);
@@ -172,23 +198,10 @@ class _PublishResultState extends State<PublishResult> {
                         child: Container(
                           decoration: boxBaseDecoration(Colors.white,10),
                           padding: const EdgeInsets.all(5),
-                          child: const Icon(Icons.arrow_back,color: Colors.black,size: 20,),
+                          child: const Icon(Icons.segment,color: Colors.black,size: 20,),
                         ),
                       ),
-                      gapWC(5),
-                      blOldEdit?
-                      tcn("Old Result Entry", Colors.white, 18):
-                      tcn("Publish Result (${g.wstrSelectedGame.toString()})", Colors.white, 18),
                     ],
-                  ),
-                  GestureDetector(
-                    onTap: (){
-
-                      PageDialog().cDialog(context, "Update", "Do you want to edit old result entry?",(){
-                        fnShowCaptcha(fnOldEditCaptchaSuccess);
-                      });
-                    },
-                    child: const Icon(Icons.history,color: Colors.white,size: 22,),
                   )
                   // wstrPageMode == "VIEW" && blPostSts && frResultData.isNotEmpty?
                   // GestureDetector(
@@ -209,6 +222,48 @@ class _PublishResultState extends State<PublishResult> {
                   // ):gapWC(5),
                 ],
               ),
+            ),
+
+            gapHC(5),
+            Row(
+              children: [
+                Expanded(
+                  child: PopupMenuButton<Menu>(
+                    position: PopupMenuPosition.under,
+                    tooltip: "",
+                    onSelected: (Menu item) {
+
+                    },
+                    shape:  RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10)),
+                    itemBuilder: (BuildContext context) => <PopupMenuEntry<Menu>>[
+                      PopupMenuItem<Menu>(
+                        value: Menu.itemOne,
+                        padding: const EdgeInsets.symmetric(vertical: 0,horizontal: 0),
+                        child: wGamePopup(),
+                      ),
+                    ],
+                    child:   Container(
+                      margin:const  EdgeInsets.symmetric(horizontal: 2),
+                      padding: const EdgeInsets.all(10),
+                      decoration: boxOutlineCustom1(Colors.white, 5, Colors.black, 1.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Row(
+                            children: [
+                              tcn('Select Game ', Colors.black, 10),
+                              tc(fGame.toString(), Colors.black, 13),
+                            ],
+                          ),
+                          Icon(Icons.search,color: Colors.grey,size: 18,)
+                        ],
+                      ),
+                    ),
+                  ),
+                )
+
+              ],
             ),
             gapHC(5),
             GestureDetector(
@@ -984,6 +1039,51 @@ maxCount: 3,
   }
 
   //====================================WIDGET
+
+  Widget wGamePopup(){
+    return Container(
+      width: 200,
+      decoration: boxBaseDecoration(Colors.white, 0),
+      padding: const EdgeInsets.only(left: 20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: wBranchCard(),
+      ),
+    );
+  }
+  List<Widget> wBranchCard(){
+    List<Widget> rtnList  =  [];
+    for(var e in frGameList){
+      var colorCode = (e["CODE"]??"").toString();
+      var color  =  colorCode == "1PM"?oneColor:colorCode == "3PM"?threeColor:colorCode == "6PM"?sixColor:colorCode == "8PM"?eightColor:Colors.amber;
+
+      rtnList.add(GestureDetector(
+        onTap: (){
+          Navigator.pop(context);
+          setState(() {
+            fGame = (e["CODE"]??"").toString();
+          });
+          apiGetResultData();
+        },
+        child: Container(
+          decoration: boxBaseDecoration(color, 5),
+          padding: const EdgeInsets.symmetric(vertical: 5,horizontal: 5),
+          margin: const EdgeInsets.only(bottom: 5),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(Icons.confirmation_num,color:Colors.white,size: 15,),
+              gapWC(5),
+              tcn((e["CODE"]??"").toString(), Colors.white, 15)
+            ],
+          ),
+        ),
+      ));
+    }
+
+    return rtnList;
+  }
+
   //====================================PAGE FN
 
   Future<void> _selectResultDate(BuildContext context) async {
@@ -1052,9 +1152,13 @@ maxCount: 3,
           txtP34,
           txtP35,
         ];
+
+        fGame = g.wstrSelectedGame;
+
       });
     }
     apiGetResultData();
+    apiGetGameList();
   }
 
   fnCancel(){
@@ -1268,7 +1372,7 @@ maxCount: 3,
   //====================================API CALL
 
   apiGetGame(){
-    futureForm =  ApiCall().apiGetGame(g.wstrSelectedGame, setDate(2, fResDate));
+    futureForm =  ApiCall().apiGetGame(fGame, setDate(2, fResDate));
     futureForm.then((value) => apiGetGameRes(value));
   }
   apiGetGameRes(value){
@@ -1292,7 +1396,7 @@ maxCount: 3,
 
   apiGetResultData(){
     fnClear();
-    futureForm =  ApiCall().apiGetResultData(g.wstrSelectedGame, setDate(2, fResDate));
+    futureForm =  ApiCall().apiGetResultData(fGame, setDate(2, fResDate));
     futureForm.then((value) => apiGetResultDataRes(value));
   }
   apiGetResultDataRes(value){
@@ -1376,6 +1480,23 @@ maxCount: 3,
           errorMsg(context, msg.toString());
         }
       }
+    }
+  }
+
+
+  apiGetGameList(){
+    //api for get user wise game list
+    futureForm = apiCall.apiGetUserGames(g.wstrCompany, g.wstrUserCd, "");
+    futureForm.then((value) => apiGetGameListRes(value));
+  }
+  apiGetGameListRes(value){
+    if(mounted){
+      setState(() {
+        frGameList = [];
+        if(g.fnValCheck(value)){
+          frGameList = value;
+        }
+      });
     }
   }
 

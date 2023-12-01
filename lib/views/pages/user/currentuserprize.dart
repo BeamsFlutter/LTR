@@ -92,7 +92,10 @@ class _CurrentUserPrizeState extends State<CurrentUserPrize> {
               padding: const EdgeInsets.symmetric(vertical: 13,horizontal: 10),
               decoration: boxDecoration(g.wstrGameBColor, 0),
               child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
+
+                  tcn("Prize & Commission", Colors.white, 20),
                   GestureDetector(
                     onTap: (){
                       Navigator.pop(context);
@@ -100,11 +103,9 @@ class _CurrentUserPrizeState extends State<CurrentUserPrize> {
                     child: Container(
                       decoration: boxBaseDecoration(Colors.white,10),
                       padding: const EdgeInsets.all(5),
-                      child: const Icon(Icons.arrow_back,color: Colors.black,size: 20,),
+                      child: const Icon(Icons.segment,color: Colors.black,size: 20,),
                     ),
                   ),
-                  gapWC(5),
-                  tcn("Prize & Commission", Colors.white, 20)
                 ],
               ),
             ),

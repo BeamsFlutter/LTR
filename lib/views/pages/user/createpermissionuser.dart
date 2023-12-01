@@ -368,9 +368,31 @@ class _UserCreationWithPermissionState extends State<UserCreationWithPermission>
         "MENU_DESCP":""
       });
     }
+
+    games.add({
+      "GAME_CODE":"1PM",
+      "MAX_COUNT":-1,//50
+      "REPORT_DAYS":-1
+    });
+    games.add({
+      "GAME_CODE":"3PM",
+      "MAX_COUNT":-1,//50
+      "REPORT_DAYS":-1
+    });
+    games.add({
+      "GAME_CODE":"6PM",
+      "MAX_COUNT":-1,//50
+      "REPORT_DAYS":-1
+    });
+    games.add({
+      "GAME_CODE":"8PM",
+      "MAX_COUNT":-1,//50
+      "REPORT_DAYS":-1
+    });
+
     var parentCode = g.wstrUserCd;
 
-    futureForm = apiCall.apiCreateUser(g.wstrCompany, txtId.text, "SPC",parentCode, txtPassword.text, 0, 0,blEdit?"PASSWORD":wstrPageMode,0,"N","N",[],menu);
+    futureForm = apiCall.apiCreateUser(g.wstrCompany, txtId.text, "SPC",parentCode, txtPassword.text, 0, 0,blEdit?"PASSWORD":wstrPageMode,0,"N","N",games,menu);
     futureForm.then((value) => apiCreateUserRes(value));
   }
   apiCreateUserRes(value){

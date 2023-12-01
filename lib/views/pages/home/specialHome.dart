@@ -7,6 +7,7 @@ import 'package:ltr/views/pages/booking/booking.dart';
 import 'package:ltr/views/pages/booking/bookingview.dart';
 import 'package:ltr/views/pages/booking/othersales.dart';
 import 'package:ltr/views/pages/booking/publishresult.dart';
+import 'package:ltr/views/pages/booking/result.dart';
 import 'package:ltr/views/pages/booking/retailbooking.dart';
 import 'package:ltr/views/pages/home/countview.dart';
 import 'package:ltr/views/pages/number/favnumber.dart';
@@ -136,7 +137,7 @@ class _SpecialHomeState extends State<SpecialHome> {
 
         }else if(nav == 3){
 
-
+          Navigator.push(context, MaterialPageRoute(builder: (context) =>   const Results()));
         }else if(nav == 5){
           Navigator.push(context, MaterialPageRoute(builder: (context) =>   const NumberCount()));
 
